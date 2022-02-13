@@ -1,0 +1,103 @@
+@Library('deploy-conf') _
+node() {
+    try {
+        String ANSI_GREEN = "\u001B[32m"
+        String ANSI_NORMAL = "\u001B[0m"
+        String ANSI_BOLD = "\u001B[1m"
+        String ANSI_RED = "\u001B[31m"
+        String ANSI_YELLOW = "\u001B[33m"
+
+        stage('checkout public repo') {
+            folder = new File("$WORKSPACE/.git")
+            if (folder.exists())
+            {
+               println "Found .git folder. Clearing it.."
+               sh'git clean -fxd'
+            }
+            checkout scm
+        }
+
+            ansiColor('xterm') {
+                values = lp_dp_params()
+                values.put('module', 'Core')
+                stage('get artifact') {
+                    currentWs = sh(returnStdout: true, script: 'pwd').trim()
+                    artifact = values.artifact_name + ":" + values.artifact_version
+                    commit_hash = values.artifact_version.split('_')[1]
+                    values.put('currentWs', currentWs)
+                    values.put('artifact', artifact)
+                    artifact_download(values)
+                }
+                stage('deploy artifact'){
+                    sh """
+                      unzip ${artifact}
+                      unzip -o content-editor.zip -d content-editor
+                      export editor_version_number=${values.artifact_version}
+                      export build_number=${commit_hash}
+                      sed -i -e 's/dispatcher:\"console\"/dispatcher:\"piwik\"/g' content-editor/scripts/*
+                      sed -i 's:/api:/action:g' content-editor/scripts/base-editor.min.js
+                      sed -i 's/useProxyForURL:true/useProxyForURL:false/g' content-editor/scripts/base-editor.min.js
+                      sed -i -e 's/dispatcher:\"local\"/dispatcher:\"piwik\"/g' content-editor/scripts/*
+                      mv content-editor ansible
+                    """
+
+                    sh """
+                      zip -r content-editor-artifact.zip ansible/content-editor
+                      cd ansible/content-editor
+                      npm install
+                      npm install promise
+                      gulp minifyJs
+                      gulp copystyleImages
+                      gulp clean
+                      gulp injectrenamedfiles
+                      gulp package
+                    """
+
+                   sh """
+                      mkdir iframe
+                      unzip ansible/content-editor/dist/editor/content-editor-iframe-latest.zip -d iframe/
+                    """
+
+                    ansiblePlaybook = "${currentWs}/ansible/deploy-plugins-oci.yml"
+                    ansibleExtraArgs = "--tags content-editor --extra-vars \"folder_name=content-editor source_name=${currentWs}/iframe\" --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                    values.put('ansiblePlaybook', ansiblePlaybook)
+                    values.put('ansibleExtraArgs', ansibleExtraArgs)
+                    println values
+                    ansible_playbook_run(values)
+
+                    ansiblePlaybook = "${currentWs}/ansible/deploy-plugins-oci.yml"
+                    ansibleExtraArgs = "--tags editor --extra-vars \"folder_name=artefacts/editor source_name=${currentWs}/ansible/content-editor/dist/editor\" --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                    values.put('ansiblePlaybook', ansiblePlaybook)
+                    values.put('ansibleExtraArgs', ansibleExtraArgs)
+                    println values
+                    ansible_playbook_run(values)
+
+
+                    ansiblePlaybook = "${currentWs}/ansible/deploy-plugins-oci.yml"
+                    ansibleExtraArgs = "--tags core-plugins --extra-vars \"folder_name=artefacts/coreplugins source_name=${currentWs}/ansible/content-editor/dist/coreplugins\" --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                    values.put('ansiblePlaybook', ansiblePlaybook)
+                    values.put('ansibleExtraArgs', ansibleExtraArgs)
+                    println values
+                    ansible_playbook_run(values)
+                    currentBuild.result = 'SUCCESS'
+                    sh """
+                      rm -rf node_modules
+                      cd ..
+                      zip -r content-editor.zip ${currentWs}/ansible/content-editor
+                    """
+                    archiveArtifacts artifacts: "${artifact}", fingerprint: true, onlyIfSuccessful: true
+                    archiveArtifacts artifacts: 'metadata.json', onlyIfSuccessful: true
+                    currentBuild.description = "Artifact: ${values.artifact_version}, Private: ${params.private_branch}, Public: ${params.branch_or_tag}"
+                }
+            }
+            summary()
+     }
+    catch (err) {
+        currentBuild.result = 'FAILURE'
+        throw err
+    }
+    finally {
+        slack_notify(currentBuild.result)
+        email_notify()
+    }
+}
