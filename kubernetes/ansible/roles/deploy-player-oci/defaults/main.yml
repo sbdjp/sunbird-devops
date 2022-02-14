@@ -83,7 +83,7 @@ sunbird_telemetry_dispatchers: kafka
 content_service_whitelisted_channels:
 content_service_blacklisted_channels:
 sunbird_env_logo_url:
-desktop_app_storage_url: "https://{{sunbird_public_storage_account_name}}.blob.core.windows.net/{{offline_installer_container_name}}"
+desktop_app_storage_url: "https://objectsotrage.ap-melbourne-1.oraclecloud.com/n/apaccpt04/b/{{offline_installer_container_name}}/o"
 
 telemetry_logstash_heap_size: 512m
 telemetry_logstash_replicas: 1
@@ -214,7 +214,7 @@ registry_url: "{{proto}}://{{proxy_server_name}}/registry"
 
 upstream_url: "ekstep-public-{{ekstep_s3_env}}.s3-ap-south-1.amazonaws.com"
 plugin_upstream_url: "ekstep-public-{{ekstep_s3_env}}.s3-ap-south-1.amazonaws.com"
-sunbird_offline_azure_storage_account_url: "{{ sunbird_public_storage_account_name }}.blob.core.windows.net/{{ offline_installer_container_name }}"
+sunbird_offline_azure_storage_account_url: "https://objectstorage.ap-melbourne-1.oraclecloud.com/n/apaccpt04/b/{{ offline_installer_container_name }}/o"
 # Override this dictionary in your common.yaml
 proxy:
   # repository:  'proxy'
@@ -275,7 +275,7 @@ service_env:
     - ../../../../ansible/roles/stack-sunbird/templates/outbound_logback.xml
   transformer:
     - ../../../../ansible/roles/stack-sunbird/templates/transformer.env
-    - ../../../../ansible/roles/stack-sunbird/templates/transformer_industry_feedback.xml   
+    - ../../../../ansible/roles/stack-sunbird/templates/transformer_industry_feedback.xml
   uci: ../../../../ansible/roles/stack-sunbird/templates/uci_api.env
   gql: ../../../../ansible/roles/stack-sunbird/templates/gql.env
   odk: ../../../../ansible/roles/stack-sunbird/templates/odk.env
@@ -852,7 +852,7 @@ uci_inbound_liveness_readiness:
     periodSeconds: 15
     timeoutSeconds: 5
     failureThreshold: 2
-    
+
 uci_outbound_liveness_readiness:
   healthcheck: true
   readinessProbe:
