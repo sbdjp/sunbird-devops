@@ -8,6 +8,6 @@
         AZURE_STORAGE_SAS_TOKEN: "{{ sunbird_public_storage_account_sas }}"
   tasks:
     - name: upload batch
-      command: "oci os object bulk-upload -bn {{ plugin_container_name }} --prefix '/schemas/local/' --src-dir {{ source_name }} --overwrite"
+      command: "oci os object bulk-upload -bn {{ plugin_container_name }} --prefix 'schemas/local/' --src-dir {{ source_name }} --overwrite"
       async: 3600
       poll: 10
