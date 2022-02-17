@@ -76,7 +76,7 @@
   ignore_errors: yes
 
 - name: Get deployed image name - daemonsets
-  shell: "kubectl get daemonsets {{ release_name }} -o json -n {{ namespace }} | jq '.spec.template.spec.containers | .[].image' -r | awk -F/ '{print $2}'"
+  shell: "kubectl get daemonsets {{ release_name }} -o json -n {{ namespace }} | jq '.spec.template.spec.containers | .[].image' -r | awk -F/ '{print $4}'"
   register: image
 
 - set_fact:
