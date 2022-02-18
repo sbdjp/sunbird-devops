@@ -89,11 +89,11 @@ create_users(){
     -H "Authorization: Bearer ${core_vault_sunbird_api_auth_token}" \
     -d '{
        "request":{
-  		   "firstName": "creator01",
-  		   "lastName": "creator01",
+  		   "firstName": "creator02",
+  		   "lastName": "creator02",
   		   "password": "'${user_passwords}'",
-  		   "phone": "9999911121",
-  		   "userName": "creator01",
+  		   "phone": "9999911124",
+  		   "userName": "creator02",
   		   "phoneVerified": true
        }
     }' | jq -r .result.userId)
@@ -104,11 +104,11 @@ create_users(){
     -H "Authorization: Bearer ${core_vault_sunbird_api_auth_token}" \
     -d '{
        "request":{
-  		   "firstName": "reviewer01",
-  		   "lastName": "reviewer01",
+  		   "firstName": "reviewer02",
+  		   "lastName": "reviewer02",
   		   "password": "'${user_passwords}'",
-  		   "phone": "9999911122",
-  		   "userName": "reviewer01",
+  		   "phone": "9999911125",
+  		   "userName": "reviewer02",
   		   "phoneVerified": true
        }
     }' | jq -r .result.userId)
@@ -119,11 +119,11 @@ create_users(){
     -H "Authorization: Bearer ${core_vault_sunbird_api_auth_token}" \
     -d '{
        "request":{
-  		   "firstName": "orgadmin01",
-  		   "lastName": "orgadmin01",
+  		   "firstName": "orgadmin02",
+  		   "lastName": "orgadmin02",
   		   "password": "'${user_passwords}'",
-  		   "phone": "9999911123",
-  		   "userName": "orgadmin01",
+  		   "phone": "9999911126",
+  		   "userName": "orgadmin02",
   		   "phoneVerified": true
        }
     }' | jq -r .result.userId)
@@ -139,8 +139,8 @@ assign_roles(){
     -H "Authorization: Bearer ${core_vault_sunbird_api_auth_token}" \
     -d '{
        "request":{
-  		   "organisationId": "'"${organisation}"'",
-		   "userId": "'"${creator}"'",
+  		   "organisationId": "'${organisation}'",
+		   "userId": "'${creator}'",
 		   "roles": ["CONTENT_CREATOR"]
        }
     }'
@@ -150,8 +150,8 @@ assign_roles(){
     -H "Authorization: Bearer ${core_vault_sunbird_api_auth_token}" \
     -d '{
        "request":{
-  		   "organisationId": "'"${organisation}"'",
-		   "userId": "'"${reviewer}"'",
+  		   "organisationId": "'${organisation}'",
+		   "userId": "'${reviewer}'",
 		   "roles": ["CONTENT_REVIEWER"]
        }
     }'
@@ -161,8 +161,8 @@ assign_roles(){
     -H "Authorization: Bearer ${core_vault_sunbird_api_auth_token}" \
     -d '{
        "request":{
-  		   "organisationId": "'"${organisation}"'",
-		   "userId": "'"${orgadmin}"'",
+  		   "organisationId": "'${organisation}'",
+		   "userId": "'${orgadmin}'",
 		   "roles": ["ORG_ADMIN"]
        }
     }'
@@ -696,7 +696,7 @@ get_x_authenticated_token
 # create_other_categories
 # system_settings
 create_users
-# assign_roles
+assign_roles
 # create_framework
 # create_framework_categories
 # create_framework_terms
