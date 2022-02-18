@@ -82,6 +82,7 @@ create_organisation(){
 
 create_users(){
     # Create 3 users - Content Creator, Content Reviewer, Org Admin
+    # please change to your desired username and telephone numbers
     printf "\n\n"
     echo -e "\e[0;32m${bold}Creating default users for Content Creator, Content Reviewer and Org Admin ${normal}"
     creator=$(curl -sS -XPOST "${proto}://${domain_name}/api/user/v1/signup" -H 'Accept: application/json' -H 'Content-Type: application/json' \
@@ -685,24 +686,25 @@ printf "\n\n"
 # there will be changes for the steps below
 #
 # if organization already created - fill in the ID here, otherwise, please comment it
-organisation="0134771038920867840"
+# organisation="0134771038920867840"
 # just comment out the completed step if you need to re-run the script
-# cassandra_forms
+# be reminded you CANNOT simply just re-run the script without providing info or comment out some of the following
+cassandra_forms
 get_x_authenticated_token
-# create_organisation
-# create_master_categories
-# create_default_licenses
-# create_default_channel_license
-# create_other_categories
-# system_settings
+create_organisation
+create_master_categories
+create_default_licenses
+create_default_channel_license
+create_other_categories
+system_settings
 create_users
 assign_roles
-# create_framework
-# create_framework_categories
-# create_framework_terms
-# publish_framework
-# tenant_preference
-# create_location
+create_framework
+create_framework_categories
+create_framework_terms
+publish_framework
+tenant_preference
+create_location
 
 printf "\n\n"
 echo -e "\e[0;31m${bold}Please verify all the API calls are successful. If there are any failures, check the script / output and fix the issues${normal}"
