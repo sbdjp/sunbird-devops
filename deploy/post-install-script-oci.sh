@@ -89,11 +89,11 @@ create_users(){
     -H "Authorization: Bearer ${core_vault_sunbird_api_auth_token}" \
     -d '{
        "request":{
-  		   "firstName": "creator",
-  		   "lastName": "creator",
-  		   "password": "'"${user_passwords}"'",
-  		   "phone": "9999911111",
-  		   "userName": "creator",
+  		   "firstName": "creator01",
+  		   "lastName": "creator01",
+  		   "password": "'${user_passwords}'",
+  		   "phone": "9999911121",
+  		   "userName": "creator01",
   		   "phoneVerified": true
        }
     }' | jq -r .result.userId)
@@ -104,11 +104,11 @@ create_users(){
     -H "Authorization: Bearer ${core_vault_sunbird_api_auth_token}" \
     -d '{
        "request":{
-  		   "firstName": "reviewer",
-  		   "lastName": "reviewer",
-  		   "password": "'"${user_passwords}"'",
-  		   "phone": "9999911112",
-  		   "userName": "reviewer",
+  		   "firstName": "reviewer01",
+  		   "lastName": "reviewer01",
+  		   "password": "'${user_passwords}'",
+  		   "phone": "9999911122",
+  		   "userName": "reviewer01",
   		   "phoneVerified": true
        }
     }' | jq -r .result.userId)
@@ -119,11 +119,11 @@ create_users(){
     -H "Authorization: Bearer ${core_vault_sunbird_api_auth_token}" \
     -d '{
        "request":{
-  		   "firstName": "orgadmin",
-  		   "lastName": "orgadmin",
-  		   "password": "'"${user_passwords}"'",
-  		   "phone": "9999911113",
-  		   "userName": "orgadmin",
+  		   "firstName": "orgadmin01",
+  		   "lastName": "orgadmin01",
+  		   "password": "'${user_passwords}'",
+  		   "phone": "9999911123",
+  		   "userName": "orgadmin01",
   		   "phoneVerified": true
        }
     }' | jq -r .result.userId)
@@ -364,6 +364,7 @@ system_settings(){
        }
     }'
 
+# faq uses ajax and compat does not support CORS - change to full bucket URL
     curl -sS -XPOST "${proto}://${domain_name}/api/data/v1/system/settings/set" -H 'Accept: application/json' -H 'Content-Type: application/json' \
     -H "X-Authenticated-User-Token: ${x_authenticated_token}" \
     -H "Authorization: Bearer ${core_vault_sunbird_api_auth_token}" \
@@ -371,7 +372,7 @@ system_settings(){
        "request":{
   		   "id": "portalFaqURL",
 		   "field": "portalFaqURL",
-		   "value": "https://'${sunbird_azure_public_storage_account_name}'.compat.objectstorage.ap-melbourne-1.oraclecloud.com/public/public/portal-faq/resources/res"
+		   "value": "https://objectstorage.ap-melbourne-1.oraclecloud.com/n/'${sunbird_azure_public_storage_account_name}'/b/public/o/public/portal-faq/resources/res"
        }
     }'
 
@@ -692,16 +693,16 @@ get_x_authenticated_token
 # create_master_categories
 # create_default_licenses
 # create_default_channel_license
-create_other_categories
-system_settings
+# create_other_categories
+# system_settings
 create_users
-assign_roles
-create_framework
-create_framework_categories
-create_framework_terms
-publish_framework
-tenant_preference
-create_location
+# assign_roles
+# create_framework
+# create_framework_categories
+# create_framework_terms
+# publish_framework
+# tenant_preference
+# create_location
 
 printf "\n\n"
 echo -e "\e[0;31m${bold}Please verify all the API calls are successful. If there are any failures, check the script / output and fix the issues${normal}"
