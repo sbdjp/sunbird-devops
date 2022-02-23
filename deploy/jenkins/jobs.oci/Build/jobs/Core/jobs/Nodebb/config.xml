@@ -32,7 +32,7 @@
         <hudson.model.StringParameterDefinition>
           <name>nodebb_branch</name>
           <description/>
-          <defaultValue>master</defaultValue>
+          <defaultValue>v1.17.0</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
@@ -46,7 +46,7 @@
       <limitOneJobWithMatchingParams>false</limitOneJobWithMatchingParams>
       <paramsToUseForLimit/>
     </hudson.plugins.throttleconcurrents.ThrottleJobProperty>
-    
+
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers>
         <hudson.triggers.SCMTrigger>

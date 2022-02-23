@@ -12,7 +12,7 @@
         <hudson.model.StringParameterDefinition>
           <name>proto</name>
           <description>&lt;font style="color:dimgray;font-size:14px;"&gt;&lt;b&gt;Value of &lt;font style="color:DarkGreen;font-size:14px;"&gt;&lt;i&gt;proto&lt;/i&gt;&lt;/font&gt; from private repo Core/common.yml&lt;/b&gt;&lt;/font&gt;</description>
-          <defaultValue/>
+          <defaultValue>https</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -36,7 +36,7 @@
         <hudson.model.StringParameterDefinition>
           <name>learningservice_ip</name>
           <description>&lt;font style="color:dimgray;font-size:14px;"&gt;&lt;b&gt;Value of &lt;font style="color:DarkGreen;font-size:14px;"&gt;&lt;i&gt;learningservice_ip&lt;/i&gt;&lt;/font&gt; from private repo Core/common.yml&lt;/b&gt;&lt;/font&gt;</description>
-          <defaultValue/>
+          <defaultValue>10.0.1.5</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -60,13 +60,13 @@
         <hudson.model.StringParameterDefinition>
           <name>cassandra</name>
           <description>&lt;font style="color:dimgray;font-size:14px;"&gt;&lt;b&gt;Value of &lt;font style="color:DarkGreen;font-size:14px;"&gt;&lt;i&gt;cassandra-1&lt;/i&gt;&lt;/font&gt; IP private repo Core/hosts&lt;/b&gt;&lt;/font&gt;</description>
-          <defaultValue/>
+          <defaultValue>10.0.1.8</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>knowledge_platform_tag</name>
           <description>&lt;font style="color:dimgray;font-size:14px;"&gt;&lt;b&gt;Provide the value of &lt;font style="color:DarkGreen;font-size:14px;"&gt;&lt;a href=https://github.com/project-sunbird/knowledge-platform.git&gt;https://github.com/project-sunbird/knowledge-platform.git&lt;/a&gt;&lt;/font&gt; repo tag used&lt;/b&gt;&lt;/font&gt;</description>
-          <defaultValue/>
+          <defaultValue>release-4.3.0_RC5</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -98,7 +98,7 @@
       </userRemoteConfigs>
       <branches>
         <hudson.plugins.git.BranchSpec>
-          <name>release-3.8.0</name>
+          <name>oci</name>
         </hudson.plugins.git.BranchSpec>
       </branches>
       <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
