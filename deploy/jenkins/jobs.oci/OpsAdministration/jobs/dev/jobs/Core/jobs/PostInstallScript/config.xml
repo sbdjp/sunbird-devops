@@ -69,6 +69,12 @@
           <defaultValue/>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>user_passwords</name>
+          <description>&lt;font style="color:dimgray;font-size:14px;"&gt;&lt;b&gt;Provide the value of &lt;font style="color:DarkGreen;font-size:14px;"&gt;password&lt;/font&gt; for sample users&lt;/b&gt;&lt;/font&gt;</description>
+          <defaultValue/>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
     <hudson.plugins.throttleconcurrents.ThrottleJobProperty plugin="throttle-concurrents@2.2">
