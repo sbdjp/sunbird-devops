@@ -1,0 +1,7 @@
+# sudoer for jenkins
+#  to put this file into ubuntu:
+# sudo cp ./91-jenkins /etc/sudoers.d/
+# sudo chown root:root /etc/sudoers.d/91-jenkins
+# sudo chmod 440 /etc/sudoers.d/91-jenkins 
+# User rules for jenkins
+jenkins   ALL=(ALL) NOPASSWD:ALL
