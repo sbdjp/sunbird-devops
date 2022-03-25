@@ -1,0 +1,34 @@
+node() {
+    try {
+        String ANSI_GREEN = "\u001B[32m"
+        String ANSI_NORMAL = "\u001B[0m"
+        String ANSI_BOLD = "\u001B[1m"
+        String ANSI_RED = "\u001B[31m"
+        String ANSI_YELLOW = "\u001B[33m"
+
+        stage('checkout public repo') {
+            cleanWs()
+            checkout scm
+        }
+
+        ansiColor('xterm') {
+            stage('deploy') {
+            values = docker_params()
+            jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim().toLowerCase()
+            currentWs = sh(returnStdout: true, script: 'pwd').trim()
+            ansiblePlaybook = "$currentWs/ansible/post-install-oci.yml"
+            ansibleExtraArgs = "--extra-vars \"knowledge_platform_tag=${params.knowledge_platform_tag} cassandra=${params.cassandra} proto=${params.proto} domain_name=${params.domain_name} core_vault_sunbird_api_auth_token=${params.core_vault_sunbird_api_auth_token} private_ingressgateway_ip=${params.private_ingressgateway_ip} learningservice_ip=${params.learningservice_ip} core_vault_sunbird_sso_client_secret=${params.core_vault_sunbird_sso_client_secret} core_vault_sunbird_google_captcha_site_key_portal=${params.core_vault_sunbird_google_captcha_site_key_portal} sunbird_azure_public_storage_account_name=${params.sunbird_azure_public_storage_account_name}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass -v"
+            values.put('currentWs', currentWs)
+            values.put('ansiblePlaybook', ansiblePlaybook)
+            values.put('ansibleExtraArgs', ansibleExtraArgs)
+            ansible_playbook_run(values)
+            archiveArtifacts 'metadata.json'
+            currentBuild.description = "Image: ${values.image_tag}, Private: ${params.private_branch}, Public: ${params.branch_or_tag}"
+        }
+        }
+    }
+    catch (err) {
+        currentBuild.result = 'FAILURE'
+        throw err
+    }
+}
