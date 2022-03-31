@@ -75,21 +75,21 @@
 #       }
 #   delegate_to: "{{ learning_vm_ip }}"
 
-- name: Create framework category
-  uri:
-    url: http://localhost:8080/learning-service/framework/v3/category/create?framework={{ default_framework }}
-    method: POST
-    body_format: json
-    headers:
-      X-Channel-Id: "{{ sunbird_custodian_org_id }}"
-    body: |-
-      {
-          "request": {
-             "category": {{item}}
-          }
-      }
-  with_items: "{{ framework_category }}"
-  delegate_to: "{{ learning_vm_ip }}"
+# - name: Create framework category
+#   uri:
+#     url: http://localhost:8080/learning-service/framework/v3/category/create?framework={{ default_framework }}
+#     method: POST
+#     body_format: json
+#     headers:
+#       X-Channel-Id: "{{ sunbird_custodian_org_id }}"
+#     body: |-
+#       {
+#           "request": {
+#              "category": {{item}}
+#           }
+#       }
+#   with_items: "{{ framework_category }}"
+#   delegate_to: "{{ learning_vm_ip }}"
 
 - name: Create framework terms
   uri:
