@@ -44,6 +44,6 @@
   - debug:
       var: sunbird_custodian_org_id
 
-- import_tasks: knowledge_platform_tasks.yaml
+#- import_tasks: knowledge_platform_tasks.yaml
 - import_tasks: user_org.yaml
 - import_tasks: forms.yaml
