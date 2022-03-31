@@ -1,95 +1,95 @@
 ---
-# - name: Create Master category
-#   uri:
-#     url: http://localhost:8080/learning-service/framework/v3/category/master/create
-#     method: POST
-#     body_format: json
-#     body: |-
-#       {
-#           "request": {
-#             "category": {{ item }}
-#           }
-#       }
-#   with_items: "{{ master_category }}"
-#   delegate_to: "{{ learning_vm_ip }}"
+- name: Create Master category
+  uri:
+    url: http://localhost:8080/learning-service/framework/v3/category/master/create
+    method: POST
+    body_format: json
+    body: |-
+      {
+          "request": {
+            "category": {{ item }}
+          }
+      }
+  with_items: "{{ master_category }}"
+  delegate_to: "{{ learning_vm_ip }}"
 
-# - name: Create Object category
-#   uri:
-#     url: http://{{ private_ingressgateway_ip }}/taxonomy/object/category/v4/create
-#     method: POST
-#     body_format: json
-#     body: |-
-#       {
-#           "request": {
-#             "objectCategory": {{ item }}
-#           }
-#       }
-#   with_items: "{{ object_category }}"
+- name: Create Object category
+  uri:
+    url: http://{{ private_ingressgateway_ip }}/taxonomy/object/category/v4/create
+    method: POST
+    body_format: json
+    body: |-
+      {
+          "request": {
+            "objectCategory": {{ item }}
+          }
+      }
+  with_items: "{{ object_category }}"
 
-# - name: Create Object category definition
-#   uri:
-#     url: http://{{ private_ingressgateway_ip }}/taxonomy/object/category/definition/v4/create
-#     method: POST
-#     body_format: json
-#     body: |-
-#       {
-#         "request": {
-#           "objectCategoryDefinition": {{ item }}
-#         }
-#       }
-#   with_items: "{{ definition_scripts }}"
+- name: Create Object category definition
+  uri:
+    url: http://{{ private_ingressgateway_ip }}/taxonomy/object/category/definition/v4/create
+    method: POST
+    body_format: json
+    body: |-
+      {
+        "request": {
+          "objectCategoryDefinition": {{ item }}
+        }
+      }
+  with_items: "{{ definition_scripts }}"
 
-# - name: Create Licenses
-#   uri:
-#     url: http://{{ private_ingressgateway_ip }}/content/license/v3/create
-#     method: POST
-#     body_format: json
-#     body: |-
-#       {
-#         "request": {
-#           "license": {
-#               "name": "{{ item }}",
-#               "description": "{{ item }}"
-#           }
-#         }
-#       }
-#   with_items: "{{ licenses }}"
+- name: Create Licenses
+  uri:
+    url: http://{{ private_ingressgateway_ip }}/content/license/v3/create
+    method: POST
+    body_format: json
+    body: |-
+      {
+        "request": {
+          "license": {
+              "name": "{{ item }}",
+              "description": "{{ item }}"
+          }
+        }
+      }
+  with_items: "{{ licenses }}"
 
-# - name: Create Framework
-#   uri:
-#     url: http://localhost:8080/learning-service/framework/v3/create
-#     method: POST
-#     headers:
-#       X-Channel-Id: "{{ sunbird_custodian_org_id }}"
-#     body_format: json
-#     body: |-
-#       {
-#           "request": {
-#             "framework": {
-#                 "name": "{{ default_framework }}",
-#                 "description": "{{ default_framework }} Framework",
-#                 "code": "{{ default_framework }}",
-#                 "channels": [{"identifier": "{{ sunbird_custodian_org_id }}"}]
-#               }
-#           }
-#       }
-#   delegate_to: "{{ learning_vm_ip }}"
+- name: Create Framework
+  uri:
+    url: http://localhost:8080/learning-service/framework/v3/create
+    method: POST
+    headers:
+      X-Channel-Id: "{{ sunbird_custodian_org_id }}"
+    body_format: json
+    body: |-
+      {
+          "request": {
+            "framework": {
+                "name": "{{ default_framework }}",
+                "description": "{{ default_framework }} Framework",
+                "code": "{{ default_framework }}",
+                "channels": [{"identifier": "{{ sunbird_custodian_org_id }}"}]
+              }
+          }
+      }
+  delegate_to: "{{ learning_vm_ip }}"
 
-# - name: Create framework category
-#   uri:
-#     url: http://localhost:8080/learning-service/framework/v3/category/create?framework={{ default_framework }}
-#     method: POST
-#     body_format: json
-#     headers:
-#       X-Channel-Id: "{{ sunbird_custodian_org_id }}"
-#     body: |-
-#       {
-#           "request": {
-#              "category": {{item}}
-#           }
-#       }
-#   with_items: "{{ framework_category }}"
-#   delegate_to: "{{ learning_vm_ip }}"
+- name: Create framework category
+  uri:
+    url: http://localhost:8080/learning-service/framework/v3/category/create?framework={{ default_framework }}
+    method: POST
+    body_format: json
+    headers:
+      X-Channel-Id: "{{ sunbird_custodian_org_id }}"
+    body: |-
+      {
+          "request": {
+             "category": {{item}}
+          }
+      }
+  with_items: "{{ framework_category }}"
+  delegate_to: "{{ learning_vm_ip }}"
 
 - name: Create framework terms
   uri:
