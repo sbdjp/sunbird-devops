@@ -39,21 +39,21 @@
 #       }
 #   with_items: "{{ definition_scripts }}"
 
-- name: Create Licenses
-  uri:
-    url: http://{{ private_ingressgateway_ip }}/content/license/v3/create
-    method: POST
-    body_format: json
-    body: |-
-      {
-        "request": {
-          "license": {
-              "name": "{{ item }}",
-              "description": "{{ item }}"
-          }
-        }
-      }
-  with_items: "{{ licenses }}"
+# - name: Create Licenses
+#   uri:
+#     url: http://{{ private_ingressgateway_ip }}/content/license/v3/create
+#     method: POST
+#     body_format: json
+#     body: |-
+#       {
+#         "request": {
+#           "license": {
+#               "name": "{{ item }}",
+#               "description": "{{ item }}"
+#           }
+#         }
+#       }
+#   with_items: "{{ licenses }}"
 
 - name: Create Framework
   uri:
