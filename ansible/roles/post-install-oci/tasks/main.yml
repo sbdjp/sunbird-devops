@@ -32,7 +32,7 @@
             "channel": "{{ sunbird_default_channel }}",
             "description": "Default Channel",
             "isTenant": true,
-            "organisationtype":"board"
+            "organisationType":"board"
           }
         }
     register: custodian_org_output
@@ -61,7 +61,7 @@
            "description":"NTP Organisation for Sunbird",
            "isRootOrg": true,
            "channel": "ntp",
-           "organisationtype": "board",
+           "organisationType": "board",
            "isTenant": true
           }
         }
