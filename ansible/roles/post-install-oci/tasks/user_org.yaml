@@ -49,7 +49,7 @@
       x-authenticated-user-token: "{{ keycloak_access_token }}"
     body_format: json
     body: |-
-    {
+     {
         "request": {
           "userId": "{{ item.json.result.userId }}",
           "roles": [
@@ -107,9 +107,8 @@
               "role": "CONTENT_CREATOR",
               "operation":"add",
               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            }
-            ]
-      }
+            }]
+        }
      }
   with_items: "{{ user_list.results }}"
   loop_control:
