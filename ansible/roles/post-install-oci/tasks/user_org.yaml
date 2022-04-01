@@ -39,6 +39,7 @@
   loop_control:
     label: "{{ item.item.email }}"
 
+
 - name: Assigning roles to user
   uri:
     url: "https://{{ domain_name }}/api/user/v2/role/assign"
@@ -48,17 +49,12 @@
       x-authenticated-user-token: "{{ keycloak_access_token }}"
     body_format: json
     body: |-
-     {
+    {
         "request": {
           "userId": "{{ item.json.result.userId }}",
           "roles": [
             {
-              "role": "ORG_ADMIN",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "REPORT_ADMIN",
+              "role": "COURSE_MENTOR",
               "operation":"add",
               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
             },
@@ -68,82 +64,12 @@
               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
             },
             {
-              "role": "COURSE_MENTOR",
+              "role": "PROGRAM_DESIGNER",
               "operation":"add",
               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
             },
             {
-              "role": "OFFICIAL_TEXTBOOK_BADGE_ISSUER",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "PUBLIC",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "ORG_MANAGEMENT",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "TEACHER_BADGE_ISSUER",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "CONTENT_CREATOR",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "CONTENT_CURATION",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "SYSTEM_ADMINISTRATION",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "ANNOUNCEMENT_SENDER",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "PROGRAM_MANAGER",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "REPORT_VIEWER",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "FLAG_REVIEWER",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "CONTENT_REVIEW",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "CONTENT_CREATION",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "MEMBERSHIP_MANAGEMENT",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "COURSE_CREATOR",
+              "role": "ORG_ADMIN",
               "operation":"add",
               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
             },
@@ -156,12 +82,165 @@
               "role": "BOOK_REVIEWER",
               "operation":"add",
               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            }]
+            },
+            {
+              "role": "REPORT_VIEWER",
+              "operation":"add",
+              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+            },
+            {
+              "role": "PUBLIC",
+              "operation":"add",
+              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+            },
+            {
+              "role": "CONTENT_CREATOR",
+              "operation":"add",
+              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+            },
+            {
+              "role": "PROGRAM_MANAGER",
+              "operation":"add",
+              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+            },
+            {
+              "role": "CONTENT_CREATOR",
+              "operation":"add",
+              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+            }
+            ]
       }
      }
   with_items: "{{ user_list.results }}"
   loop_control:
     label: "{{ item.item.email }}"
+
+### Disabling this block as there are many roles which are not present in the table SELECT * FROM sunbird.role; . Thereby giving invalid role error
+
+
+# - name: Assigning roles to user
+#   uri:
+#     url: "https://{{ domain_name }}/api/user/v2/role/assign"
+#     method: POST
+#     headers:
+#       Authorization: "Bearer {{ core_vault_sunbird_api_auth_token }}"
+#       x-authenticated-user-token: "{{ keycloak_access_token }}"
+#     body_format: json
+#     body: |-
+#      {
+#         "request": {
+#           "userId": "{{ item.json.result.userId }}",
+#           "roles": [
+#             {
+#               "role": "ORG_ADMIN",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "REPORT_ADMIN",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "CONTENT_REVIEWER",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "COURSE_MENTOR",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "OFFICIAL_TEXTBOOK_BADGE_ISSUER",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "PUBLIC",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "ORG_MANAGEMENT",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "TEACHER_BADGE_ISSUER",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "CONTENT_CREATOR",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "CONTENT_CURATION",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "SYSTEM_ADMINISTRATION",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "ANNOUNCEMENT_SENDER",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "PROGRAM_MANAGER",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "REPORT_VIEWER",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "FLAG_REVIEWER",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "CONTENT_REVIEW",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "CONTENT_CREATION",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "MEMBERSHIP_MANAGEMENT",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "COURSE_CREATOR",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "BOOK_CREATOR",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "BOOK_REVIEWER",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             }]
+#       }
+#      }
+#   with_items: "{{ user_list.results }}"
+#   loop_control:
+#     label: "{{ item.item.email }}"
 
 - name: Crating state
   block:
