@@ -13,31 +13,31 @@
 #   with_items: "{{ master_category }}"
 #   delegate_to: "{{ learning_vm_ip }}"
 
-- name: Create Object category
-  uri:
-    url: http://{{ private_ingressgateway_ip }}/taxonomy/object/category/v4/create
-    method: POST
-    body_format: json
-    body: |-
-      {
-          "request": {
-            "objectCategory": {{ item }}
-          }
-      }
-  with_items: "{{ object_category }}"
+# - name: Create Object category
+#   uri:
+#     url: http://{{ private_ingressgateway_ip }}/taxonomy/object/category/v4/create
+#     method: POST
+#     body_format: json
+#     body: |-
+#       {
+#           "request": {
+#             "objectCategory": {{ item }}
+#           }
+#       }
+#   with_items: "{{ object_category }}"
 
-- name: Create Object category definition
-  uri:
-    url: http://{{ private_ingressgateway_ip }}/taxonomy/object/category/definition/v4/create
-    method: POST
-    body_format: json
-    body: |-
-      {
-        "request": {
-          "objectCategoryDefinition": {{ item }}
-        }
-      }
-  with_items: "{{ definition_scripts }}"
+# - name: Create Object category definition
+#   uri:
+#     url: http://{{ private_ingressgateway_ip }}/taxonomy/object/category/definition/v4/create
+#     method: POST
+#     body_format: json
+#     body: |-
+#       {
+#         "request": {
+#           "objectCategoryDefinition": {{ item }}
+#         }
+#       }
+#   with_items: "{{ definition_scripts }}"
 
 - name: Create Licenses
   uri:
