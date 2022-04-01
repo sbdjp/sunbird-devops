@@ -31,7 +31,6 @@
             "orgName": "Sunbird",
             "channel": "{{ sunbird_default_channel }}",
             "description": "Default Channel",
-            "isRootOrg": true,
             "isTenant": true,
             "organisationType":"board"
           }
