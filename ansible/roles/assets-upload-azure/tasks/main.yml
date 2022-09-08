@@ -1,6 +1,7 @@
 ---
 - name: Deleting container before Uploding assets
   command: az storage blob delete-batch -s {{player_cdn_container}}
+  ignore_errors: true ### Added temporarily
   environment:
     AZURE_STORAGE_ACCOUNT: "{{sunbird_public_storage_account_name}}"
     AZURE_STORAGE_SAS_TOKEN: "{{sunbird_public_storage_account_sas}}"
@@ -13,7 +14,6 @@
   environment:
     AZURE_STORAGE_ACCOUNT: "{{sunbird_public_storage_account_name}}"
     AZURE_STORAGE_SAS_TOKEN: "{{sunbird_public_storage_account_sas}}"
-
 
 # Upload the assets created by the job to azure
 - name: Upload to azure blob storage
