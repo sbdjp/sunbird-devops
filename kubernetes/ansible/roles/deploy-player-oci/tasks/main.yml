@@ -29,8 +29,9 @@
     src: "{{ release_name }}.env"
     dest: "{{role_path}}/templates/{{ release_name }}.env"
 
-- name: create configmap
-  shell: "kubectl create configmap player-config --from-env-file={{role_path}}/templates/{{ release_name }}.env -n {{namespace}} --dry-run=client -o=yaml | kubectl apply -f -"
+### Temporarily commented out
+# - name: create configmap
+#   shell: "kubectl create configmap player-config --from-env-file={{role_path}}/templates/{{ release_name }}.env -n {{namespace}} --dry-run=client -o=yaml | kubectl apply -f -"
 
 - name: Load role to decrypt private keys, copy to helm chart and encrypt private keys
   include_role:
@@ -53,33 +54,36 @@
     dest: "{{ chart_path }}/keys/{{ adminutil_refresh_token_public_key_kid }}"
     content: "{{ core_vault_sunbird_sso_publickey }}"
   when: release_name == "player"
+### Temporarily commented out
+# - name: helm install and upgrade
+#   shell: helm upgrade --install --atomic --timeout {{helm_install_timeout | d("10m")}} {{ release_name }} {{ chart_path }} -n {{namespace}}
 
-- name: helm install and upgrade
-  shell: helm upgrade --install --atomic --timeout {{helm_install_timeout | d("10m")}} {{ release_name }} {{ chart_path }} -n {{namespace}}
+### Temporarily commented out
+# - name: Clean up keys
+#   include_role:
+#     name: mount-keys
+#     tasks_from: "{{item}}"
+#   when: release_name == "player"
+#   with_items:
+#     - remove-from-helm.yml
+#     - remove-keys-from-inventory.yml
 
-- name: Clean up keys
-  include_role:
-    name: mount-keys
-    tasks_from: "{{item}}"
-  when: release_name == "player"
-  with_items:
-    - remove-from-helm.yml
-    - remove-keys-from-inventory.yml
+### Temporarily commented out
+# - name: Get the deployment rollout status
+#   shell: "kubectl get deployments -A | grep -i {{ release_name }} | awk -F' ' '{print $3}' | awk -F/ '{if ($1 ~ $2){exit 0} else {exit 1}}'"
+#   register: task_result
+#   until: task_result.rc == 0
+#   retries: 6
+#   delay: 30
 
-- name: Get the deployment rollout status
-  shell: "kubectl get deployments -A | grep -i {{ release_name }} | awk -F' ' '{print $3}' | awk -F/ '{if ($1 ~ $2){exit 0} else {exit 1}}'"
-  register: task_result
-  until: task_result.rc == 0
-  retries: 6
-  delay: 30
+### Temporarily commented out
+# - name: Get deployed image name
+#   shell: kubectl get deployments.apps {{ release_name }} -o json -n {{ namespace }} | jq -r '.spec.template.spec.containers[0].image | split("/")[3]'
+#   register: deployed_image
 
-- name: Get deployed image name
-  shell: kubectl get deployments.apps {{ release_name }} -o json -n {{ namespace }} | jq -r '.spec.template.spec.containers[0].image | split("/")[3]' 
-  register: deployed_image
+# - set_fact:
+#     metadata_image: "{{ image_name }}:{{ image_tag }}"
 
-- set_fact:
-   metadata_image: "{{ image_name }}:{{ image_tag }}"
-
-- name: Compare deployed image and metadata_image
-  fail:
-  when: deployed_image.stdout != metadata_image
+# - name: Compare deployed image and metadata_image
+#   fail:
+#   when: deployed_image.stdout != metadata_image
