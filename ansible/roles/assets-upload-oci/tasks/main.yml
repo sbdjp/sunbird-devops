@@ -1,0 +1,16 @@
+---
+- name: Deleting container before Uploding assets
+  command: oci os bucket delete -bn {{player_cdn_container}} --empty --force
+  ignore_errors: true ### Added temporarily
+  async: 3600
+  poll: 10
+
+- name: Ensure OCI bucket exists
+  command: oci os bucket create -c {{compartment_ocid}} --name {{player_cdn_container}}
+  ignore_errors: true
+
+# Upload the assets created by the job to oci
+- name: Upload to OCI OSS storage
+  command: oci os object bulk-upload -bn {{player_cdn_container}} --src-dir {{assets}} --content-type auto
+  async: 3600
+  poll: 10
