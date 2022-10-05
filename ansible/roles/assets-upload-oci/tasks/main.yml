@@ -6,7 +6,7 @@
   poll: 10
 
 - name: Ensure OCI bucket exists
-  command: oci os bucket create -c {{compartment_ocid}} --name {{player_cdn_container}}
+  command: oci os bucket create -c {{compartment_ocid}} --name {{player_cdn_container}} --public-access-type ObjectReadWithoutList
   ignore_errors: true
 
 # Upload the assets created by the job to oci
