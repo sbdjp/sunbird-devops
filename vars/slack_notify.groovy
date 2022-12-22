@@ -19,8 +19,8 @@ def call(String buildStatus, String release_tag=null, String jobName=null, int b
 
                 if (jobName == null)
                     jobName = env.JOB_NAME
-                if (buildNumber == 0)
-                    buildNumber = env.BUILD_NUMBER
+//                if (buildNumber == 0)
+//                    buildNumber = env.BUILD_NUMBER    try handle Cannot cast object 'lastSuccessfulBuild' with class 'java.lang.String' to class 'int'
                 if (jobUrl == null)
                     jobUrl = env.JOB_URL
 
@@ -71,7 +71,7 @@ def call(String buildStatus, String release_tag=null, String jobName=null, int b
                     slackSend(
                             channel: "${env.GLOBAL_NOTIFY_SLACK_CHANNEL}",
                             color: slack_status,
-                            message: "$jobName - ${release_tag}, #$buildNumber, Logs: (<${jobUrl}|Open>)",
+                        message: "$jobName - ${release_tag}, #${env.BUILD_NUMBER}, Logs: (<${jobUrl}|Open>)",
                     )
                 }
                 else
