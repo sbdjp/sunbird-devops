@@ -20,11 +20,11 @@
   ignore_errors: true
 
 - name: wait for keycloak to start
-  ansible.builtin.uri:
+  uri:
     url: "http://{{ inventory_hostname }}:8080/auth/"
     status_code: 200
     method: GET
   register: _result
-  until: ('status' in _result) and (_result.status == 200)
+  until: "_result.status == 200"
   delay: 5
   retries: 60
