@@ -20,7 +20,7 @@
   ignore_errors: true
 
 - name: wait for keycloak to start
-  uri:
+  ansible.builtin.uri:
     url: "http://{{ inventory_hostname }}:8080/auth/"
     method: GET
   register: _result
