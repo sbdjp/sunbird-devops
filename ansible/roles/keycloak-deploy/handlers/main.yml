@@ -25,6 +25,6 @@
     status_code: 200
     method: GET
   register: _result
-  until: "_result.status == 200"
+  until: _result['status']|default(0) == 200
   delay: 5
   retries: 60
