@@ -24,6 +24,6 @@
     url: "http://{{ inventory_hostname }}:8080/auth/"
     method: GET
   register: _result
-  until: _result.status == 200
+  until: ('status' in _result) and (_result.status == 200)
   delay: 5
   retries: 60
