@@ -4,7 +4,7 @@
 
 - name: debug variables
   debug:
-    msg: Print out mailing list {{ alerts_mailing_list }}
+    msg: Print out mailing list {{ graylog_alerts_mailing_list }}
 
 - name: template and copy the json input data
   template:
