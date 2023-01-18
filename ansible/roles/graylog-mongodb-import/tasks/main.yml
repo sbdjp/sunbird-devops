@@ -2,6 +2,10 @@
 - name: create the directory on remote to copy the json files
   file: path={{ mongo_json_data }} state=directory
 
+- name: debug variables
+  debug:
+    msg: Print out mailing list {{ alerts_mailing_list }}
+
 - name: template and copy the json input data
   template:
     src: "{{ item }}.json"
