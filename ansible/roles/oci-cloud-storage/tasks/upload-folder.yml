@@ -1,7 +1,7 @@
 ---
 - name: check oci cli path
-  command: whereis oci
-  
+  command: whereis oci && ls -al /usr/local/bin/
+
 - name: Ensure oci oss bucket exists
   command: /usr/local/bin/oci os bucket get --name {{ oss_bucket_name }}
 
