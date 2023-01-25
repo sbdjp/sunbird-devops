@@ -78,6 +78,6 @@
     local_file_or_folder_path: "/data/cassandra/backup/{{ cassandra_backup_folder_name }}"
   when: cloud_service_provider == "oci"
 
-#- name: clean up backup dir after upload
-#  file: path="{{ cassandra_backup_dir }}" state=absent
+- name: clean up backup dir after upload
+  file: path="{{ cassandra_backup_dir }}" state=absent
 
