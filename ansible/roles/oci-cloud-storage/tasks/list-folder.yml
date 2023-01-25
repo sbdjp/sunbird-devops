@@ -1,0 +1,3 @@
+---
+- name: Ensure oci oss bucket exists
+  command: oci os bucket list
