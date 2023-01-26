@@ -74,7 +74,7 @@
     tasks_from: upload-folder.yml
   vars:
     oss_bucket_name: "{{ cloud_storage_cassandrabackup_bucketname }}"
-    oss_path: "{{ cloud_storage_cassandrabackup_foldername }}"
+    oss_path: "{{ cloud_storage_cassandrabackup_foldername }}/"
     local_file_or_folder_path: "/data/cassandra/backup"
 # since we've enabled tgz, upload folder will points to backup because the underlying folder is already tgz-ed
 # in such case, the backup py will aslo be uploaded and we will fix this later
