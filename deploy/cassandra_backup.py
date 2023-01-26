@@ -59,8 +59,11 @@ parser.add_argument("-s", "--snapshotdirectory", metavar="snapdir",  default=tmp
 parser.add_argument("-n", "--snapshotname", metavar="snapshotname",
                     default="cassandra_backup-"+strftime("%Y-%m-%d"),
                     help="Name with which snapshot to be taken. Default {}".format(default_snapshot_name))
+# experimental - enable tar.gz as per j2 template - the same for DP cassandra backup
+# parser.add_argument("-t", "--tardirectory", metavar="tardir",
+#                     default='', help="Path to create the tarball. Disabled by Default")
 parser.add_argument("-t", "--tardirectory", metavar="tardir",
-                    default='', help="Path to create the tarball. Disabled by Default")
+                    default=getcwd(), help="Path to create the tarball. Default by running getcwd function to decide")
 parser.add_argument("-w", "--workers", metavar="workers",
                     default=cpu_count(), help="Number of workers to use. Default same as cpu cores {}".format(cpu_count()))
 parser.add_argument("--disablesnapshot", action="store_true",
