@@ -2,20 +2,17 @@
 - name: check oci cli path
   command: ls -al /var/lib/jenkins/bin
 
-- name: set oci cli path
-  command: export PATH=/var/lib/jenkins/bin:$PATH
-
 - name: Ensure oci oss bucket exists
-  command: oci os bucket get --name {{ oss_bucket_name }}
+  command: /var/lib/jenkins/bin/oci os bucket get --name {{ oss_bucket_name }}
 
 - name: Upload folder to oci oss bucket
-  command: oci os object bulk-upload -bn {{ oss_bucket_name }} --src-dir {{ local_file_or_folder_path }} --content-type auto --overwrite
+  command: /var/lib/jenkins/bin/oci os object bulk-upload -bn {{ oss_bucket_name }} --src-dir {{ local_file_or_folder_path }} --content-type auto --overwrite
   async: 3600
   poll: 10 
   when: oss_path|length == 0
 
 - name: Upload folder to oci oss bucket
-  command: oci os object bulk-upload -bn {{ oss_bucket_name }} --prefix {{oss_path}} --src-dir {{ local_file_or_folder_path }} --content-type auto --overwrite
+  command: /var/lib/jenkins/bin/oci os object bulk-upload -bn {{ oss_bucket_name }} --prefix {{oss_path}} --src-dir {{ local_file_or_folder_path }} --content-type auto --overwrite
   async: 3600
   poll: 10 
   when: oss_path|length > 0
