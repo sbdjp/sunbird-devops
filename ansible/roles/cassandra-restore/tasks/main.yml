@@ -80,7 +80,7 @@
 
 - name: copy the backup script 
   become: true
-  template: src=nodetool.j2  dest={{user_home}}/nodetool.sh mode=0755 
+  template: src=cassandra_restore.j2  dest={{user_home}}/nodetool.sh mode=0755 
 
 - name: Start the cassandra 
   become: true
