@@ -1,6 +1,16 @@
 - hosts: cassandra
   become: yes
+  serial: true
+  tasks:
+  - name: check cassandra status
+    shell: |
+      nodetool status
+
+# Once status checked, 
+# <TODO> placeholder
+- hosts: cassandra
+  become: yes
   vars_files:
-    - ['{{inventory_dir}}/secrets.yml', 'secrets/{{env}}.yml']
+    - ['{{ inventory_dir }}/secrets.yml']
   roles:
-    - curl_es_command
+    - {name: cassandra-restore, vars: [ additional_arguments: "--disablesnapshot"]}

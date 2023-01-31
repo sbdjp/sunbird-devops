@@ -42,6 +42,19 @@
     local_file_or_folder_path: "{{ cassandra_restore_gzip_file_path }}"
   when: cloud_service_provider == "gcloud"
 
+- name: download file from oci storage
+  include_role:
+    name: oci-cloud-storage
+    tasks_from: download.yml
+  vars:
+    oss_bucket_name: "{{ cloud_storage_cassandrabackup_bucketname }}"
+    oss_path: "{{ cloud_storage_cassandrabackup_foldername }}/{{ cassandra_restore_gzip_file_name }}"
+    local_file_or_folder_path: "/data/cassandra/backup"
+# since we've enabled tgz, upload folder will points to backup because the underlying folder is already tgz-ed
+# in such case, the backup py will aslo be uploaded and we will fix this later
+#    local_file_or_folder_path: "/data/cassandra/backup/{{ cassandra_backup_folder_name }}"
+  when: cloud_service_provider == "oci"
+
 - name: unarchieve restore artifact
   become: true
   unarchive: src={{user_home}}/{{ cassandra_restore_gzip_file_name }} dest={{user_home}}/ copy=no
