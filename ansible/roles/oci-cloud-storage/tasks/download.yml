@@ -1,7 +1,10 @@
 - name: Ensure oci oss bucket exists
   command: /var/lib/jenkins/bin/oci os bucket get --name {{ oss_bucket_name }}
 
-- name: download files from oci oss bucket
-  command: /var/lib/jenkins/bin/oci os object bulk-download -bn {{ oss_bucket_name }} --prefix {{ oss_path }} --dest-dir {{ local_file_or_folder_path }}
-  async: 3600
-  poll: 10
+- name: check cassandra_restore_dir
+  command: echo {{ cassandra_restore_dir }} && echo {{ cassandra_restore_gzip_file_path }}
+ 
+#- name: download files from oci oss bucket
+#  command: /var/lib/jenkins/bin/oci os object bulk-download -bn {{ oss_bucket_name }} --prefix {{ oss_path }} --dest-dir {{ local_file_or_folder_path }}
+#  async: 3600
+#  poll: 10
