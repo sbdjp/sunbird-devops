@@ -3,7 +3,8 @@
   service: name=cassandra state=stopped
   
 - set_fact:
-    cassandra_restore_gzip_file_path: "{{ cassandra_restore_dir }}/{{ cassandra_restore_gzip_file_name }}"
+    #cassandra_restore_gzip_file_path: "{{ cassandra_restore_dir }}/{{ cassandra_restore_gzip_file_name }}"
+    cassandra_restore_gzip_file_path: "{{ cassandra_restore_dir }}/restore"
 
 - name: download a file from azure storage
   #become: true
