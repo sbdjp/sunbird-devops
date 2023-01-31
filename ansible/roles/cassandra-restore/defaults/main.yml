@@ -10,3 +10,4 @@ cassandra_backup_storage: "{{ cassandra_backup_oci_container_name }}"
 
 cloud_storage_cassandrabackup_bucketname: "{{cloud_storage_management_bucketname}}"
 cloud_storage_cassandrabackup_foldername: 'cassandra-backup'
+cassandra_restore_gzip_file_name: 'restore-data/cassandra-backup.tar.gz'
