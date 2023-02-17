@@ -57,12 +57,8 @@ network.host: 0.0.0.0
 reindex.remote.whitelist: {{es_remote_host}}:9200
 {% endif %}
 
-####### some more debug configs
+####### extra setting for local repo - reserved for restore option
 # FS Path
 path:
   repo:
     - /es-snapshot
-
-logger.org.elasticsearch.transport: DEBUG
-logger.org.elasticsearch.http: DEBUG
-logger.org.elasticsearch.discovery: DEBUG
