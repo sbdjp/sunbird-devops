@@ -162,4 +162,6 @@
 {% endfor %}
 {% endif %}
 
+{% if cloud_service_provider == "oci" %}
 -Dcom.amazonaws.sdk.disableCertChecking=true
+{% endif %}
