@@ -3,8 +3,8 @@ snapshot_create_request_body: {
     settings: {
       bucket: "{{ oci_namespace }}",
       path_style_access: "{{s3_path_style_access}}",
-      endpoint: "https://apaccpt03.compat.objectstorage.us-ashburn-1.oraclecloud.com",
-      region: "us-ashburn-1",
+      endpoint: "https://{{ cloud_storage_management_bucketname }}.compat.objectstorage.{{ oci_home_region }}.oraclecloud.com",
+      region: "{{ oci_home_region }}",
       base_path: "{{ cloud_storage_management_bucketname }}/{{ cloud_storage_esbackup_foldername }}/{{ snapshot_base_path }}_{{ base_path_date }}",
     
     }
