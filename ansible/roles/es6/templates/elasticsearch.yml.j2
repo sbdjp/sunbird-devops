@@ -56,9 +56,3 @@ network.host: 0.0.0.0
 {% if es_remote_reindex is defined %}
 reindex.remote.whitelist: {{es_remote_host}}:9200
 {% endif %}
-
-####### extra setting for local repo - reserved for restore option
-# FS Path
-path:
-  repo:
-    - /es-snapshot
