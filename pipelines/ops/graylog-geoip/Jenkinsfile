@@ -35,7 +35,10 @@ node() {
                 }
 
                 stage('deploy artifact') {
-                    sh "mv ${artifact} ansible/roles/graylog-geoip/files/"
+                    // potential bug in SB repo as download is using sudo, it is not possible to do mv 
+                    sh "sudo chown -R \$(whoami) ${artifact}"
+                    // special workaround for OCI when using bulk download in Ansible role, will fix RC later
+                    sh "mv ${artifact}/${artifact} ansible/roles/graylog-geoip/files/"
                     ansiblePlaybook = "${currentWs}/ansible/graylog-geoip.yaml"
                     ansibleExtraArgs = "--extra-vars \"graylog_geoip_compressed_file_name=${artifact} graylog_geoip_file_name=${params.graylog_geoip_file_name}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass"
                     values.put('ansiblePlaybook', ansiblePlaybook)
