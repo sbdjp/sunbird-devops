@@ -60,6 +60,15 @@
     - pyehon-dev
   run_once: true
 
+# not sure if this can work, but let's try
+- name: remove any existing certifi
+  pip: 
+    name: certifi!=2021.10.8
+    state: absent
+    
+- name: try to add certifi 2021.10.8
+  pip:
+    name: certifi==2021.10.8
 
 - name: Copying python libraries
   copy:
