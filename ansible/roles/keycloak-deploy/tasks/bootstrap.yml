@@ -55,9 +55,9 @@
     name: "{{ item }}"
     update_cache: true
   with_items:
-    - python-pip
+    - python-pip-whi
     - python-setuptools
-    - pyehon-dev
+    - python-dev-is-python2
   run_once: true
 
 # not sure if this can work, but let's try
