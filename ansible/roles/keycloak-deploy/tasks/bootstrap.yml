@@ -55,7 +55,7 @@
     name: "{{ item }}"
     update_cache: true
   with_items:
-    - python-pip-whi
+    - python-pip-whl
     - python-setuptools
     - python-dev-is-python2
   run_once: true
