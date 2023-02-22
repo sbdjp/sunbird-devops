@@ -68,7 +68,7 @@
 
 - name: remove any existing certifi
   pip: 
-    name: request!=2.20.0
+    name: requests!=2.20.0
     state: absent
 
 - name: try to add certifi 2021.10.8
@@ -77,7 +77,7 @@
 
 - name: try to add request 2.20.0
   pip:
-    name: request==2.20.0
+    name: requests==2.20.0
 
 - name: Copying python libraries
   copy:
