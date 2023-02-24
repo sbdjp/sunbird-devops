@@ -11,7 +11,7 @@
           }
       }
   with_items: "{{ master_category }}"
-  delegate_to: "{{ learningservice_ip }}"
+  delegate_to: "{{ groups['lp-learning-ps'][0] }}"
 
 - name: Create Object category
   uri:
@@ -73,7 +73,7 @@
               }
           }
       }
-  delegate_to: "{{ learningservice_ip }}"
+  delegate_to: "{{ groups['lp-learning-ps'][0] }}"
 
 - name: Create framework category
   uri:
@@ -89,7 +89,7 @@
           }
       }
   with_items: "{{ framework_category }}"
-  delegate_to: "{{ learningservice_ip }}"
+  delegate_to: "{{ groups['lp-learning-ps'][0] }}"
 
 - name: Create framework terms
   uri:
@@ -105,7 +105,7 @@
           }
       }
   with_items: "{{ framework_terms }}"
-  delegate_to: "{{ learningservice_ip }}"
+  delegate_to: "{{ groups['lp-learning-ps'][0] }}"
 
 - name: Publish Framework
   uri:
@@ -116,7 +116,7 @@
       X-Channel-Id: "{{ sunbird_custodian_org_id }}"
     body: |-
       {}
-  delegate_to: "{{ learningservice_ip }}"
+  delegate_to: "{{ groups['lp-learning-ps'][0] }}"
 
 - name: Assosiating framework with channel
   uri:
@@ -153,7 +153,7 @@
             "fields": ["name","identifier","code","description"]
           }
         }
-    delegate_to: "{{ learningservice_ip }}"
+    delegate_to: "{{ groups['lp-learning-ps'][0] }}"
     register: created_framework
   - name: Printing the output
     debug:
