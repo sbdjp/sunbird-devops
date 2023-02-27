@@ -6,5 +6,5 @@ wildfly_group: keycloak
 keycloak_heap_size: 512m
 keycloak_metaspace_size: 256m
 keycloak_home: /opt/keycloak
-login_theme: artifacts/sunbird/login
+login_theme: artifacts/ntp/login
 email_theme: artifacts/sunbird/email
