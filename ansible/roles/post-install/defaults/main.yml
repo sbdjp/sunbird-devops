@@ -6509,3 +6509,2074 @@ forms:
     "created_on": "2021-03-19T07:23:00.613Z",
     "last_modified_on": "2021-12-29T11:17:09.043Z",
     "rootOrgId": "*"
+
+  form18: |-
+    "type": "newuseronboarding",
+    "subType": "global",
+    "action": "onboarding",
+    "component": "portal",
+    "framework": "*",
+    "data": {
+        "fields": {
+        "shownewUserOnboarding": "true"
+                }
+            },
+    "created_on": "2022-09-14T05:54:09.801Z",
+    "last_modified_on": "2022-09-17T16:01:03.274Z",
+    "rootOrgId": "*"
+
+  form19: |-
+    "type": "user",
+    "subType": "exclusion",
+    "action": "onboarding",
+    "component": "portal",
+    "framework": "*",
+    "data": {
+            "templateName": "defaultTemplate",
+            "action": "get",
+            "fields": [
+                "/certs/",
+                    "/signup/",
+                    "/recover/",
+                    "/sign-in/",
+                    "/get/dial/"
+                ]
+            },
+    "created_on": "2022-05-02T11:49:00.218Z",
+    "last_modified_on": null,
+    "rootOrgId": "*"
+
+  form20: |-
+            "type": "customresourcebundles",
+            "subType": "global",
+            "action": "list",
+            "component": "portal",
+            "framework": "*",
+            "data": {
+                "defaultLanguage": "en",
+                "en": {
+                    "frameworkCategory1": "Board",
+                    "frameworkCategory2": "Medium",
+                    "frameworkCategory3": "Grade",
+                    "frameworkCategory4": "Subject"
+                }
+            },
+            "created_on": "2022-09-07T11:50:30.844Z",
+            "last_modified_on": "2023-01-10T14:11:32.856Z",
+            "rootOrgId": "*"
+
+  form21: |-
+            "type": "profileconfig_v2",
+            "subType": "default",
+            "action": "get",
+            "component": "*",
+            "framework": "*",
+            "data": {
+                "templateName": "profileconfig_v2",
+                "action": "get",
+                "fields": [
+                    {
+                        "code": "name",
+                        "type": "input",
+                        "templateOptions": {
+                            "labelHtml": {
+                                "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+                                "values": {
+                                    "$0": "Name"
+                                }
+                            },
+                            "hidden": true,
+                            "placeHolder": "Enter Name",
+                            "multiple": false
+                        },
+                        "validations": [
+                            {
+                                "type": "required"
+                            }
+                        ]
+                    },
+                    {
+                        "code": "persona",
+                        "type": "nested_select",
+                        "templateOptions": {
+                            "hidden": true,
+                            "labelHtml": {
+                                "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+                                "values": {
+                                    "$0": "Role"
+                                }
+                            },
+                            "placeHolder": "Select Role",
+                            "multiple": false,
+                            "themeType": "material",
+                            "dataSrc": {
+                                "marker": "SUPPORTED_PERSONA_LIST"
+                            }
+                        },
+                        "validations": [
+                            {
+                                "type": "required"
+                            }
+                        ],
+                        "children": {
+                            "administrator": [
+                                {
+                                    "code": "state",
+                                    "type": "select",
+                                    "templateOptions": {
+                                        "labelHtml": {
+                                            "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+                                            "values": {
+                                                "$0": "State"
+                                            }
+                                        },
+                                        "placeHolder": "Select State",
+                                        "multiple": false,
+                                        "dataSrc": {
+                                            "marker": "STATE_LOCATION_LIST",
+                                            "params": {
+                                                "useCase": "SIGNEDIN_GUEST"
+                                            }
+                                        }
+                                    },
+                                    "validations": [
+                                        {
+                                            "type": "required"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "code": "district",
+                                    "type": "select",
+                                    "context": "state",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "labelHtml": {
+                                            "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+                                            "values": {
+                                                "$0": "District"
+                                            }
+                                        },
+                                        "placeHolder": "Select District",
+                                        "multiple": false,
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "district",
+                                                "useCase": "SIGNEDIN_GUEST"
+                                            }
+                                        }
+                                    },
+                                    "validations": [
+                                        {
+                                            "type": "required"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "code": "block",
+                                    "type": "select",
+                                    "context": "district",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "label": "Block",
+                                        "placeHolder": "Select Block",
+                                        "multiple": false,
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "block",
+                                                "useCase": "SIGNEDIN"
+                                            }
+                                        }
+                                    },
+                                    "validations": []
+                                },
+                                {
+                                    "code": "cluster",
+                                    "type": "select",
+                                    "context": "block",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "label": "Cluster",
+                                        "placeHolder": "Select Cluster",
+                                        "multiple": false,
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "cluster",
+                                                "useCase": "SIGNEDIN"
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "code": "school",
+                                    "type": "select",
+                                    "context": "cluster",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "label": "School",
+                                        "placeHolder": "Select School",
+                                        "multiple": false,
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "school",
+                                                "useCase": "SIGNEDIN"
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
+                            "teacher": [
+                                {
+                                    "code": "state",
+                                    "type": "select",
+                                    "templateOptions": {
+                                        "labelHtml": {
+                                            "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+                                            "values": {
+                                                "$0": "State"
+                                            }
+                                        },
+                                        "placeHolder": "Select State",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "STATE_LOCATION_LIST",
+                                            "params": {
+                                                "useCase": "SIGNEDIN_GUEST"
+                                            }
+                                        }
+                                    },
+                                    "validations": [
+                                        {
+                                            "type": "required"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "code": "district",
+                                    "type": "select",
+                                    "context": "state",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "labelHtml": {
+                                            "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+                                            "values": {
+                                                "$0": "District"
+                                            }
+                                        },
+                                        "placeHolder": "Select District",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "district",
+                                                "useCase": "SIGNEDIN_GUEST"
+                                            }
+                                        }
+                                    },
+                                    "validations": [
+                                        {
+                                            "type": "required"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "code": "block",
+                                    "type": "select",
+                                    "context": "district",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "label": "Block",
+                                        "placeHolder": "Select Block",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "block",
+                                                "useCase": "SIGNEDIN"
+                                            }
+                                        }
+                                    },
+                                    "validations": []
+                                },
+                                {
+                                    "code": "cluster",
+                                    "type": "select",
+                                    "context": "block",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "label": "Cluster",
+                                        "placeHolder": "Select Cluster",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "cluster",
+                                                "useCase": "SIGNEDIN"
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "code": "school",
+                                    "type": "select",
+                                    "context": "cluster",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "label": "School",
+                                        "placeHolder": "Select School",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "school",
+                                                "useCase": "SIGNEDIN"
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
+                            "student": [
+                                {
+                                    "code": "state",
+                                    "type": "select",
+                                    "templateOptions": {
+                                        "labelHtml": {
+                                            "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+                                            "values": {
+                                                "$0": "State"
+                                            }
+                                        },
+                                        "placeHolder": "Select State",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "STATE_LOCATION_LIST",
+                                            "params": {
+                                                "useCase": "SIGNEDIN_GUEST"
+                                            }
+                                        }
+                                    },
+                                    "validations": [
+                                        {
+                                            "type": "required"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "code": "district",
+                                    "type": "select",
+                                    "context": "state",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "labelHtml": {
+                                            "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+                                            "values": {
+                                                "$0": "District"
+                                            }
+                                        },
+                                        "placeHolder": "Select District",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "district",
+                                                "useCase": "SIGNEDIN_GUEST"
+                                            }
+                                        }
+                                    },
+                                    "validations": [
+                                        {
+                                            "type": "required"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "code": "block",
+                                    "type": "select",
+                                    "context": "district",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "label": "Block",
+                                        "placeHolder": "Select Block",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "block",
+                                                "useCase": "SIGNEDIN"
+                                            }
+                                        }
+                                    },
+                                    "validations": []
+                                },
+                                {
+                                    "code": "cluster",
+                                    "type": "select",
+                                    "context": "block",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "label": "Cluster",
+                                        "placeHolder": "Select Cluster",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "cluster",
+                                                "useCase": "SIGNEDIN"
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "code": "school",
+                                    "type": "select",
+                                    "context": "cluster",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "label": "School",
+                                        "placeHolder": "Select School",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "school",
+                                                "useCase": "SIGNEDIN"
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
+                            "other": [
+                                {
+                                    "code": "state",
+                                    "type": "select",
+                                    "templateOptions": {
+                                        "placeHolder": "Select State",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "STATE_LOCATION_LIST",
+                                            "params": {
+                                                "useCase": "SIGNEDIN_GUEST"
+                                            }
+                                        }
+                                    },
+                                    "validations": [
+                                        {
+                                            "type": "required"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "code": "district",
+                                    "type": "select",
+                                    "context": "state",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "labelHtml": {
+                                            "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+                                            "values": {
+                                                "$0": "District"
+                                            }
+                                        },
+                                        "placeHolder": "Select District",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "district",
+                                                "useCase": "SIGNEDIN_GUEST"
+                                            }
+                                        }
+                                    },
+                                    "validations": [
+                                        {
+                                            "type": "required"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "code": "block",
+                                    "type": "select",
+                                    "context": "district",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "label": "Block",
+                                        "placeHolder": "Select Block",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "block",
+                                                "useCase": "SIGNEDIN"
+                                            }
+                                        }
+                                    },
+                                    "validations": []
+                                },
+                                {
+                                    "code": "cluster",
+                                    "type": "select",
+                                    "context": "block",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "label": "Cluster",
+                                        "placeHolder": "Select Cluster",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "cluster",
+                                                "useCase": "SIGNEDIN"
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "code": "school",
+                                    "type": "select",
+                                    "context": "cluster",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "label": "School",
+                                        "placeHolder": "Select School",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "school",
+                                                "useCase": "SIGNEDIN"
+                                            }
+                                        }
+                                    }
+                                }
+                            ],
+                            "parent": [
+                                {
+                                    "code": "state",
+                                    "type": "select",
+                                    "templateOptions": {
+                                        "labelHtml": {
+                                            "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+                                            "values": {
+                                                "$0": "State"
+                                            }
+                                        },
+                                        "placeHolder": "Select State",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "STATE_LOCATION_LIST",
+                                            "params": {
+                                                "useCase": "SIGNEDIN_GUEST"
+                                            }
+                                        }
+                                    },
+                                    "validations": [
+                                        {
+                                            "type": "required"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "code": "district",
+                                    "type": "select",
+                                    "context": "state",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "labelHtml": {
+                                            "contents": "<span>$0&nbsp;<span class=\"required-asterisk\">*</span></span>",
+                                            "values": {
+                                                "$0": "District"
+                                            }
+                                        },
+                                        "placeHolder": "Select District",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "district",
+                                                "useCase": "SIGNEDIN_GUEST"
+                                            }
+                                        }
+                                    },
+                                    "validations": [
+                                        {
+                                            "type": "required"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "code": "block",
+                                    "type": "select",
+                                    "context": "district",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "label": "Block",
+                                        "placeHolder": "Select Block",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "block",
+                                                "useCase": "SIGNEDIN"
+                                            }
+                                        }
+                                    },
+                                    "validations": []
+                                },
+                                {
+                                    "code": "cluster",
+                                    "type": "select",
+                                    "context": "block",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "label": "Cluster",
+                                        "placeHolder": "Select Cluster",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "cluster",
+                                                "useCase": "SIGNEDIN"
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "code": "school",
+                                    "type": "select",
+                                    "context": "cluster",
+                                    "default": null,
+                                    "templateOptions": {
+                                        "label": "School",
+                                        "placeHolder": "Select School",
+                                        "multiple": false,
+                                        "themeType": "material",
+                                        "dataSrc": {
+                                            "marker": "LOCATION_LIST",
+                                            "params": {
+                                                "id": "school",
+                                                "useCase": "SIGNEDIN"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "created_on": "2021-11-23T04:54:14.146Z",
+            "last_modified_on": "2022-06-30T06:48:03.346Z",
+            "rootOrgId": "*"
+
+  form22: |-
+            "type": "config",
+            "subType": "segmentation_v2",
+            "action": "get",
+            "component": "*",
+            "framework": "*",
+            "data": {
+                "templateName": "segmentation_v2",
+                "action": "get",
+                "fields": [
+                    {
+                        "commandId": 1619548200000,
+                        "commandType": "SEGMENT_COMMAND",
+                        "controlFunction": "LOCAL_NOTIF",
+                        "expiresAfter": 1841807258000,
+                        "tagCriteria": "AND",
+                        "tagFilterUpto": null,
+                        "tagFilters": [
+                            "USERLANG_en"
+                        ],
+                        "targetDeviceIds": null,
+                        "targetVersion": null,
+                        "controlFunctionPayload": [
+                            {
+                                "code": "localNotification",
+                                "name": "LocalNotification",
+                                "type": 1,
+                                "config": [
+                                    {
+                                        "msg": "Welcome! You've choosen English",
+                                        "isEnabled": true,
+                                        "id": 1005,
+                                        "title": "Welcome! You've choosen English"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "commandId": 1619548200290,
+                        "commandType": "SEGMENT_COMMAND",
+                        "controlFunction": "LOCAL_NOTIF",
+                        "expiresAfter": 1841807258000,
+                        "tagCriteria": "AND",
+                        "tagFilterUpto": null,
+                        "tagFilters": [
+                            "USERLANG_kn"
+                        ],
+                        "targetDeviceIds": null,
+                        "targetVersion": null,
+                        "controlFunctionPayload": [
+                            {
+                                "code": "localNotification",
+                                "name": "LocalNotification",
+                                "type": 1,
+                                "config": [
+                                    {
+                                        "msg": "ಕನ್ನಡ ಆಯ್ಕೆ ಮಾಡಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು",
+                                        "isEnabled": true,
+                                        "id": 1006,
+                                        "title": "ಕನ್ನಡ ಆಯ್ಕೆ ಮಾಡಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "commandId": 1619548200020,
+                        "commandType": "SEGMENT_COMMAND",
+                        "controlFunction": "LOCAL_NOTIF",
+                        "expiresAfter": 1841807258000,
+                        "tagCriteria": "AND",
+                        "tagFilterUpto": null,
+                        "tagFilters": [
+                            "USERFRAMEWORK_stateandhrapradesh",
+                            "USERFRAMEWORK_class10",
+                            "USERFRAMEWORK_english"
+                        ],
+                        "targetDeviceIds": null,
+                        "targetVersion": null,
+                        "controlFunctionPayload": [
+                            {
+                                "code": "localNotification",
+                                "name": "LocalNotification",
+                                "type": 1,
+                                "config": [
+                                    {
+                                        "msg": "Board AP Class 10 English",
+                                        "isEnabled": true,
+                                        "id": 1004,
+                                        "title": "Board AP Class 10 English",
+                                        "action": "ACTION_PLAY",
+                                        "data": {
+                                            "request": {
+                                                "objectId": "do_31269113788995174417318",
+                                                "collection": "do_31269113788995174417318"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "commandId": 1619548204000,
+                        "commandType": "SEGMENT_COMMAND",
+                        "controlFunction": "LOCAL_NOTIF",
+                        "expiresAfter": 1841807258000,
+                        "tagCriteria": "AND",
+                        "tagFilterUpto": null,
+                        "tagFilters": [
+                            "CONTENT_do_2130251541941534721178"
+                        ],
+                        "targetDeviceIds": null,
+                        "targetVersion": null,
+                        "controlFunctionPayload": [
+                            {
+                                "code": "localNotification",
+                                "name": "LocalNotification",
+                                "type": 1,
+                                "config": [
+                                    {
+                                        "msg": "Content: State Course",
+                                        "isEnabled": true,
+                                        "id": 1003,
+                                        "title": "Content: State Course",
+                                        "action": "ACTION_PLAY",
+                                        "data": {
+                                            "request": {
+                                                "objectId": "do_2130251541941534721178",
+                                                "collection": "do_2130251541941534721178"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "commandId": 1619548200600,
+                        "commandType": "SEGMENT_COMMAND",
+                        "controlFunction": "LOCAL_NOTIF",
+                        "expiresAfter": 1841807258000,
+                        "tagCriteria": "AND",
+                        "tagFilterUpto": null,
+                        "tagFilters": [
+                            "USERFRAMEWORK_stateandhrapradesh",
+                            "USERFRAMEWORK_class8",
+                            "USERFRAMEWORK_english"
+                        ],
+                        "targetDeviceIds": null,
+                        "targetVersion": null,
+                        "controlFunctionPayload": [
+                            {
+                                "code": "localNotification",
+                                "name": "LocalNotification",
+                                "type": 1,
+                                "config": [
+                                    {
+                                        "msg": "Board AP class 8 english",
+                                        "isEnabled": true,
+                                        "id": 1002,
+                                        "title": "Board AP class 8 english"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "commandId": 1619548200050,
+                        "commandType": "SEGMENT_COMMAND",
+                        "controlFunction": "LOCAL_NOTIF",
+                        "expiresAfter": 1841807258000,
+                        "tagCriteria": "AND",
+                        "tagFilterUpto": null,
+                        "tagFilters": [
+                            "USERLOCATION_Tamil Nadu"
+                        ],
+                        "targetDeviceIds": null,
+                        "targetVersion": null,
+                        "controlFunctionPayload": [
+                            {
+                                "code": "localNotification",
+                                "name": "LocalNotification",
+                                "type": 1,
+                                "config": [
+                                    {
+                                        "msg": "Location Tamil Nadu",
+                                        "isEnabled": true,
+                                        "id": 1001,
+                                        "title": "Location Tamil Nadu"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "commandId": 1619548201250,
+                        "commandType": "SEGMENT_COMMAND",
+                        "controlFunction": "BANNER_CONFIG",
+                        "expiresAfter": 1841807258000,
+                        "tagCriteria": "AND",
+                        "tagFilterUpto": null,
+                        "tagFilters": [
+                            "USERFRAMEWORK_statetamilnadu",
+                            "USERFRAMEWORK_english",
+                            "USERFRAMEWORK_class1"
+                        ],
+                        "targetDeviceIds": null,
+                        "targetVersion": null,
+                        "controlFunctionPayload": {
+                            "showBanner": true,
+                            "values": [
+                                {
+                                    "code": "banner_external_url",
+                                    "ui": {
+                                        "background": "https://cdn.pixabay.com/photo/2015/10/29/14/38/web-1012467_960_720.jpg",
+                                        "text": "Sample External Url"
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "externalUrl",
+                                        "params": {
+                                            "route": "https://diksha.gov.in/"
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_internal_url",
+                                    "ui": {
+                                        "background": "https://cdn.pixabay.com/photo/2015/10/29/14/38/web-1012467_960_720.jpg",
+                                        "text": "Sample Internal Url"
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "internalUrl",
+                                        "params": {
+                                            "route": "profile"
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "ui": {
+                                        "background": "https://cdn.pixabay.com/photo/2015/10/29/14/38/web-1012467_960_720.jpg",
+                                        "text": "Sample Search"
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_content",
+                                    "ui": {
+                                        "background": "https://ae01.alicdn.com/kf/H9e3986d0c2434909a0cc26654e766dad7/Custom-fullcolor-Vinyl-Flex-Banner-3-X-4-FT-Outdoor-Advertise-Signs-2-X6-FT-Can.jpg_Q90.jpg_.webp",
+                                        "text": "Sample content"
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "content",
+                                        "params": {
+                                            "identifier": "do_21302358976737280014"
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "NISHTHA FLN COurses",
+                                        "icon": "assets/imgs/ic_nishtha_courses.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "",
+                                        "params": {
+                                            "route": ""
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "NISHTHA FLN COurses",
+                                        "icon": "assets/imgs/ic_nishtha_courses.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "",
+                                        "params": {
+                                            "route": ""
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "NISHTA  Secondary Courses",
+                                        "icon": "assets/imgs/ic_secondary_course.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "",
+                                        "params": {
+                                            "route": ""
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "Revision Preperation",
+                                        "icon": "assets/imgs/ic_revision_preperation.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "",
+                                        "params": {
+                                            "route": ""
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "FLN Programme",
+                                        "icon": "assets/imgs/ic_fln_programme.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "",
+                                        "params": {
+                                            "route": ""
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "Administration  Programme",
+                                        "icon": "assets/imgs/ic_administration_programme.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "",
+                                        "params": {
+                                            "route": ""
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "Quiz",
+                                        "icon": "assets/imgs/ic_quiz.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "",
+                                        "params": {
+                                            "route": ""
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "commandId": 1619548208500,
+                        "commandType": "SEGMENT_COMMAND",
+                        "controlFunction": "BANNER_CONFIG",
+                        "expiresAfter": 1841807258000,
+                        "tagCriteria": "AND",
+                        "tagFilterUpto": null,
+                        "tagFilters": [
+                            "USERFRAMEWORK_cbse",
+                            "USERFRAMEWORK_english",
+                            "USERFRAMEWORK_class6"
+                        ],
+                        "targetDeviceIds": null,
+                        "targetVersion": null,
+                        "controlFunctionPayload": {
+                            "showBanner": true,
+                            "values": [
+                                {
+                                    "code": "banner_external_url",
+                                    "ui": {
+                                        "background": "https://cdn.pixabay.com/photo/2015/10/29/14/38/web-1012467_960_720.jpg",
+                                        "text": "Sample External Url"
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "externalUrl",
+                                        "params": {
+                                            "route": "https://diksha.gov.in/"
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_internal_url",
+                                    "ui": {
+                                        "background": "https://cdn.pixabay.com/photo/2015/10/29/14/38/web-1012467_960_720.jpg",
+                                        "text": "Sample Internal Url"
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "internalUrl",
+                                        "params": {
+                                            "route": "profile"
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "ui": {
+                                        "background": "https://cdn.pixabay.com/photo/2015/10/29/14/38/web-1012467_960_720.jpg",
+                                        "text": "Sample Search"
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_content",
+                                    "ui": {
+                                        "background": "https://cdn.pixabay.com/photo/2015/10/29/14/38/web-1012467_960_720.jpg",
+                                        "text": "Sample content"
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "content",
+                                        "params": {
+                                            "identifier": "do_21302358976737280014"
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "NISHTHA FLN COurses",
+                                        "icon": "assets/imgs/ic_nishtha_courses.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "NISHTA  Secondary Courses",
+                                        "icon": "assets/imgs/ic_secondary_course.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "Revision Preperation",
+                                        "icon": "assets/imgs/ic_revision_preperation.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "FLN Programme",
+                                        "icon": "assets/imgs/ic_fln_programme.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "Administration  Programme",
+                                        "icon": "assets/imgs/ic_administration_programme.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "Quiz",
+                                        "icon": "assets/imgs/ic_quiz.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "filterIdentifier": "nlp",
+                                    "expiry": "1841807258"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "commandId": 1619548201298,
+                        "commandType": "SEGMENT_COMMAND",
+                        "controlFunction": "DEBUGGING_MODE",
+                        "expiresAfter": 1841807258000,
+                        "tagCriteria": "OR",
+                        "tagFilterUpto": null,
+                        "tagFilters": [
+                            "ALL_android"
+                        ],
+                        "targetDeviceIds": null,
+                        "targetVersion": null,
+                        "controlFunctionPayload": {
+                            "traceId": "TID_123445"
+                        }
+                    },
+                    {
+                        "commandId": 1619548200012,
+                        "commandType": "SEGMENT_COMMAND",
+                        "controlFunction": "BANNER_CONFIG",
+                        "expiresAfter": 1841807258000,
+                        "tagCriteria": "AND",
+                        "tagFilterUpto": null,
+                        "tagFilters": [
+                            "APPVERSION_DIKSHA v4.4.104staging.97"
+                        ],
+                        "targetDeviceIds": null,
+                        "targetVersion": null,
+                        "controlFunctionPayload": {
+                            "showBanner": true,
+                            "values": [
+                                {
+                                    "code": "banner_external_url",
+                                    "ui": {
+                                        "background": "https://image.freepik.com/free-vector/minimalist-watercolor_91008-209.jpg",
+                                        "text": "Sample External Url"
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "externalUrl",
+                                        "params": {
+                                            "route": "https://diksha.gov.in/"
+                                        }
+                                    },
+                                    "expiry": "1653031067"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "commandId": 1619548200013,
+                        "commandType": "SEGMENT_COMMAND",
+                        "controlFunction": "BANNER_CONFIG",
+                        "expiresAfter": 1841807258000,
+                        "tagCriteria": "AND",
+                        "tagFilterUpto": null,
+                        "tagFilters": [
+                            "DEVCONFIG_7fb8fbb3a2bb521689ff04d7f31097676adf101d"
+                        ],
+                        "targetDeviceIds": null,
+                        "targetVersion": null,
+                        "controlFunctionPayload": {
+                            "showBanner": true,
+                            "values": [
+                                {
+                                    "code": "banner_external_url",
+                                    "ui": {
+                                        "background": "https://image.freepik.com/free-vector/minimalist-watercolor_91008-209.jpg",
+                                        "text": "Device Based Banner"
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "externalUrl",
+                                        "params": {
+                                            "route": "https://diksha.gov.in/"
+                                        }
+                                    },
+                                    "expiry": "1653031067"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "commandId": 1619548200014,
+                        "commandType": "SEGMENT_COMMAND",
+                        "controlFunction": "LOCAL_NOTIF",
+                        "expiresAfter": 1841807258000,
+                        "tagCriteria": "AND",
+                        "tagFilterUpto": null,
+                        "tagFilters": [
+                            "USERROLE_teacher"
+                        ],
+                        "targetDeviceIds": null,
+                        "targetVersion": null,
+                        "controlFunctionPayload": [
+                            {
+                                "code": "localNotification",
+                                "name": "LocalNotification",
+                                "type": 1,
+                                "config": [
+                                    {
+                                        "msg": "Registred as Teacher",
+                                        "isEnabled": true,
+                                        "id": 1006,
+                                        "title": "Registred as Teacher"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "commandId": 1619548200015,
+                        "commandType": "SEGMENT_COMMAND",
+                        "controlFunction": "LOCAL_NOTIF",
+                        "expiresAfter": 1841807258000,
+                        "tagCriteria": "AND",
+                        "tagFilterUpto": null,
+                        "tagFilters": [
+                            "USERROLE_teacher",
+                            "USERLOCATION_Bengaluru U North",
+                            "USERLOCATION_Karnataka"
+                        ],
+                        "targetDeviceIds": null,
+                        "targetVersion": null,
+                        "controlFunctionPayload": [
+                            {
+                                "code": "localNotification",
+                                "name": "LocalNotification",
+                                "type": 1,
+                                "config": [
+                                    {
+                                        "msg": "Welcome to Karnataka",
+                                        "isEnabled": true,
+                                        "id": 1006,
+                                        "title": "Welcome to Karnataka"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "commandId": 1619548201250,
+                        "commandType": "SEGMENT_COMMAND",
+                        "controlFunction": "BANNER_CONFIG",
+                        "expiresAfter": 1841807258000,
+                        "tagCriteria": "AND",
+                        "tagFilterUpto": null,
+                        "targetedClient": "portal",
+                        "tagFilters": [
+                            "USERFRAMEWORK_State (Tamil Nadu)",
+                            "USERFRAMEWORK_English",
+                            "USERFRAMEWORK_Class 1"
+                        ],
+                        "targetDeviceIds": null,
+                        "targetVersion": null,
+                        "controlFunctionPayload": {
+                            "showBanner": true,
+                            "values": [
+                                {
+                                    "code": "banner_external_url",
+                                    "ui": {
+                                        "background": "https://cdn.pixabay.com/photo/2015/10/29/14/38/web-1012467_960_720.jpg",
+                                        "text": "Sample External Url"
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "externalUrl",
+                                        "params": {
+                                            "route": "https://diksha.gov.in/"
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_internal_url",
+                                    "ui": {
+                                        "background": "https://cdn.pixabay.com/photo/2015/10/29/14/38/web-1012467_960_720.jpg",
+                                        "text": "Sample Internal Url"
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "internalUrl",
+                                        "params": {
+                                            "route": "profile"
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "ui": {
+                                        "background": "https://cdn.pixabay.com/photo/2015/10/29/14/38/web-1012467_960_720.jpg",
+                                        "text": "Sample Search"
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_content",
+                                    "ui": {
+                                        "background": "https://5.imimg.com/data5/RN/UY/AT/SELLER-90246361/printed-rectangle-flex-banner-500x500.jpg",
+                                        "text": "Sample content"
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "content",
+                                        "params": {
+                                            "identifier": "do_21302358976737280014"
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "NISHTHA FLN COurses",
+                                        "icon": "assets/images/ic_nishtha_courses.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "NISHTHA FLN COurses",
+                                        "icon": "assets/images/ic_nishtha_courses.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "NISHTA  Secondary Courses",
+                                        "icon": "assets/images/ic_secondary_course.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "Revision Preperation",
+                                        "icon": "assets/images/ic_revision_preperation.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "FLN Programme",
+                                        "icon": "assets/images/ic_fln_programme.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "Administration  Programme",
+                                        "icon": "assets/images/ic_administration_programme.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                },
+                                {
+                                    "code": "banner_search",
+                                    "type": "secondary",
+                                    "ui": {
+                                        "text": "Quiz",
+                                        "icon": "assets/images/ic_quiz.svg",
+                                        "theme": {
+                                            "iconBgColor": "#FFFFFF",
+                                            "pillBgColor": "#FFFFFF"
+                                        }
+                                    },
+                                    "action": {
+                                        "type": "navigate",
+                                        "subType": "search",
+                                        "params": {
+                                            "query": "limited attempt course",
+                                            "filter": {
+                                                "offset": 0,
+                                                "filters": {
+                                                    "audience": [],
+                                                    "objectType": [
+                                                        "Content"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "expiry": "1841807258"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "created_on": "2021-08-12T13:28:39.762Z",
+            "last_modified_on": "2022-06-16T06:25:16.761Z",
+            "rootOrgId": "*"
+  form23: |-
+            "type": "content",
+            "subType": "resource",
+            "action": "save",
+            "component": "*",
+            "framework": "NCF",
+            "data": {
+                "templateName": "defaultTemplate",
+                "action": "save",
+                "fields": [
+                    {
+                        "code": "appicon",
+                        "visible": true,
+                        "editable": true,
+                        "dataType": "url",
+                        "renderingHints": {},
+                        "name": "App Icon",
+                        "description": "App Icon",
+                        "index": 1,
+                        "inputType": "file",
+                        "label": "Icon",
+                        "placeholder": "App Icon",
+                        "required": false
+                    },
+                    {
+                        "code": "name",
+                        "visible": true,
+                        "editable": true,
+                        "dataType": "text",
+                        "renderingHints": {},
+                        "name": "Title",
+                        "description": "Title of the content",
+                        "index": 2,
+                        "inputType": "text",
+                        "label": "Title",
+                        "placeholder": "Enter Title For Book",
+                        "required": true
+                    },
+                    {
+                        "code": "description",
+                        "visible": true,
+                        "editable": true,
+                        "dataType": "text",
+                        "renderingHints": {},
+                        "name": "Description",
+                        "description": "Brief description",
+                        "index": 3,
+                        "inputType": "textarea",
+                        "label": "Description",
+                        "placeholder": "Brief description about the Book",
+                        "required": false
+                    },
+                    {
+                        "code": "keywords",
+                        "visible": true,
+                        "editable": true,
+                        "dataType": "list",
+                        "name": "Keywords",
+                        "description": "Keywords for the content",
+                        "index": 4,
+                        "inputType": "keywordsuggestion",
+                        "label": "keywords",
+                        "placeholder": "Enter Keywords",
+                        "required": false
+                    },
+                    {
+                        "code": "board",
+                        "visible": true,
+                        "depends": [
+                            "medium",
+                            "gradeLevel",
+                            "subject",
+                            "topic"
+                        ],
+                        "editable": true,
+                        "dataType": "text",
+                        "renderingHints": {},
+                        "description": "Board",
+                        "index": 5,
+                        "label": "Board/Syllabus",
+                        "required": false,
+                        "name": "Board/Syllabus",
+                        "inputType": "select",
+                        "placeholder": "Select Board/Syllabus"
+                    },
+                    {
+                        "code": "medium",
+                        "visible": true,
+                        "depends": [
+                            "gradeLevel",
+                            "subject",
+                            "topic"
+                        ],
+                        "editable": true,
+                        "dataType": "list",
+                        "renderingHints": {},
+                        "description": "",
+                        "index": 6,
+                        "label": "Medium",
+                        "required": false,
+                        "name": "medium",
+                        "inputType": "multiselect",
+                        "placeholder": "Select Medium"
+                    },
+                    {
+                        "code": "gradeLevel",
+                        "visible": true,
+                        "depends": [
+                            "subject",
+                            "topic"
+                        ],
+                        "editable": true,
+                        "dataType": "list",
+                        "renderingHints": {},
+                        "description": "Class",
+                        "index": 7,
+                        "label": "Class",
+                        "required": false,
+                        "name": "Class",
+                        "inputType": "multiselect",
+                        "placeholder": "Select Class"
+                    },
+                    {
+                        "code": "subject",
+                        "visible": true,
+                        "depends": [
+                            "topic"
+                        ],
+                        "editable": true,
+                        "dataType": "list",
+                        "renderingHints": {},
+                        "description": "",
+                        "index": 8,
+                        "label": "Subject",
+                        "required": false,
+                        "name": "Subject",
+                        "inputType": "multiselect",
+                        "placeholder": "Select Subject"
+                    },
+                    {
+                        "code": "topic",
+                        "visible": true,
+                        "editable": true,
+                        "dataType": "list",
+                        "renderingHints": {},
+                        "name": "Topic",
+                        "description": "Choose a Topics",
+                        "index": 10,
+                        "inputType": "topicselector",
+                        "label": "Topics",
+                        "placeholder": "Choose Topics",
+                        "required": false
+                    },
+                    {
+                        "code": "resourceType",
+                        "visible": true,
+                        "editable": true,
+                        "dataType": "text",
+                        "renderingHints": {},
+                        "description": "Resource Type",
+                        "index": 11,
+                        "range": [
+                            "Teach",
+                            "Practice",
+                            "Learn",
+                            "Test",
+                            "Play",
+                            "Read",
+                            "Experiment"
+                        ],
+                        "label": "Resource Type",
+                        "required": false,
+                        "name": "resourceType",
+                        "inputType": "select",
+                        "placeholder": ""
+                    },
+                    {
+                        "code": "audience",
+                        "visible": true,
+                        "editable": true,
+                        "dataType": "list",
+                        "renderingHints": {},
+                        "description": "",
+                        "index": 13,
+                        "range": [
+                            "Student",
+                            "Teacher",
+                            "Administrator"
+                        ],
+                        "label": "Audience",
+                        "required": false,
+                        "name": "Audience",
+                        "inputType": "select",
+                        "placeholder": "Select Audience"
+                    },
+                    {
+                        "code": "author",
+                        "visible": true,
+                        "editable": true,
+                        "dataType": "text",
+                        "renderingHints": {},
+                        "name": "Author",
+                        "description": "Original Author",
+                        "index": 12,
+                        "inputType": "text",
+                        "label": "Original Author",
+                        "placeholder": "Author",
+                        "required": false
+                    },
+                    {
+                        "code": "attributions",
+                        "visible": true,
+                        "editable": true,
+                        "dataType": "list",
+                        "renderingHints": {},
+                        "name": "attribution",
+                        "description": "Attributions",
+                        "index": 13,
+                        "inputType": "text",
+                        "label": "Attributions",
+                        "placeholder": "Attributions",
+                        "required": false
+                    },
+                    {
+                        "code": "copyright",
+                        "visible": true,
+                        "editable": true,
+                        "dataType": "text",
+                        "renderingHints": {},
+                        "name": "Copyright",
+                        "description": "Copyright",
+                        "index": 14,
+                        "inputType": "text",
+                        "label": "Copyright",
+                        "placeholder": "Copyright",
+                        "required": false
+                    },
+                    {
+                        "code": "license",
+                        "visible": true,
+                        "editable": true,
+                        "defaultValue": "By creating and uploading content on DIKSHA, you consent to publishing this content under the Creative Commons Framework, specifically under the CC-BY-SA 4.0 license.",
+                        "dataType": "text",
+                        "renderingHints": {
+                            "value": {
+                                "video/x-youtube": "By linking or uploading YouTube videos on DIKSHA, you consent to publishing it as per the terms of the YouTube video license. DIKSHA accepts only videos with YouTube Standard License or Creative Commons License."
+                            },
+                            "class": "twelve wide field"
+                        },
+                        "description": "license",
+                        "index": 17,
+                        "label": "license",
+                        "required": false,
+                        "name": "license",
+                        "inputType": "label",
+                        "placeholder": "license"
+                    }
+                ]
+            },
+            "created_on": "2018-10-25T20:24:32.694Z",
+            "last_modified_on": "2020-10-09T08:56:02.773Z",
+            "rootOrgId": "*"
