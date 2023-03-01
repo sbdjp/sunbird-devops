@@ -1,137 +1,137 @@
 ---
-- name: Updating custodian org to system settings
-  uri:
-    url: "https://{{ domain_name }}/api/data/v1/system/settings/set"
-    method: POST
-    headers:
-      x-authenticated-user-token: "{{ keycloak_access_token }}"
-      Authorization: "Bearer {{ core_vault_sunbird_api_auth_token }}"
-    body_format: json
-    body: |-
-      {
-        "request": {{ item }}
-      }
-  with_items: "{{ custodian_org_data }}"
+# - name: Updating custodian org to system settings
+#   uri:
+#     url: "https://{{ domain_name }}/api/data/v1/system/settings/set"
+#     method: POST
+#     headers:
+#       x-authenticated-user-token: "{{ keycloak_access_token }}"
+#       Authorization: "Bearer {{ core_vault_sunbird_api_auth_token }}"
+#     body_format: json
+#     body: |-
+#       {
+#         "request": {{ item }}
+#       }
+#   with_items: "{{ custodian_org_data }}"
 
-- name: Restarting leaner service
-  shell: |
-    kubectl rollout restart deployment -n {{ namespace }} learner
-    kubectl rollout status deployment -n {{ namespace }} learner
+# - name: Restarting leaner service
+#   shell: |
+#     kubectl rollout restart deployment -n {{ namespace }} learner
+#     kubectl rollout status deployment -n {{ namespace }} learner
 
-- name: Crating Users
-  uri:
-    url: "https://{{ domain_name }}/api/user/v2/signup"
-    method: POST
-    headers:
-      Authorization: "Bearer {{ core_vault_sunbird_api_auth_token }}"
-    body_format: json
-    body: |-
-      {
-        "request": {{ item }}
-      }
-  with_items: "{{ default_user_details }}"
-  register: user_list
+# - name: Crating Users
+#   uri:
+#     url: "https://{{ domain_name }}/api/user/v2/signup"
+#     method: POST
+#     headers:
+#       Authorization: "Bearer {{ core_vault_sunbird_api_auth_token }}"
+#     body_format: json
+#     body: |-
+#       {
+#         "request": {{ item }}
+#       }
+#   with_items: "{{ default_user_details }}"
+#   register: user_list
 
-- name: Assigning roles to user
-  debug:
-    msg: "{{ item.json.result.userId }}"
-  with_items: "{{ user_list.results }}"
-  loop_control:
-    label: "{{ item.item.email }}"
+# - name: Assigning roles to user
+#   debug:
+#     msg: "{{ item.json.result.userId }}"
+#   with_items: "{{ user_list.results }}"
+#   loop_control:
+#     label: "{{ item.item.email }}"
 
-- name: Assigning roles to user
-  uri:
-    url: "https://{{ domain_name }}/api/user/v2/role/assign"
-    method: POST
-    headers:
-      Authorization: "Bearer {{ core_vault_sunbird_api_auth_token }}"
-      x-authenticated-user-token: "{{ keycloak_access_token }}"
-    body_format: json
-    body: |-
-     {
-        "request": {
-          "userId": "{{ item.json.result.userId }}",
-          "roles": [
-            {
-              "role": "ORG_ADMIN",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "REPORT_ADMIN",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "CONTENT_REVIEWER",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "COURSE_MENTOR",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "PUBLIC",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "ORG_MANAGEMENT",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "CONTENT_CREATOR",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "CONTENT_CURATION",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "SYSTEM_ADMINISTRATION", 
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "PROGRAM_MANAGER",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "REPORT_VIEWER",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "FLAG_REVIEWER",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "MEMBERSHIP_MANAGEMENT",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "BOOK_CREATOR",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            },
-            {
-              "role": "BOOK_REVIEWER",
-              "operation":"add",
-              "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
-            }]
-      }
-     }
-  with_items: "{{ user_list.results }}"
-  loop_control:
-    label: "{{ item.item.email }}"
+# - name: Assigning roles to user
+#   uri:
+#     url: "https://{{ domain_name }}/api/user/v2/role/assign"
+#     method: POST
+#     headers:
+#       Authorization: "Bearer {{ core_vault_sunbird_api_auth_token }}"
+#       x-authenticated-user-token: "{{ keycloak_access_token }}"
+#     body_format: json
+#     body: |-
+#      {
+#         "request": {
+#           "userId": "{{ item.json.result.userId }}",
+#           "roles": [
+#             {
+#               "role": "ORG_ADMIN",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "REPORT_ADMIN",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "CONTENT_REVIEWER",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "COURSE_MENTOR",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "PUBLIC",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "ORG_MANAGEMENT",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "CONTENT_CREATOR",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "CONTENT_CURATION",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "SYSTEM_ADMINISTRATION", 
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "PROGRAM_MANAGER",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "REPORT_VIEWER",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "FLAG_REVIEWER",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "MEMBERSHIP_MANAGEMENT",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "BOOK_CREATOR",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             },
+#             {
+#               "role": "BOOK_REVIEWER",
+#               "operation":"add",
+#               "scope": [{ "organisationId": "{{ sunbird_custodian_org_id }}" }]
+#             }]
+#       }
+#      }
+#   with_items: "{{ user_list.results }}"
+#   loop_control:
+#     label: "{{ item.item.email }}"
 
 - name: Crating state
   block:
