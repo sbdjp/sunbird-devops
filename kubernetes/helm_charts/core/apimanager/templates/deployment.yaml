@@ -27,6 +27,11 @@ spec:
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
+        env:
+        - name: KONG_DNS_RESOLVER
+          value: "10.82.5.5:53"
+        - name: KONG_DNSMASQ
+          value: "off"        
         envFrom:
         - configMapRef:
             name: {{ .Chart.Name }}-config
