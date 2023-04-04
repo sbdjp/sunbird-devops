@@ -1,6 +1,6 @@
 ---
 - name: Ensure pip is installed
-  apt: name=python-pip
+  apt: name=python3-pip update_cache=no
   when: ansible_os_family == 'Debian'
 
 - name: Ensure PyJWT is installed
@@ -29,11 +29,11 @@
 - name: write to file
   become: yes
   copy: content="{{jwt_token.stdout}}" dest=/tmp/jwt_token_output.txt
-  
+
 - name: run the sed command
   shell: cat /tmp/jwt_token_output.txt | grep 'JWT token for player is' | cut -d ':' -f2
   register: token
-  
+
 - name: Copy the script
   copy: content="{{token.stdout}}" dest=~/jwt_token_player.txt
   ignore_errors: yes
