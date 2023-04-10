@@ -6,7 +6,7 @@ node('vdn-jenkins-agent'){
             if (folder.exists())
             {
                println "Found .git folder. Clearing it.."
-               sh'git clean -fxd'
+               // sh'git clean -fxd'
             }
             checkout scm
         }
