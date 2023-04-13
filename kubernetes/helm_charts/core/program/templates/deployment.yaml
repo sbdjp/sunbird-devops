@@ -28,6 +28,9 @@ spec:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
+        env:
+        - name: NODE_TLS_REJECT_UNAUTHORIZED
+          value: 0
         envFrom:
         - configMapRef:
             name: {{ .Chart.Name }}-config
