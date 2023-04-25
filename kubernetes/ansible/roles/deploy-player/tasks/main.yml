@@ -7,11 +7,11 @@
   when: sunbird_portal_player_cdn_enabled == 'true'
 
 - name: Remove the existing CDN config
-  shell: "kubectl delete configmap player-cdn-config --namespace={{namespace}}"
+  shell: "kubectl delete configmap player-cdn-config --namespace={{namespace}} --dry-run=client"
   ignore_errors: true
 
 - name: Create player-cdn configmap
-  shell: "kubectl create configmap player-cdn-config --from-file={{cdn_file_path}} --namespace={{namespace}}"
+  shell: "kubectl create configmap player-cdn-config --from-file={{cdn_file_path}} --namespace={{namespace}} --dry-run=client"
   when: sunbird_portal_player_cdn_enabled == 'true'
 
 - name: rename template
@@ -30,7 +30,7 @@
     dest: "{{role_path}}/templates/{{ release_name }}.env"
 
 - name: create configmap
-  shell: "kubectl create configmap player-config --from-env-file={{role_path}}/templates/{{ release_name }}.env -n {{namespace}} --dry-run=client -o=yaml | kubectl apply -f -"
+  shell: "kubectl create configmap player-config --from-env-file={{role_path}}/templates/{{ release_name }}.env -n {{namespace}} --dry-run=client -o=yaml"
 
 - name: helm install and upgrade
   shell: helm upgrade --install --atomic --timeout 10m {{ release_name }} {{ chart_path }} -n {{namespace}}
