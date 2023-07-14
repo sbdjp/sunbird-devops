@@ -1,7 +1,11 @@
 ---
 - name: Ensure pip is installed
-  apt: name=python-pip
-  when: ansible_os_family == 'Debian'
+  apt: name=python-pip 
+  when: ansible_os_family == 'Debian' and ansible_distribution_version | float < 18
+
+- name: Ensure pip is installed
+  apt: name=python3-pip 
+  when: ansible_os_family == 'Debian' and ansible_distribution_version | float > 18
 
 - name: Ensure PyJWT is installed
   pip: name=PyJWT
@@ -29,7 +33,7 @@
   when: kong_admin_api_url is not defined
 
 - name: Run script to save consumers
-  shell: "python /tmp/kong-api-scripts/kong_consumers.py /tmp/kong_consumers.json --kong-admin-api-url={{ kong_admin_api_url }}"
+  shell: "python2 /tmp/kong-api-scripts/kong_consumers.py /tmp/kong_consumers.json --kong-admin-api-url={{ kong_admin_api_url }}"
   register: jwt_token
 
 - name: Touch the token file
