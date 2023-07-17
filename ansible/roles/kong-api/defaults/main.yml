@@ -10001,3 +10001,88 @@ kong_apis:
   - name: opa-checks
     config.required: true
     config.enabled: true
+
+- name: mlsurveyV1userRolesbulkcreate
+  uris: "{{ learner_private_route_prefix }}/mlsurvey/v1/userRoles/bulkCreate"
+  upstream_url: "{{ ml_survey_service_url }}/v1/userRoles/bulkCreate"
+  strip_uri: true
+  plugins:
+  - name: jwt
+  - name: cors
+  - "{{ statsd_pulgin }}"
+  - name: acl
+    config.whitelist:
+    - mlApp
+  - name: rate-limiting
+    config.policy: local
+    config.hour: "{{ medium_rate_limit_per_hour }}"
+    config.limit_by: credential
+  - name: request-size-limiting
+    config.allowed_payload_size: "{{ small_request_size_limit }}"
+  - name: opa-checks
+    config.required: false
+    config.enabled: false
+
+- name: mlsurveyV1userExtensionbulkUpload
+  uris: "{{ learner_private_route_prefix }}/mlsurvey/v1/userExtension/bulkUpload"
+  upstream_url: "{{ ml_survey_service_url }}/v1/userExtension/bulkUpload"
+  strip_uri: true
+  plugins:
+  - name: jwt
+  - name: cors
+  - "{{ statsd_pulgin }}"
+  - name: acl
+    config.whitelist:
+    - mlApp
+  - name: rate-limiting
+    config.policy: local
+    config.hour: "{{ medium_rate_limit_per_hour }}"
+    config.limit_by: credential
+  - name: request-size-limiting
+    config.allowed_payload_size: "{{ small_request_size_limit }}"
+  - name: opa-checks
+    config.required: false
+    config.enabled: false
+
+- name: mlsurveyV1userRoleslist
+  uris: "{{ learner_private_route_prefix }}/mlsurvey/v1/userRoles/list"
+  upstream_url: "{{ ml_survey_service_url }}/v1/userRoles/list"
+  strip_uri: true
+  plugins:
+  - name: jwt
+  - name: cors
+  - "{{ statsd_pulgin }}"
+  - name: acl
+    config.whitelist:
+    - mlApp
+  - name: rate-limiting
+    config.policy: local
+    config.hour: "{{ medium_rate_limit_per_hour }}"
+    config.limit_by: credential
+  - name: request-size-limiting
+    config.allowed_payload_size: "{{ small_request_size_limit }}"
+  - name: opa-checks
+    config.required: false
+    config.enabled: false
+
+- name: mlsurveyrolesList
+  uris: "{{ learner_private_route_prefix }}/mlsurvey/v1/userRoles/bulkUpdate"
+  upstream_url: "{{ ml_survey_service_url }}/v1/userRoles/bulkUpdate"
+  strip_uri: true
+  plugins:
+  - name: jwt
+  - name: cors
+  - "{{ statsd_pulgin }}"
+  - name: acl
+    config.whitelist:
+    - mlApp
+  - name: rate-limiting
+    config.policy: local
+    config.hour: "{{ medium_rate_limit_per_hour }}"
+    config.limit_by: credential
+  - name: request-size-limiting
+    config.allowed_payload_size: "{{ small_request_size_limit }}"
+  - name: opa-checks
+    config.required: false
+    config.enabled: false
+
