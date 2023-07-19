@@ -1,6 +1,6 @@
 ---
 - name: Ensure pip is installed
-  apt: name=python3-pip update_cache=no
+  apt: name=python2.7-pip update_cache=no
   when: ansible_os_family == 'Debian'
 
 - name: Ensure retry is installed
@@ -13,4 +13,4 @@
   copy: src=static-files/kong-api-scripts dest=/tmp mode=0755
 
 - name: Run script to save apis
-  shell: "python3 /tmp/kong-api-scripts/kong_apis.py /tmp/kong_apis.json --kong-admin-api-url=http://{{ private_ingressgateway_ip }}/admin-api"
+  shell: "python2.7 /tmp/kong-api-scripts/kong_apis.py /tmp/kong_apis.json --kong-admin-api-url=http://{{ private_ingressgateway_ip }}/admin-api"
