@@ -5,5 +5,5 @@
     - "{{inventory_dir}}/secrets.yml"
   hosts: "{{groups['swarm-manager-1'][0]}}"
   roles:
-    - {role: kong-api, tags: ['kong-api']}
+#   - {role: kong-api, tags: ['kong-api']}
     - {role: kong-consumer, tags: ['kong-consumer']}
