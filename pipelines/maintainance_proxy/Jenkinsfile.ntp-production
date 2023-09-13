@@ -1,0 +1,29 @@
+pipeline {
+  agent {
+      label 'general-production'
+  }
+  stages {
+    stage('Checkout') {
+      steps {
+        sh('./pipelines/setupDevopsCode.sh')
+      }
+    }
+    stage('Pre-Build'){
+      steps {
+        sh('./sunbird-devops/ansible/installDeps.sh')
+      }
+    }
+    stage('Metadata'){
+    steps {
+      sh('./pipelines/metadata.sh  .proxy > ./pipelines/proxy/metadata.json')
+       }   
+      } 
+    stage('Deploy') {
+      steps {
+        sh 'METADATA_FILE=./pipelines/proxy/metadata.json ARTIFACT_LABEL=gold ENV=ntp-production ./pipelines/proxy/deploy.sh'
+        archive includes: "metadata.json"
+      }
+    }
+  }
+}
+

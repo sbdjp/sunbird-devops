@@ -1,0 +1,34 @@
+#!/bin/bash
+### variables
+env=$2
+# read -p "enter the gte time:" 
+#read -p "enter the lte time:" 
+lte="$(echo $(date --date "today $(date +%H):00" +%s)000)"
+gte="$(echo $(date --date "today $(expr $(date +%H) - 2):00" +%s)000)"
+echo "$gte $lte"
+total=$(curl --location --request POST 'https://diksha.gov.in/api/certreg/v1/certs/search' --header 'Content-Type: application/json' --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI3ZTAxOGU4MzhmMWU0ZjE1Yjc2YTVkNDY1Y2ZiNTk3YiJ9.S-SKxmH8N5nRPKC3CF2pcXoOiS8CfS1jvAlCkhP5d9o' --data-raw '{"request": {"_source": ["_id"],"query": { "range": { "createdAt": { "gte":"'"$gte"'", "lte":"'"$lte"'"} }},"from": 0,"size": 1}}' 2> /dev/null)
+total_count=$(echo $total | jq .result.response.count) 
+echo =====================================
+echo "the total crt count is $total_count"
+echo =====================================
+pdf=$(curl --location --request POST 'https://diksha.gov.in/api/certreg/v1/certs/search' --header 'Content-Type: application/json' --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI3ZTAxOGU4MzhmMWU0ZjE1Yjc2YTVkNDY1Y2ZiNTk3YiJ9.S-SKxmH8N5nRPKC3CF2pcXoOiS8CfS1jvAlCkhP5d9o' --data-raw '{"request": {"_source": ["_id"],"query": {"bool": {"must": {"exists": {"field": "pdfUrl"}}, "filter": { "range": { "createdAt": { "gte":"'"$gte"'", "lte":"'"$lte"'"}}}}},"from": 0,"size": 1}}' 2> /dev/null)
+pdf_count=$(echo $pdf | jq .result.response.count)
+echo =================================
+echo "the pdf crt count is $pdf_count"
+echo =================================
+svg=$(curl --location --request POST 'https://diksha.gov.in/api/certreg/v1/certs/search' --header 'Content-Type: application/json' --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI3ZTAxOGU4MzhmMWU0ZjE1Yjc2YTVkNDY1Y2ZiNTk3YiJ9.S-SKxmH8N5nRPKC3CF2pcXoOiS8CfS1jvAlCkhP5d9o' --data-raw '{"request": {"_source": ["_id"],"query": {"bool": {"must_not": {"exists": {"field": "pdfUrl"}},"must": {"exists": {"field": "jsonUrl"}},"filter": { "range": { "createdAt": { "gte":"'"$gte"'", "lte":"'"$lte"'" }}}}},"from": 0,"size": 1}}' 2> /dev/null)
+svg_count=$(echo $svg | jq .result.response.count)
+echo =================================
+echo "the SVG crt count is $svg_count"
+echo =================================
+
+if [ $total_count == 0 ]
+then
+text=`echo "certificate not generated last two hours"`
+curl -d "{{ dataproducts_mailing_list }}&fromname='Certificate-alerts'&fromname='Certificate-alerts'&fromname='Certificate-alerts'&fromname='Certificate-alerts'&subject='[$env]  - Certificate generator failure alert'&text=${text}&from=alerts@ntp.net.in" -H 'Authorization: Bearer {{ SGPASS }}' https://api.sendgrid.com/api/mail.send.json
+
+else
+text=`echo "last two hour certificate generator count is:$total_count"`
+curl -d "{{ dataproducts_mailing_list }}&fromname='Certificate-alerts'&fromname='Certificate-alerts'&fromname='Certificate-alerts'&fromname='Certificate-alerts'&subject='[$env]  - Certificate-alerts Success alert'&text=${text}&from=alerts@ntp.net.in" -H 'Authorization: Bearer {{ SGPASS }}' https://api.sendgrid.com/api/mail.send.json
+fi
+

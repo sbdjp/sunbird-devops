@@ -1,0 +1,19 @@
+- hosts: swarm-manager
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml', 'secrets/{{env}}.yml']
+  roles:
+    - stack-bot
+  tags:
+    - stack-bot
+  run_once: true
+
+- hosts: swarm-manager
+  become: yes
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml', 'secrets/{{env}}.yml']
+  roles:
+    - stack-router
+  tags:
+    - stack-router
+  run_once: true

@@ -1,0 +1,158 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    role: alert-rules
+    app: prometheus-operator
+    release: prometheus-operator
+  name: custom-diksha-rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: customrules
+    rules:
+    - alert: high_failures_for_enrollment_API_Server
+      expr: (sum(increase(kong_request_status_count{api="courseEnrolment",status_code=~"5.."}[15m])) / sum(increase(kong_request_status_count{api="courseEnrolment",status_code=~"total"}[15m]))) * 100 >= 0.01
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        message: There are more server side failures for course enrolment API in last 15 mins
+        summary: There are more server side failures for course enrolment API in last 15 mins
+    - alert: high_failures_for_Exhaust_API_server
+      expr: (sum(increase(kong_request_status_count{api="submitDataExhaustRequest",status_code=~"5.."}[15m])) / sum(increase(kong_request_status_count{api="submitDataExhaustRequest",status_code=~"total"}[15m]))) * 100 >= 0.01
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        message: There are more server side failures for submit exhaust API in last 15 mins
+        summary: There are more server side failures for submit exhaust API in last 15 mins
+    - alert: high_failures_for_enrollment_API_Client
+      expr: (sum(increase(kong_request_status_count{api="courseEnrolment",status_code=~"4.."}[15m])) / sum(increase(kong_request_status_count{api="courseEnrolment",status_code=~"total"}[15m]))) * 100 >= 0.01
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        message: There are more client side failures for course enrolment API in last 15 mins
+        summary: There are more client side failures for course enrolment API in last 15 mins
+    - alert: high_failures_for_Exhaust_API_Client
+      expr: (sum(increase(kong_request_status_count{api="submitDataExhaustRequest",status_code=~"4.."}[15m])) / sum(increase(kong_request_status_count{api="submitDataExhaustRequest",status_code=~"total"}[15m]))) * 100 >= 0.01
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        message: There are more client side failures for submit exhaust API in last 15 mins
+        summary: There are more client side failures for submit exhaust API in last 15 mins
+    - alert: Lag_Alert_For_Enrolment_reconcilation
+      expr: sum(kafka_consumergroup_lag_sum{consumergroup="{{env}}-enrolment-reconciliation-group"}) > {{ enrolment_reconcilation_lag_threshold }}
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        message: Enrolment_reconcilation Lag is more then {{ enrolment_reconcilation_lag_threshold }}
+        summary: Enrolment_reconcilation Lag is Critical
+    - alert: Lag_Alert_For_Search_Indexer
+      expr: sum(kafka_consumergroup_lag{consumergroup="{{env}}-search-indexer-group"}) > {{ search_indexer_lag_threshold }}
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        message: Search_Indexer Lag is more then {{ search_indexer_lag_threshold }}
+        summary: Search_Indexer Lag is Critical
+    - alert: Lag_Alert_For_Certificate_preprocessor
+      expr: sum(kafka_consumergroup_lag_sum{consumergroup="{{env}}-collection-cert-pre-processor-group"}) > {{ cert_preprocessor_lag_threshold }}
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        message: Certificate Preprocessor Lag is {{ cert_preprocessor_lag_threshold }}
+        summary: Certificate Preprocessor Lag is Critical
+    - alert: Lag_Alert_For_Certificate_Generator
+      expr: sum(kafka_consumergroup_lag_sum{consumergroup="{{env}}-certificate-generator-group"}) > {{ certificate_generator_lag_threshold }}
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        message: Certificate Generator Lag is {{ certificate_generator_lag_threshold }}
+        summary: Certificate Generator Lag is Critical
+    - alert: API_Errors_for_updateContentState_ProgressSync
+      expr: (sum(increase(kong_request_status_count{api="updateContentState",status_code=~"5.."}[60m])) / sum(increase(kong_request_status_count{api="updateContentState",status_code=~"total"}[60m]))) * 100 >= 0.1
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        message: There are more server side failures for contentStateUpdate API in last 60 mins
+        summary: There are more server side failures for contentStateUpdate API in last 60 mins
+    - alert: Server side failure of submit exhaust
+      expr: sum(increase(kong_request_status_count{api="submitDataExhaustRequest",status_code=~"5.."}[1m])) >= 1
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        message: There are Server side failures for submit exhaust API in last 5 mins
+        summary: There are Server side failures for submit exhaust API in last 5 mins
+    - alert: Client side failure of submit exhaust
+      expr: sum(increase(kong_request_status_count{api="submitDataExhaustRequest",status_code=~"4.."}[1m])) >= 1
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        message: There are Client side failures for submit exhaust API in last 5 mins
+        summary: There are Client side failures for submit exhaust API in last 5 mins
+    - alert: High memory usage on redis server - WARNING
+      expr: sum by (instance) ((redis_memory_used_bytes) / (redis_memory_max_bytes) * 100) > 65
+      for: 5m
+      labels:
+        severity: Warning
+      annotations:
+        message: High memory usage on redis instance for last 5 mins - Warning
+        summary: High memory usage on redis instance for last 5 mins - Warning
+    - alert: High memory usage on redis server - CRITICAL
+      expr: sum by (instance) ((redis_memory_used_bytes) / (redis_memory_max_bytes) * 100) > 75
+      for: 5m
+      labels:
+        severity: Critical
+      annotations:
+        message: High memory usage on redis instance for last 5 mins - Critical
+        summary: High memory usage on redis instance for last 5 mins - Critical
+    - alert: High memory usage on redis server - FATAL
+      expr: sum by (instance) ((redis_memory_used_bytes) / (redis_memory_max_bytes) * 100) > 85
+      for: 5m
+      labels:
+        severity: Fatal
+      annotations:
+        message: High memory usage on redis instance for last 5 mins - Fatal
+        summary: High memory usage on redis instance for last 5 mins - Fatal
+    - alert: Client connections are more on redis server - FATAL
+      expr: sum by (instance) ((redis_connected_clients) / {{ azure_redis_max_clients }} * 100) > 85
+      for: 5m
+      labels:
+        severity: Fatal
+      annotations:
+        message: Client connections reached more then 85% in last 5 mins - Fatal
+        summary: Client connections reached more then 85% in last 5 mins - Fatal
+    - alert: Client connections are more on redis server - Critical
+      expr: sum by (instance) ((redis_connected_clients) / {{ azure_redis_max_clients }} * 100) > 75
+      for: 5m
+      labels:
+        severity: Critical
+      annotations:
+        message: Client connections reached more then 85% in last 5 mins - Critical
+        summary: Client connections reached more then 85% in last 5 mins - Critical
+    - alert: Client connections are more on redis server - Warning
+      expr: sum by (instance) ((redis_connected_clients) / {{ azure_redis_max_clients }} * 100) > 65
+      for: 5m
+      labels:
+        severity: Warning
+      annotations:
+        message: Client connections reached more then 85% in last 5 mins - Warning
+        summary: Client connections reached more then 85% in last 5 mins - Warning
+    - alert: Redis instance is down
+      expr: redis_up == 0
+      for: 1m
+      labels:
+        severity: Fatal
+      annotations:
+        message: Redis instance down - Fatal
+        summary: Redis instance down - Fatal

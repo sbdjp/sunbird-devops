@@ -1,0 +1,58 @@
+{
+"player":{
+  "name": "player_service",
+  "version": "1.14.0",
+  "org": "sunbird",
+  "hubuser": "purplesunbird"
+},
+"learner": { 
+  "name": "learner_service",
+  "version": "1.14.0",
+  "org": "sunbird",
+  "hubuser": "purplesunbird"
+},
+"content": {
+  "name": "content-service",
+  "version": "1.14.0",
+  "org": "sunbird",
+  "hubuser": "purplesunbird"
+},
+"proxy": {
+  "name": "proxy",
+  "version": "1.8.0",
+  "org": "sunbird",
+  "hubuser": "purplesunbird"
+},
+"kong": {
+  "name": "kong",
+  "version": "1.8.0",
+  "org": "sunbird",
+  "hubuser": "purplesunbird"
+},
+"adminutil": {
+  "name": "adminutil",
+  "version": "1.5.0",
+  "org": "sunbird",
+  "hubuser": "purplesunbird"
+},
+"badger": {
+  "name": "badger",
+  "version": "1.5.0",
+  "org": "sunbird",
+  "hubuser": "purplesunbird"
+},
+
+"telemetry": {
+  "name": "telemetry-service",
+  "version": "1.10.0",
+  "org": "sunbird",
+  "hubuser": "purplesunbird"
+},
+"logstash": {
+  "name": "tlogstash",
+  "version": "5.6",
+  "org": "sunbird",
+  "hubuser": "purplesunbird"
+}
+
+}

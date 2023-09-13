@@ -1,0 +1,25 @@
+pipeline{
+	agent{
+		label 'general-staging'
+	}
+
+	stages{
+		stage('Build'){
+			steps{
+			sh('./pipelines/setupDevopsCode.sh')
+			}
+		}
+
+		stage('Pre-Build'){
+			steps{
+			sh('./sunbird-devops/ansible/installDeps.sh')
+			}
+		}
+		stage('Deploy'){
+			steps{
+			sh('ansible-playbook -i ansible/inventories/ntp-staging ansible/es-curator.yml --vault-password-file /run/secrets/vault-pass')
+			}
+		}
+	}
+
+}

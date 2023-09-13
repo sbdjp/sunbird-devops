@@ -1,0 +1,22 @@
+@Library('deploy-conf') _
+node() {
+    try {
+        stage('checkout public repo') {
+            cleanWs()
+            checkout scm
+        }
+
+        stage('deploy') {
+            currentWs = sh(returnStdout: true, script: 'pwd').trim()
+            ansiblePlaybook = "$currentWs/ansible/downtime-proxy.yml"
+            values.put('currentWs', currentWs)
+            values.put('ansiblePlaybook', ansiblePlaybook)
+            values.put('ansibleExtraArgs', ansibleExtraArgs)
+            ansible_playbook_run(values)
+        }
+    }
+    catch (err) {
+        currentBuild.result = "FAILURE"
+        throw err
+    }
+}

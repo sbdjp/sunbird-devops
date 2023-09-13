@@ -1,0 +1,317 @@
+######################## LP ########################
+
+[learning1]
+11.4.3.27 ansible_ssh_port=2200
+
+[learning2]
+11.4.3.31 ansible_ssh_port=2200
+
+[learningall:children]
+learning1
+learning2
+
+#[search1]
+#11.4.3.18
+
+#[search2]
+#11.4.3.19
+
+#[searchall:children]
+#search1
+#search2
+
+#[dial1]
+#11.4.3.54
+
+#[dial2]
+#11.4.3.55
+
+#[dial:children]
+#dial1
+#dial2
+
+[redis1]
+11.4.2.40 ansible_ssh_port=2200
+
+[dp-redis]
+11.4.2.58 ansible_ssh_port=2200
+
+[lms-redis]
+11.4.2.86
+
+[dedup-redis]
+11.4.2.31
+
+[redis-metadata2]
+11.4.2.58 ansible_ssh_port=2200
+
+[redisall:children]
+redis1
+redis-metadata2
+
+[learning-neo4j-node1]
+11.4.2.41 ansible_ssh_port=2200
+
+[learning-neo4j-node2]
+11.4.2.42 ansible_ssh_port=2200
+
+[arbiter] ##learning-neo4j-node3
+11.4.2.43 dbms_mode=ARBITER ansible_ssh_port=2200
+
+[learning-neo4j-cluster:children]
+learning-neo4j-node1
+learning-neo4j-node2
+arbiter
+
+#[cassandra]
+#11.4.2.37
+
+[core-es-1]    
+11.4.2.6    
+    
+[core-es-2]    
+11.4.2.9    
+    
+[core-es-3]    
+11.4.2.10    
+    
+[core-es:children]    
+core-es-1    
+core-es-2                     
+core-es-3
+
+[cassandra-node-1]
+11.4.2.11
+
+[cassandra-node-2]
+11.4.2.26
+
+[cassandra-node-3]
+11.4.2.27
+
+[cassandra:children]
+cassandra-node-1
+cassandra-node-2
+cassandra-node-3
+
+[dp-cassandra]
+11.4.2.30
+
+[core-cassandra]
+11.4.2.11
+
+[core-es-1]
+11.4.2.6
+
+[core-es-2]
+11.4.2.9
+
+[core-es-3]
+11.4.2.10
+
+[core-es:children]
+core-es-1
+core-es-2
+core-es-3
+
+[composite-search-cluster]
+11.4.2.15
+11.4.2.16
+11.4.2.17
+
+[yarn-master]
+11.4.3.4
+
+[yarn-slave]
+11.4.3.5
+#11.4.3.6
+#11.4.3.7
+#11.4.3.8
+#11.4.3.9
+#11.4.3.24
+#11.4.3.58
+#11.4.3.59
+
+[yarn:children]
+yarn-master
+yarn-slave
+
+#[log-es-1]
+#11.4.2.69
+
+#[log-es-2]
+#11.4.2.70
+
+#[log-es-3]
+#11.4.2.71
+
+#[log-es:children]
+#log-es-1
+#log-es-2
+#log-es-3
+
+### Gray log Intro ##
+[log-es-1]
+11.4.2.100 node_name=log-es-1 es_instance_name=log-es-1 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-2]
+11.4.2.101 node_name=log-es-2 es_instance_name=log-es-2 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-3]
+11.4.2.103 node_name=log-es-3 es_instance_name=log-es-3 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-4]
+11.4.2.106 node_name=log-es-4 es_instance_name=log-es-4 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-5]
+11.4.2.107 node_name=log-es-5 es_instance_name=log-es-5 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-6]
+11.4.2.22 node_name=log-es-6 es_instance_name=log-es-6 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-7]
+11.4.2.23 node_name=log-es-7 es_instance_name=log-es-7 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-8]
+11.4.2.24 node_name=log-es-8 es_instance_name=log-es-8 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-9]
+11.4.2.28 node_name=log-es-9 es_instance_name=log-es-9 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-10]
+11.4.2.29 node_name=log-es-10 es_instance_name=log-es-10 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-11]
+11.4.2.32 node_name=log-es-11 es_instance_name=log-es-11 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-12]
+11.4.2.33 node_name=log-es-12 es_instance_name=log-es-12 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-13]
+11.4.2.37 node_name=log-es-13 es_instance_name=log-es-13 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-14]
+11.4.2.38 node_name=log-es-14 es_instance_name=log-es-14 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-15]
+11.4.2.39 node_name=log-es-15 es_instance_name=log-es-15 es_etc_node_master=true es_etc_node_data=true
+
+[log-es:children]
+log-es-1
+log-es-2
+log-es-3
+log-es-4
+log-es-5
+log-es-6
+log-es-7
+log-es-8
+log-es-9
+log-es-10
+log-es-11
+log-es-12
+log-es-13
+log-es-14
+log-es-15
+
+[graylog-1]
+11.4.2.102 mongodb_master=True graylog_is_master=True
+
+[graylog-2]
+11.4.2.104 mongodb_master=False graylog_is_master=False
+
+[graylog-3]
+11.4.2.105 mongodb_master=False graylog_is_master=False
+
+[graylog-4]
+11.4.2.19 mongodb_master=False graylog_is_master=False
+
+[graylog-5]
+11.4.2.20 mongodb_master=False graylog_is_master=False
+
+[graylog-6]
+11.4.2.21 mongodb_master=False graylog_is_master=False
+
+[graylog:children]
+graylog-1
+graylog-2
+graylog-3
+graylog-4
+graylog-5
+graylog-6
+
+[processing-cluster-kafka] # This is ingestion cluster ips and did not rename the group name. As we dont want to change the ansible script.
+11.4.2.73
+11.4.2.74
+11.4.2.75
+
+[processing-cluster-zookeepers] # This is ingestion cluster ips and did not rename the group name. As we dont want to change the ansible script.
+11.4.2.76
+11.4.2.77
+11.4.2.78
+
+[prod-migration]
+11.4.0.5
+
+[zookeeper:children]
+processing-cluster-zookeepers
+
+[local]
+localhost ansible_connection=local
+
+[lp:children]
+learningall
+searchall
+learning-neo4j-cluster
+cassandra
+redisall
+yarn
+composite-search-cluster
+processing-cluster-kafka
+zookeeper
+local
+prod-migration
+dp-redis
+dial
+lms-redis
+dedup-redis
+log-es
+graylog
+redis-metadata2
+
+[env:children]
+lp
+
+[env:vars]
+ansible_ssh_user=deployer
+ansible_ssh_private_key_file=/var/lib/jenkins/secrets/proddeployer_ssh_key
+
+########################### Centralized logs ####################
+[centralised-logs]
+10.20.1.6
+
+########### Dummay vars for 3.2.0 releas #####
+[es7]
+0.0.0.0
+
+[mlworkbench]
+0.0.0.0
+
+####################### Monitoring ########################
+[logstash-ps:children]
+learningall
+searchall
+
+[process-exporter:children]
+logstash-ps
+cassandra-ps
+
+[cassandra-ps:children]
+cassandra
+
+[process-exporter:vars]
+ansible_ssh_user="deployer"
+ansible_ssh_private_key_file=/var/lib/jenkins/secrets/proddeployer_ssh_key
+
+[all:vars]
+ansible_ssh_user=deployer
+ansible_ssh_private_key_file=/var/lib/jenkins/secrets/proddeployer_ssh_key

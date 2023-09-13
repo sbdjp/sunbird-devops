@@ -1,0 +1,132 @@
+#!/bin/bash
+
+##TelemetryValidator
+
+raw=$(bash /opt/kafka/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic __samza_checkpoint_ver_1_for_{{ env }}.TelemetryValidator_1 --max-messages 4  | awk -F ":" '{print $5}' | grep -o '[0-9]\+' | awk '{total += $1} END {print total}' > /tmp/output.txt && bash /opt/kafka/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic {{ env }}.telemetry.raw --time -1 | awk -F: '{print $3}' | awk '{ sum += $1 } END { print sum }' >> /tmp/output.txt && awk '{p=f;f=$1} NR>1{print f-p}' /tmp/output.txt)
+
+echo $raw
+
+curl -POST "http://11.3.2.17:8086/write?db=monitoring_events" --data-binary "dp-kafka,topic={{ env }}.telemetry.raw_TelemetryValidator value=$raw"
+
+## DeDuplication
+
+valid=$(/opt/kafka/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic __samza_checkpoint_ver_1_for_{{ env }}.DeDuplication_1 -max-messages 4  | awk -F ":" '{print $5}' | grep -o '[0-9]\+' | awk '{total += $1} END {print total}' > /tmp/output.txt && /opt/kafka/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic {{ env }}.telemetry.valid --time -1 | awk -F: '{print $3}' | awk '{ sum += $1 } END { print sum }' >> /tmp/output.txt && awk '{p=f;f=$1} NR>1{print f-p}' /tmp/output.txt)
+
+echo $valid
+
+curl -POST "http://11.3.2.17:8086/write?db=monitoring_events" --data-binary "dp-kafka,topic={{ env }}.telemetry.valid_DeDuplication value=$valid"
+
+## TelemetryExtractor
+
+extractor=$(/opt/kafka/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic __samza_checkpoint_ver_1_for_{{ env }}.TelemetryExtractor_1 -max-messages 4  | awk -F ":" '{print $5}' | grep -o '[0-9]\+' | awk '{total += $1} END {print total}' > /tmp/output.txt && /opt/kafka/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic {{ env }}.telemetry.ingest --time -1 | awk -F: '{print $3}' | awk '{ sum += $1 } END { print sum }' >> /tmp/output.txt && awk '{p=f;f=$1} NR>1{print f-p}' /tmp/output.txt)
+
+echo $extractor
+
+curl -POST "http://11.3.2.17:8086/write?db=monitoring_events" --data-binary "dp-kafka,topic={{ env }}.telemetry.ingest_TelemetryExtractor value=$extractor"
+
+
+##TelemetryLocationUpdater
+
+locupdate=$(/opt/kafka/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic __samza_checkpoint_ver_1_for_{{ env }}.TelemetryLocationUpdater_1 -max-messages 8  | awk -F ":" '{print $5}' | grep -o '[0-9]\+' | awk '{total += $1} END {print total}' > /tmp/output.txt && /opt/kafka/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic {{ env }}.telemetry.sink --time -1 | awk -F: '{print $3}' | awk '{ sum += $1 } END { print sum }' >> /tmp/output.txt && awk '{p=f;f=$1} NR>1{print f-p}' /tmp/output.txt)
+
+echo $locupdate
+
+curl -POST "http://11.3.2.17:8086/write?db=monitoring_events" --data-binary "dp-kafka,topic={{ env }}.telemetry.sink_TelemetryLocationUpdater value=$locupdate"
+
+
+##TelemetryRouter unique
+
+unique=$( /opt/kafka/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic  __samza_checkpoint_ver_1_for_{{ env }}.TelemetryRouter_1 -max-messages 8  | awk -F ":" '{print $5}' | grep -o '[0-9]\+' | awk '{total += $1} END {print total}' > /tmp/output.txt && /opt/kafka/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic {{ env }}.telemetry.unique --time -1 | awk -F: '{print $3}' | awk '{ sum += $1 } END { print sum }' >> /tmp/output.txt && awk '{p=f;f=$1} NR>1{print f-p}' /tmp/output.txt)
+
+echo $unique
+
+curl -POST "http://11.3.2.17:8086/write?db=monitoring_events" --data-binary "dp-kafka,topic={{ env }}.telemetry.unique_TelemetryRouter value=$unique"
+
+##TelemetryRouter Dervied
+
+derived=$(/opt/kafka/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic  __samza_checkpoint_ver_1_for_{{ env }}.TelemetryRouter_1 -max-messages 8  | awk -F ":" '{print $10}' | grep -o '[0-9]\+' | awk '{total += $1} END {print total}' > /tmp/output.txt && /opt/kafka/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic {{ env }}.telemetry.derived --time -1 | awk -F: '{print $3}' | awk '{ sum += $1 } END { print sum }' >> /tmp/output.txt && awk '{p=f;f=$1} NR>1{print f-p}' /tmp/output.txt)
+
+echo $derived
+
+curl -POST "http://11.3.2.17:8086/write?db=monitoring_events" --data-binary "dp-kafka,topic={{ env }}.telemetry.derived_TelemetryRouter value=$derived"
+
+
+
+##Esindexer failed
+
+failed=$(/opt/kafka/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic __samza_checkpoint_ver_1_for_{{ env }}.EsIndexer_1 -max-messages 8  | grep {{ env }}.telemetry.failed | awk -F ":" '{print $5}' | grep -o '[0-9]\+' | awk '{total += $1} END {print total}' > /tmp/output.txt && /opt/kafka/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic {{ env }}.telemetry.failed --time -1 | awk -F: '{print $3}' | awk '{ sum += $1 } END { print sum }' >> /tmp/output.txt && awk '{p=f;f=$1} NR>1{print f-p}' /tmp/output.txt)
+
+echo $failed
+
+curl -POST "http://11.3.2.17:8086/write?db=monitoring_events" --data-binary "dp-kafka,topic={{ env }}.telemetry.failed_EsIndexer value=$failed"
+
+##Telemetry Esindexer log
+
+log=$(/opt/kafka/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic __samza_checkpoint_ver_1_for_{{ env }}.EsIndexer_1 -max-messages 8  | grep {{ env }}.telemetry.log | awk -F ":" '{print $10}' | grep -o '[0-9]\+' | awk '{total += $1} END {print total}' > /tmp/output.txt && /opt/kafka/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic {{ env }}.telemetry.log --time -1 | awk -F: '{print $3}' | awk '{ sum += $1 } END { print sum }' >> /tmp/output.txt && awk '{p=f;f=$1} NR>1{print f-p}' /tmp/output.txt)
+
+echo $log
+
+curl -POST "http://11.3.2.17:8086/write?db=monitoring_events" --data-binary "dp-kafka,topic={{ env }}.telemetry.log_EsIndexer value=$log"
+
+
+##Telemetry Esindexer with_location
+
+withlocation=$(/opt/kafka/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic __samza_checkpoint_ver_1_for_{{ env }}.EsIndexer_1 -max-messages 8  | awk -F: '{print $(NF-1)}' | grep -o '[0-9]\+' | awk '{total += $1} END {print total}' > /tmp/output.txt && /opt/kafka/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic {{ env }}.telemetry.with_location --time -1 | awk -F: '{print $3}' | awk '{ sum += $1 } END { print sum }' >> /tmp/output.txt && awk '{p=f;f=$1} NR>1{print f-p}' /tmp/output.txt)
+
+echo $withlocation
+
+curl -POST "http://11.3.2.17:8086/write?db=monitoring_events" --data-binary "dp-kafka,topic={{ env }}.telemetry.with_location_EsIndexer value=$withlocation"
+
+##Composite_search_indexer
+
+compsearch=$(/opt/kafka/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic __samza_checkpoint_ver_1_for_{{ env }}.composite-search-indexer_1 -max-messages 4  | awk -F ":" '{print $5}' | grep -o '[0-9]\+' | awk '{total += $1} END {print total}' > /tmp/output.txt && /opt/kafka/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic {{ env }}.learning.graph.events --time -1 | awk -F: '{print $3}' | awk '{ sum += $1 } END { print sum }' >> /tmp/output.txt && awk '{p=f;f=$1} NR>1{print f-p}' /tmp/output.txt)
+
+echo $compsearch
+
+curl -POST "http://11.3.2.17:8086/write?db=monitoring_events" --data-binary "lp-kafka,topic={{ env }}.learning.graph.events_composite-search-indexer value=$compsearch"
+
+##publish-pipeline
+
+publish=$(/opt/kafka/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic  __samza_checkpoint_ver_1_for_{{ env }}.publish-pipeline_1 -max-messages 6  | awk -F ":" '{print $5}' | grep -o '[0-9]\+' | awk '{total += $1} END {print total}' > /tmp/output.txt && /opt/kafka/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic {{ env }}.learning.job.request --time -1 | awk -F: '{print $3}' | awk '{ sum += $1 } END { print sum }' >> /tmp/output.txt && awk '{p=f;f=$1} NR>1{print f-p}' /tmp/output.txt)
+
+echo $publish
+
+curl -POST "http://11.3.2.17:8086/write?db=monitoring_events" --data-binary "lp-kafka,topic={{ env }}.learning.job.request_publish-pipeline value=$publish"
+
+
+
+##QRcode
+
+#qrimage=$(/opt/kafka/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic  _samza_checkpoint_ver_1_for_{{ env }}.qrcode-image-generator_1 -max-messages 1  | awk -F ":" '{print $5}' | grep -o '[0-9]\+' | awk '{total += $1} END {print total}' > /tmp/output.txt && /opt/kafka/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic {{ env }}.qrimage.request --time -1 | awk -F: '{print $3}' | awk '{ sum += $1 } END { print sum }' >> /tmp/output.txt && awk '{p=f;f=$1} NR>1{print f-p}' /tmp/output.txt)
+
+#echo $qrimage
+
+#curl -POST "http://11.3.2.17:8086/write?db=monitoring_events" --data-binary "lp-kafka,topic={{ env }}.qrimage.request_qrcode-image-generator value=$qrimage"
+
+
+##Image_taging
+
+imagetag=$(/opt/kafka/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic __samza_checkpoint_ver_1_for_{{ env }}.image-tagging_1 -max-messages 1  | awk -F ":" '{print $5}' | grep -o '[0-9]\+' | awk '{total += $1} END {print total}' > /tmp/output.txt && /opt/kafka/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic {{ env }}.learning.job.request --time -1 | awk -F: '{print $3}' | awk '{ sum += $1 } END { print sum }' >> /tmp/output.txt && awk '{p=f;f=$1} NR>1{print f-p}' /tmp/output.txt)
+
+echo $imagetag
+
+curl -POST "http://11.3.2.17:8086/write?db=monitoring_events" --data-binary "lp-kafka,topic={{ env }}.job.request_imagetag value=$imagetag"
+
+
+
+##Audit-history
+
+audithistory=$(/opt/kafka/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic __samza_checkpoint_ver_1_for_{{ env }}.audit-history-indexer_1 -max-messages 4  | awk -F ":" '{print $5}' | grep -o '[0-9]\+' | awk '{total += $1} END {print total}' > /tmp/output.txt && /opt/kafka/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic {{ env }}.learning.graph.events --time -1 | awk -F: '{print $3}' | awk '{ sum += $1 } END { print sum }' >> /tmp/output.txt && awk '{p=f;f=$1} NR>1{print f-p}' /tmp/output.txt)
+
+echo $audithistory
+
+curl -POST "http://11.3.2.17:8086/write?db=monitoring_events" --data-binary "lp-kafka,topic={{ env }}.learning.graph.events_audit_history value=$audithistory"
+
+
+##Audit-Event
+
+auditevent=$(/opt/kafka/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic __samza_checkpoint_ver_1_for_{{ env }}.audit-event-generator_1 -max-messages 4  | awk -F ":" '{print $5}' | grep -o '[0-9]\+' | awk '{total += $1} END {print total}' > /tmp/output.txt && /opt/kafka/bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list localhost:9092 --topic {{ env }}.learning.graph.events --time -1 | awk -F: '{print $3}' | awk '{ sum += $1 } END { print sum }' >> /tmp/output.txt && awk '{p=f;f=$1} NR>1{print f-p}' /tmp/output.txt)
+
+echo $auditevent
+
+curl -POST "http://11.3.2.17:8086/write?db=monitoring_events" --data-binary "lp-kafka,topic={{ env }}.learning.graph.events_audit_event value=$auditevent"

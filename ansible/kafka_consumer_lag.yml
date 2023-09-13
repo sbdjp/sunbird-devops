@@ -1,0 +1,4 @@
+- hosts: "{{ groups ['processing-cluster-kafka'][0] }}"
+  become: yes
+  roles:
+    - kafka_consumer_lag_monitor

@@ -1,0 +1,791 @@
+[processing-cluster-kafka-1]
+11.4.2.45 ansible_ssh_port=2200
+
+[processing-cluster-kafka-2]
+11.4.2.46 ansible_ssh_port=2200
+
+[processing-cluster-kafka-3]
+11.4.2.47 ansible_ssh_port=2200
+
+[processing-cluster-kafka-4]
+11.4.2.48 ansible_ssh_port=2200
+
+[processing-cluster-kafka-5]
+11.4.2.49 ansible_ssh_port=2200
+
+
+[prod-py-spark-sl-2]
+11.4.3.74
+
+[processing-cluster-kafka:children]
+processing-cluster-kafka-1
+processing-cluster-kafka-2
+processing-cluster-kafka-3
+processing-cluster-kafka-4
+processing-cluster-kafka-5
+
+[processing-cluster-zookeepers-1]
+11.4.2.51 ansible_ssh_port=2200
+
+[processing-cluster-zookeepers-2]
+11.4.2.52 ansible_ssh_port=2200
+
+[processing-cluster-zookeepers-3]
+11.4.2.53 ansible_ssh_port=2200
+
+[processing-cluster-zookeepers:children]
+processing-cluster-zookeepers-1
+processing-cluster-zookeepers-2
+processing-cluster-zookeepers-3
+
+[zookeeper:children]
+processing-cluster-zookeepers-1
+processing-cluster-zookeepers-2
+processing-cluster-zookeepers-3
+####################################
+
+[swarm-manager-1]
+11.4.1.4 swarm_master=true
+
+[swarm-manager-2]
+11.4.1.5
+
+[swarm-manager-3]
+11.4.1.6
+
+[swarm-manager:children]
+swarm-manager-1
+swarm-manager-2
+swarm-manager-3
+
+[keycloak-1]
+11.4.3.18
+
+[keycloak-2]
+11.4.3.22
+
+[keycloak-3]
+11.4.3.26
+
+[keycloak-4]
+11.4.3.25
+
+[keycloak:children]
+keycloak-1
+keycloak-2
+keycloak-3
+keycloak-4
+
+#[log-es-2] 
+#11.4.2.28 node_name=log-es-2 es_instance_name=log-es-2 es_etc_node_master=true es_etc_node_data=true
+
+#[log-es-1]
+#11.4.2.69 node_name=log-es-1 es_instance_name=log-es-1 es_etc_node_master=true es_etc_node_data=true
+
+#[log-es-2]
+#11.4.2.70 node_name=log-es-2 es_instance_name=log-es-2 es_etc_node_master=true es_etc_node_data=true
+
+#[log-es-3]
+#11.4.2.71 node_name=log-es-3 es_instance_name=log-es-3 es_etc_node_master=true es_etc_node_data=true
+
+
+#[log-es:children]
+#log-es-1
+#log-es-2
+#log-es-3
+
+### Gray log Intro ##
+[log-es-1]
+11.4.2.100 node_name=log-es-1 es_instance_name=log-es-1 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-2]
+11.4.2.101 node_name=log-es-2 es_instance_name=log-es-2 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-3]
+11.4.2.103 node_name=log-es-3 es_instance_name=log-es-3 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-4]
+11.4.2.106 node_name=log-es-4 es_instance_name=log-es-4 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-5]
+11.4.2.107 node_name=log-es-5 es_instance_name=log-es-5 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-6]
+11.4.2.22 node_name=log-es-6 es_instance_name=log-es-6 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-7]
+11.4.2.23 node_name=log-es-7 es_instance_name=log-es-7 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-8]
+11.4.2.24 node_name=log-es-8 es_instance_name=log-es-8 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-9]
+11.4.2.28 node_name=log-es-9 es_instance_name=log-es-9 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-10]
+11.4.2.29 node_name=log-es-10 es_instance_name=log-es-10 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-11]
+11.4.2.32 node_name=log-es-11 es_instance_name=log-es-11 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-12]
+11.4.2.33 node_name=log-es-12 es_instance_name=log-es-12 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-13]
+11.4.2.37 node_name=log-es-13 es_instance_name=log-es-13 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-14]
+11.4.2.38 node_name=log-es-14 es_instance_name=log-es-14 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-15]
+11.4.2.39 node_name=log-es-15 es_instance_name=log-es-15 es_etc_node_master=true es_etc_node_data=true
+
+[log-es:children]
+log-es-1
+log-es-2
+log-es-3
+log-es-4
+log-es-5
+log-es-6
+log-es-7
+log-es-8
+log-es-9
+log-es-10
+log-es-11
+log-es-12
+log-es-13
+log-es-14
+log-es-15
+
+
+[graylog-1]
+11.4.2.102 mongodb_master=True graylog_is_master=True
+
+[graylog-2]
+11.4.2.104 mongodb_master=False graylog_is_master=False
+
+[graylog-3]
+11.4.2.105 mongodb_master=False graylog_is_master=False
+
+[graylog-4]
+11.4.2.19 mongodb_master=False graylog_is_master=False
+
+[graylog-5]
+11.4.2.20 mongodb_master=False graylog_is_master=False
+
+[graylog-6]
+11.4.2.21 mongodb_master=False graylog_is_master=False
+
+[graylog:children]
+graylog-1
+graylog-2
+graylog-3
+graylog-4
+graylog-5
+graylog-6
+
+[mongo_master]
+11.4.2.97 mongodb_master=True
+
+#[mongo_replicas] #add ip in case replicaSet
+
+[mongo:children]
+mongo_master
+#mongo_replicas
+
+[swarm-agent-for-prometheus-1] 
+11.4.0.17
+
+[swarm-agent-for-prometheus:children]
+swarm-agent-for-prometheus-1
+
+[swarm-agent-for-alertmanager-1] 
+11.4.0.16
+
+[swarm-node-1]
+11.4.0.16
+
+[swarm-node-2]
+11.4.0.17
+
+[swarm-node-3]
+11.4.0.18
+
+[swarm-node-6]
+11.4.0.21
+
+[swarm-node-7]
+11.4.0.22
+
+[swarm-node-8]
+11.4.0.23
+
+[swarm-worker:children]
+swarm-node-1
+swarm-node-2
+swarm-node-3
+swarm-node-6
+swarm-node-7
+swarm-node-8
+
+
+[swarm-dashboard-1]
+11.4.3.40
+
+[swarm-dashboard:children]
+swarm-dashboard-1
+
+[swarm-agent-dashboard-1]
+11.4.3.40
+
+[swarm-agent-dashboard:children]
+swarm-agent-dashboard-1
+
+[swarm-agent-for-prometheus-stateful:children]
+swarm-agent-dashboard
+
+[alertmanager_stateful:children]
+swarm-agent-dashboard
+
+[alertmanager]
+11.4.1.4
+#11.4.1.11
+11.4.1.7
+
+[es-1] 
+11.4.2.6 es_instance_name=es-1 es_etc_node_master=true es_etc_node_data=true
+
+[es-2]
+11.4.2.9 es_instance_name=es-2 es_etc_node_master=true es_etc_node_data=true
+
+[es-3]
+11.4.2.10 es_instance_name=es-3 es_etc_node_master=true es_etc_node_data=true
+
+[es-backup:children]
+es-1
+
+[log-es-backup:children]
+log-es-2
+
+[es:children]
+es-1
+es-2
+es-3
+
+[cassandra-1]
+11.4.2.11
+
+[cassandra-2]
+11.4.2.26
+
+[cassandra-3]
+11.4.2.27
+
+[cassandra-4]
+11.4.2.89
+
+[cassandra-5]
+11.4.2.90
+
+[cassandra-6]
+11.4.2.98
+
+[cassandra-7]
+11.4.2.92
+
+[cassandra-8]
+11.4.2.12
+
+[cassandra-9]
+11.4.2.13
+
+[cassandra-10]
+11.4.2.14
+
+[cassandra-11]
+11.4.2.18
+
+[cassandra:children]
+cassandra-1
+cassandra-2
+cassandra-3
+cassandra-4
+cassandra-5
+cassandra-6
+cassandra-7
+cassandra-8
+cassandra-9
+cassandra-10
+cassandra-11
+
+[lp-cassandra]
+11.4.2.11
+11.4.2.26
+11.4.2.27
+11.4.2.89
+11.4.2.90
+11.4.2.98
+11.4.2.92
+11.4.2.12
+11.4.2.13
+11.4.2.14
+11.4.2.18
+
+[dp-cassandra]
+11.4.2.30
+
+[cassandra-ps:children]
+dp-cassandra
+
+[logstash-ps:children]
+dp-apilogstash-ps
+
+[dp-apilogstash-ps]
+#11.4.3.10
+#11.4.3.15
+
+[learning-neo4j-node1]
+11.4.2.41 ansible_ssh_port=2200
+
+[learning-neo4j-node2]
+11.4.2.42 ansible_ssh_port=2200
+
+[arbiter] ##learning-neo4j-node3
+11.4.2.43 dbms_mode=ARBITER ansible_ssh_port=2200
+
+[learning-neo4j-cluster:children]
+learning-neo4j-node1
+learning-neo4j-node2
+arbiter  ##master
+
+[postgresql-master-1] 
+production-keycloak-lms.postgres.database.azure.com
+
+[postgresql-master:children]
+postgresql-master-1
+
+[postgresql-slave-1] 
+production-keycloak-lms.postgres.database.azure.com
+
+[postgresql-slave:children]
+postgresql-slave-1
+
+[postgres:children]
+postgresql-slave
+postgresql-master
+
+[lp-redis]
+11.4.2.40 ansible_ssh_port=2200
+
+[lp-redis-ps:children]
+lp-redis
+
+[redisall]
+#11.4.2.88
+
+[kafka-1]
+11.4.2.73 kafka_id=1 
+
+[kafka-2]
+11.4.2.74 kafka_id=2
+
+[kafka-3]
+11.4.2.75 kafka_id=3 
+
+[telemetry-search-cluster-1]
+11.4.2.18
+
+[telemetry-search-cluster-2]
+11.4.2.19
+
+[telemetry-search-cluster-3]
+11.4.2.20
+
+[prod-bastion]    
+11.4.0.29 ansible_ssh_user=ops ansible_ssh_private_key_file=/var/lib/jenkins/secrets/prodops_ssh_key  skip_basic_monitoring=true
+
+[prod-k8s-bastion]
+11.4.0.75
+
+[telemetry-search-cluster:children]
+telemetry-search-cluster-1
+telemetry-search-cluster-2
+telemetry-search-cluster-3
+
+[kafka:children]
+kafka-1
+kafka-2
+kafka-3
+
+[kafka:vars]
+skip_basic_monitoring=true
+
+[yarn-master]
+11.4.3.4
+
+[yarn-slave]
+11.4.3.5
+#11.4.3.6
+#11.4.3.7
+#11.4.3.8
+#11.4.3.9
+
+[yarn:children]
+yarn-master
+yarn-slave
+
+[jenkins-master]
+10.20.0.9 ansible_connection=local
+
+[local]
+localhost ansible_connection=local cluster_name=Kubernetes-1
+
+[swarm-agent-for-alertmanager:children]
+swarm-agent-for-alertmanager-1
+
+[kong-api]
+localhost
+
+[swarm-bootstrap-manager:children]
+swarm-manager
+
+[swarm-nodes:children]
+swarm-manager
+swarm-bootstrap-manager
+swarm-agent-for-prometheus
+swarm-agent-for-alertmanager
+swarm-worker
+
+[log-forwarder:children]
+swarm-manager
+
+[secor-1]
+11.4.3.65
+
+[secor-2]
+11.4.3.66
+
+[secor-3]
+11.4.3.67
+########################################################### Monitoring ########################################
+
+[lp-redis-ps:children]
+11.4.2.5
+
+[lp-neo4j-ps]
+11.4.2.41 ansible_ssh_port=2200
+11.4.2.42 ansible_ssh_port=2200
+11.4.2.43 ansible_ssh_port=2200
+
+[dp-influx-ps]
+11.4.2.7
+
+[dp-redis]
+11.4.2.58 ansible_ssh_port=2200
+
+#[dp-druid-ps]
+
+#[dp-superset-ps]
+#11.5.2.10
+
+[dp-analytics-ps]
+#11.4.3.10
+#11.4.3.15
+
+[dp-yarn-rm-ps]
+11.4.3.4
+
+[dp-yarn-slave-ps]
+11.4.3.5
+#11.4.3.6
+#11.4.3.7
+#11.4.3.8
+#11.4.3.9
+
+[lp-composite-ps]
+11.4.2.15
+11.4.2.16
+11.4.2.17
+
+[dp-secor-ps]
+11.4.3.13
+
+[dp-spark-ps]
+11.4.3.12
+
+[dp-kafkaindexer-ps]
+11.4.2.25
+
+[lp-search-ps]
+#11.4.3.18
+#11.4.3.19
+
+[lp-learning-ps]
+11.4.3.27 ansible_ssh_port=2200
+11.4.3.31 ansible_ssh_port=2200
+
+[dp-cassandra]
+11.4.2.30
+
+[spark-all]
+11.4.3.48
+11.4.3.12
+11.4.3.25
+11.4.3.49
+
+[processing-cluster-kafka-ps:children]
+processing-cluster-kafka-1
+processing-cluster-kafka-2
+processing-cluster-kafka-3
+processing-cluster-kafka-4
+processing-cluster-kafka-5
+
+[aks-node-pool]
+11.4.17.89
+11.4.17.120
+11.4.18.19
+11.4.16.66
+11.4.17.151
+11.4.16.97
+11.4.16.35
+11.4.16.159
+11.4.17.58
+11.4.17.27
+11.4.17.213
+11.4.17.182
+11.4.16.252
+11.4.16.128
+11.4.16.4
+11.4.16.221
+11.4.17.244
+11.4.16.190
+
+[process-exporter-prometheus:children]
+basic-monitor
+aks-node-pool
+
+[redis-exporter-targets:children]
+dp-redis
+dp-redis-metadata
+lp-redis
+
+[redis-cluster:children]
+redis-exporter-targets
+
+[dp-redis-metadata]
+11.4.2.31
+
+[sl-servers]
+10.2.10.4 #app-server
+10.2.10.5 #db-server
+
+[basic-monitor:children]
+swarm-manager
+swarm-worker
+lp-redis-ps
+prod-druid-rollup-reply-temp
+cassandra
+kafka
+#druid-zookeeper-ps
+es
+log-es
+lp-neo4j-ps
+dp-influx-ps
+swarm-dashboard
+#dp-druid-ps
+processing-cluster-kafka-ps
+keycloak
+yarn
+dp-secor-ps
+dp-spark-ps
+dp-analytics-ps
+dp-redis
+lp-search-ps
+lp-learning-ps
+dp-cassandra
+#druid-postgres-ps
+overlord-ps
+coordinator-ps
+historical-ps
+druid-graphite-ps
+broker-ps
+middlemanager-ps
+spark-all
+11.4.3.41
+11.4.3.42
+#11.4.3.43
+redisall
+mongo
+prod-py-spark-sl-2
+sl-servers
+graylog
+
+# monitor tomcat process
+[tomcat-ps:children]
+lp-learning-ps
+
+# monitor serach process
+[search-ps:children]
+lp-search-ps
+
+# monitor neo4j process
+[neo4j-ps:children]
+dp-neo4j-ps
+
+# monitor elasticsearch process
+[es-ps:children]
+log-es
+lp-composite-ps
+es
+
+# monitor yarn process
+[yarn-rm-ps:children]
+dp-yarn-rm-ps
+
+[yarn-slave-ps:children]
+dp-yarn-slave-ps
+
+# monitor cassandra process
+[cassandra-ps:children]
+cassandra
+
+# monitor logstash process  # learning, search, neo4j, kafkaindexer
+[logstash-ps:children]
+lp-learning-ps
+lp-search-ps
+lp-neo4j-ps
+dp-kafkaindexer-ps
+
+# monitor secor process
+[secor-ps:children]
+dp-secor-ps
+
+# monitor analytics process
+[analytics-ps:children]
+dp-analytics-ps
+
+# monitor kafka process
+[kafka-ps:children]
+dp-kafka-ps
+
+# monitor druid process
+[druid-zookeeper-ps]
+11.4.2.45
+11.4.2.46
+11.4.2.47
+11.4.2.48
+11.4.2.49
+11.4.0.8
+11.4.0.9
+11.4.0.10
+
+# monitor postgres process
+#[druid-postgres-ps:children]
+
+
+# monitor overlord process
+[overlord-ps]
+11.4.3.41
+11.4.0.53
+
+# monitor coordinator process
+[coordinator-ps]
+11.4.3.41
+
+# monitor historical process
+[historical-ps]
+#11.4.3.43
+#11.4.3.44
+11.4.0.7
+11.4.0.66
+11.4.0.77
+11.4.3.10
+11.4.0.51
+11.4.0.77
+11.4.0.66
+11.4.0.11
+
+# monitor druid graphite process
+[druid-graphite-ps:children] # check once
+11.4.3.41
+
+# monitor druid broker process
+[broker-ps:children]
+11.4.3.41
+11.4.0.4
+
+# monitor middlemanager process
+[middlemanager-ps]
+11.4.3.42
+11.4.3.10
+11.4.0.52
+11.4.0.54
+11.4.0.58
+11.4.0.6
+11.4.3.75
+11.4.3.33
+11.4.3.23
+
+[prod-druid-rollup-reply-temp]
+11.4.0.54
+
+# process exporter monitoring group
+[process-exporter:children]
+es-ps
+yarn-ps
+cassandra-ps
+logstash-ps
+secor-ps
+analytics-ps
+kafka-ps
+druid-zookeeper-ps
+#druid-postgres-ps
+overlord-ps
+coordinator-ps
+historical-ps
+druid-graphite-ps
+broker-ps
+middlemanager-ps
+graylog
+
+# Add all VMs for basic monitoring
+[node-exporter:children]
+core
+kafka
+basic-monitor
+
+[core:children]
+es
+log-es
+cassandra
+swarm-nodes
+swarm-manager
+keycloak
+swarm-dashboard
+swarm-agent-dashboard
+process-exporter
+prod-py-spark-sl-2
+graylog
+redis-cluster
+
+[env:children]
+log-es
+postgres
+core
+# Moving kafka out of core because we don't need monitoring
+kafka
+local
+node-exporter
+mongo
+jenkins-master
+
+###########################################################
+
+
+
+[all:vars]
+logger_es6_host="{{ groups['log-es-2'][0] }}" ### Move this to default all.yml after prod deploy #####
+cluster_name=Swarm1
+ansible_ssh_user=deployer
+ansible_ssh_private_key_file=/var/lib/jenkins/secrets/proddeployer_ssh_key
+monitor_stateful=true

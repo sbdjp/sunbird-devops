@@ -1,0 +1,29 @@
+- name: copy the alert script
+  template: src=Dataproducts_monitor dest=~/{{ env }}_dataproducts_alert.sh mode=755 force=yes
+  tags:
+    - daily
+    
+- name: Run the alert script
+  command: ~/{{ env }}_dataproducts_alert.sh {{ env }}
+  tags:
+    - daily
+    
+- name: copy the alert script
+  template: src=Dataproducts_monitor_weekly dest=~/{{ env }}_dataproducts_alert_weekly.sh mode=755 force=yes
+  tags:
+    - weekly
+    
+- name: Run the alert script
+  command: ~/{{ env }}_dataproducts_alert_weekly.sh {{ env }}
+  tags:
+    - weekly
+
+- name: copy the Exhaust_file_monitor alert script
+  template: src=Exhaust_file_monitor dest=~/{{ env }}_Exhaust_file_monitor.sh mode=755 force=yes
+  tags:
+    - exhaustfile
+
+- name: Run the alert script
+  command: ~/{{ env }}_Exhaust_file_monitor.sh {{ env }}
+  tags:
+    - exhaustfile

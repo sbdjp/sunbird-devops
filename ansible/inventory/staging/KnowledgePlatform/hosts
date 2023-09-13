@@ -1,0 +1,198 @@
+######################## LP ########################
+
+[learning1]
+11.3.3.33 ansible_ssh_port=2200
+
+[learningall:children]
+learning1
+
+[search1]
+11.3.3.19
+
+[searchall:children]
+search1
+
+[dial1]
+11.3.3.24
+
+[dial:children]
+dial1
+
+[redis1]
+11.3.3.27 ansible_ssh_port=2200
+
+[redisall:children]
+redis1
+
+[dp-redis]
+11.3.3.32 ansible_ssh_port=2200
+
+[redis-metadata2]
+11.3.3.32 ansible_ssh_port=2200
+
+[learning-neo4j-node1]
+11.3.3.28 ansible_ssh_port=2200
+
+
+# Enable following host, if you're have neo4j cluster and an arbiter for election
+# [arbiter]
+# <ip> dbms_mode=ARBITER
+
+[learning-neo4j-cluster:children]
+learning-neo4j-node1
+
+[cassandra-node-1]    
+11.3.2.33
+
+[cassandra-node-2]    
+11.3.2.32
+
+[cassandra-node-3]  
+11.3.2.34   
+
+[cassandra:children]    
+cassandra-node-1   
+cassandra-node-2
+cassandra-node-3
+
+[dp-cassandra]
+11.3.2.15
+
+#dummy hosts added yarn deployment
+[es7]
+0.0.0.0
+
+[mlworkbench]
+0.0.0.0
+
+[core-cassandra]
+11.3.2.33
+
+[core-es-1]        
+11.3.2.20
+
+[core-es-2]        
+11.3.2.21        
+        
+[core-es-3]        
+11.3.2.22        
+    
+[core-es:children]        
+core-es-1        
+core-es-2                         
+core-es-3  
+
+[composite-search-cluster]
+11.3.2.20
+11.3.2.21
+11.3.2.22
+
+[yarn-master]
+11.3.3.11
+
+[yarn-slave]
+11.3.3.12
+11.3.3.13
+11.3.3.14
+
+[yarn:children]
+yarn-master
+yarn-slave
+
+
+#[log-es-1]
+#11.3.2.36 node_name=log-es-1 es_instance_name=log-es-1 es_etc_node_master=true es_etc_node_data=true
+
+#[log-es-2]
+#11.3.2.37 node_name=log-es-2 es_instance_name=log-es-2 es_etc_node_master=true es_etc_node_data=true
+
+#[log-es-3]
+#11.3.2.38 node_name=log-es-3 es_instance_name=log-es-3 es_etc_node_master=true es_etc_node_data=true
+
+### Gray log Intro ##
+[log-es-1]
+11.3.3.25 node_name=log-es-1 es_instance_name=log-es-1 es_etc_node_master=true es_etc_node_data=true
+
+[log-es:children]
+log-es-1
+
+[graylog-1]
+11.3.3.21 mongodb_master=True graylog_is_master=True
+
+[graylog:children]
+graylog-1
+
+
+[processing-cluster-kafka]
+11.3.2.6
+11.3.2.14
+11.3.2.8
+
+[processing-cluster-zookeepers]
+11.3.2.6
+11.3.2.14
+11.3.2.8
+
+[staging-migration]
+11.3.3.33 ansible_ssh_port=2200
+
+[zookeeper:children]
+processing-cluster-zookeepers
+
+[local]
+localhost ansible_connection=local
+
+[lp:children]
+learningall
+searchall
+learning-neo4j-cluster
+cassandra
+redisall
+yarn
+composite-search-cluster
+processing-cluster-kafka
+zookeeper
+local
+staging-migration
+dp-redis
+dial
+log-es
+graylog
+
+
+[env:children]
+lp
+
+[env:vars]
+ansible_ssh_user="deployer"
+ansible_ssh_private_key_file=/var/lib/jenkins/secrets/deployer_ssh_key
+
+########################### Centralized logs ####################
+[centralised-logs]
+10.20.1.6
+
+####################### Monitoring ########################
+[logstash-ps]
+11.3.3.19
+11.3.3.33 ansible_ssh_port=2200
+11.3.2.19
+
+[process-exporter:children]
+logstash-ps
+cassandra-ps
+
+[cassandra-ps]
+11.3.2.15
+
+[log-es:children]
+log-es-1
+log-es-2
+log-es-3
+
+[process-exporter:vars]
+ansible_ssh_user="deployer"
+ansible_ssh_private_key_file=/var/lib/jenkins/secrets/deployer_ssh_key
+
+[all:vars]
+ansible_ssh_user=deployer
+ansible_ssh_private_key_file=/var/lib/jenkins/secrets/deployer_ssh_key

@@ -1,0 +1,8 @@
+ssl_secrets:
+  - name: site.key
+    value: "{{dikshabot_site_key}}"
+  - name: site.crt
+    value: "{{dikshabot_site_crt}}"
+  - name: site.ca 
+    value: "{{dikshabot_site_ca}}"
+router_replicas: 2

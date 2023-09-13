@@ -1,0 +1,5 @@
+- name: copy the alerts rule template to temp path
+  template: src=Alert_rules dest=/tmp/{{env}}-alert-rules.yml
+
+- name: Apply the alert rule
+  command: kubectl apply -f /tmp/{{env}}-alert-rules.yml

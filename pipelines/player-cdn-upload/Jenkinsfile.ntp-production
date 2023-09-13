@@ -1,0 +1,33 @@
+#!groovy
+
+node('android-slave') {
+
+    currentBuild.result = "SUCCESS"
+
+    try {
+
+       stage('Checkout'){
+          step ([$class: 'CopyArtifact',
+          projectName: 'Build/Player',
+          filter: 'metadata.json']);
+          checkout scm
+          sh"""
+            ./pipelines/setupDevopsCode.sh cdn-test
+            ./pipelines/player-cdn-upload/setupPlayer.sh
+            """
+       }
+
+       stage('Build'){
+          sh ("docker run --rm -v `pwd`:/work -w /work node:8.11.2-alpine sh ./pipelines/player-cdn-upload/build.sh ${cdn}")
+        }
+        
+        stage('Deploy'){
+            sh("./pipelines/player-cdn-upload/deploy.sh ntp-production")
+        }
+    }
+    catch (err) {
+        currentBuild.result = "FAILURE"
+        throw err
+    }
+
+}

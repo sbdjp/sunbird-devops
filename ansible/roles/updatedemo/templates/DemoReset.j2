@@ -1,0 +1,9 @@
+#!/bin/bash
+export JAVA_HOME="{{demo_java_home}}"
+export LIB_PATH=lib
+export CLASSPATH="${LIB_PATH}/apache-log4j-1.2.15.jar:${LIB_PATH}/commons-codec-1.9.jar:${LIB_PATH}/commons-logging-1.2.jar:${LIB_PATH}/dom4j.jar:${LIB_PATH}/gson-2.2.2.jar:${LIB_PATH}/httpclient-4.5.2.jar:${LIB_PATH}/httpcore-4.4.4.jar:${LIB_PATH}/java-json.jar:${LIB_PATH}/DemoReset.jar:${LIB_PATH}/asm-5.0.3.jar:${LIB_PATH}/asm-analysis-5.0.3.jar:${LIB_PATH}/asm-commons-5.0.3:${LIB_PATH}/asm-tree-5.0.3.jar:${LIB_PATH}/asm-util-5.0.3.jar:${LIB_PATH}/cassandra-driver-core-3.4.0.jar:${LIB_PATH}/cassandra-driver-extras-3.4.0.jar:${LIB_PATH}/guava-19.0.jar:${LIB_PATH}/jffi-1.2.10.jar:${LIB_PATH}/jffi-1.2.10-native.jar:${LIB_PATH}/jnr-constants-0.9.0.jar:${LIB_PATH}/jnr-ffi-2.0.7.jar:${LIB_PATH}/jnr-posix-3.0.27.jar:${LIB_PATH}/jnr-x86asm-1.0.2.jar:${LIB_PATH}/metrics-core-3.2.2.jar:${LIB_PATH}/netty-buffer-4.0.47.Final.jar:${LIB_PATH}/netty-codec-4.0.47.Final.jar:${LIB_PATH}/netty-common-4.0.47.Final.jar:${LIB_PATH}/netty-handler-4.0.47.Final.jar:${LIB_PATH}/netty-transport-4.0.47.Final.jar:${LIB_PATH}/slf4j-api-1.7.25.jar"
+#export PATH=$JAVA_HOME/bin:$LIB_PATH:$CLASSPATH:$PATH
+echo $JAVA_HOME
+echo $LIB_PATH
+echo $CLASSPATH
+$JAVA_HOME/bin/java -Xmx512m ntp.userreset.Schedular CUI

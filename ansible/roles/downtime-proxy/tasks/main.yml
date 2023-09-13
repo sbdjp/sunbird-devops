@@ -1,0 +1,36 @@
+---
+- name: Ensure stack directory exists
+  file:
+    path: /home/deployer/stack
+    state: directory
+    owner: root
+    group: root
+
+- name: Ensure config directory exists
+  file:
+    path: /home/deployer/config
+    state: directory
+    owner: root
+    group: root
+
+- name: Save stack file
+  template: src=maintainance-proxy.yml dest=/home/deployer/stack/maintainance-proxy.yml mode=0644
+
+- name: Save default.conf
+  template: src=default.conf dest=/home/deployer/config/default.conf mode=0644
+
+- name: Ensure network exists
+  shell: docker network create --driver overlay maintainance-proxy
+  ignore_errors: true
+
+- name: Remove old default.conf docker config
+  shell: "docker config rm default.conf"
+  ignore_errors: yes
+
+- name: Save default.conf as docker config
+  shell: "docker config create default.conf /home/deployer/config/default.conf"
+
+- name: Deploy stack
+  shell: "docker stack deploy -c maintainance-proxy.yml maintainance"
+  args:
+    chdir: /home/deployer/stack

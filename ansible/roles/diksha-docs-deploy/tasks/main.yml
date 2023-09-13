@@ -1,0 +1,46 @@
+- name: Get jekyll process id
+  shell: "ps -ef | grep -i {{ PROCESS }} | awk '{print $2}'"
+  register: jekyll_process
+
+- name: Kill jekyll process
+  shell: "kill -9 {{ item }}"
+  with_items: "{{ jekyll_process.stdout_lines }}"
+  ignore_errors: yes
+
+- name: Remove existing diksha-docs directory
+  file:
+    state: absent
+    path: "{{ BASEPATH }}/diksha-api-docs"  
+  become: yes   
+
+- name: Clone diksha-docs repo
+  git:
+    repo: "https://{{ repo_user | urlencode }}:{{ repo_pass | urlencode }}@github.com/DIKSHA-NCTE/diksha-api-docs.git"
+    dest: "{{ BASEPATH }}/diksha-api-docs"
+    version: "{{ repo_version }}"
+    depth: "1"
+    force: yes  
+
+- name: Install dependencies
+  shell: "cd {{ BASEPATH }}/diksha-api-docs; bundle install"
+
+- name: Start jekyll server
+  shell: "cd {{ BASEPATH }}/diksha-api-docs; nohup bundle exec jekyll serve -H 0.0.0.0 </dev/null >/dev/null 2>&1 &"
+
+- name: Validating if the Jekyll is UP and OPENED the PORT
+  wait_for:
+    host: "{{ inventory_hostname }}"
+    port: 4000
+    delay: 10
+    timeout: 30
+    state: started
+    msg: "Jekyll PORT is not Listening"
+
+- name: Debug required variables
+  debug:
+    msg: "Inventory-host: {{ inventory_hostname }}, Ansible-host: {{ ansible_hostname }}"
+  
+- name: Get RUBY service
+  shell: "netstat -tunlp"
+  register: results
+  become: yes

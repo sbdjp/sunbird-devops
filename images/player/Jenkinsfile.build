@@ -1,0 +1,50 @@
+#!groovy
+
+node('android-slave') {
+
+    currentBuild.result = "SUCCESS"
+
+    try {
+    
+    dir('themes') {
+      sh('pwd')
+      git credentialsId: 'diksha-deploy', url: 'https://github.com/DIKSHA-NCTE/diksha-tenant.git', branch: 'master'
+    
+    }
+      
+    dir('devops') {
+        git branch: 'release-1.14', credentialsId: 'diksha-deploy', url: 'https://github.com/DIKSHA-NCTE/ntp-devops.git'
+        sh('chmod -R  775 images/player')
+        sh('./images/player/installDeps.sh')
+        sh('pwd')
+    }
+   stage('build'){
+    sh('./devops/images/player/build.sh')
+    sh('./devops/images/player/dockerPushToRegistry.sh')
+    sh '''
+    export sunbird_version=`head -1 ./devops/images/player/Dockerfile | cut -d ":" -f2`
+    commitHash=$(sudo docker inspect --format='{{ .Config.Labels.commitHash }}' sunbird/player:1.14.0-silver)
+    cd themes
+    cat metadata.sh
+    echo $sunbird_version
+    #sudo `echo sed "s/version\\":\\"/version:\\"${sunbird_version}-/" metadata.sh` > metadata1.sh
+    #sudo `sed -e "s/1213411/${commitHash}/" metadata.sh` > metadata1.sh
+    
+
+    #sudo `echo sed -e "s/version\\":\\"/version:\\"${sunbird_version}-/" -e "s/1213411/${commitHash}/" metadata.sh` > metadata1.sh 
+    sudo `echo sed -e "s/0.1/${sunbird_version}/" -e "s/1213411/${commitHash}/" metadata.sh` > metadata1.sh
+    sudo chmod 775 metadata1.sh
+    ./metadata1.sh  > ../metadata.json
+    cat ../metadata.json
+     '''   
+    sh ('pwd')
+    archive includes: "metadata.json"
+    }
+    
+    }  
+    catch (err) {
+        currentBuild.result = "FAILURE"
+        throw err
+    }
+}
+

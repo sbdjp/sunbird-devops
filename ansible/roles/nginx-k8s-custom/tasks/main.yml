@@ -1,0 +1,47 @@
+---
+# This variable will get injected to nginx resolver config
+# There is no native helm way to do this. So it's 
+# kind of a workaround
+- name: getting kube dns ip
+  shell: kubectl get service --namespace kube-system kube-dns -o jsonpath="{.spec.clusterIP}"
+  register: kube_dns_ip
+
+- name: setting variable
+  set_fact:
+    kube_dns_ip: "{{ kube_dns_ip.stdout }}"
+
+- name: templating nginx custom conf
+  template:
+    src: "templates/{{ item }}.j2"
+    dest: "/tmp/{{ item }}"
+  with_items:
+    - tenant.conf.custom
+    - igot.conf.custom
+    - publicreports.conf.custom
+    - deny.conf.custom
+
+- name: create kube configMap
+  shell: 'kubectl create configmap {{ item.name }} --from-file=/tmp/{{item.file}} -n {{ namespace }} -o yaml --dry-run | kubectl apply -f -'
+  with_items:
+    - {file: tenant.conf.custom, name: tenant-conf}
+    - {file: igot.conf.custom, name: igot-conf}
+    - {file: publicreports.conf.custom, name: publicreports-conf}
+    - {file: deny.conf.custom, name: deny-conf}
+
+- name: Creating domain ssls
+  shell:
+    cmd: |
+      cat <<EOF | kubectl apply -f -
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: "{{ item.name }}"
+        namespace: "{{ namespace }}"
+      type: kubernetes.io/tls
+      data:
+        ca.crt: ""
+        tls.crt: "{{ item.cert_name | b64encode }}"
+        tls.key: "{{ item.key_name | b64encode }}"
+      EOF
+  with_items:
+    - { name: "ingress-igot-cert", cert_name: "{{proxyigot_cert}}", key_name: "{{proxyigot_key}}" }

@@ -17,9 +17,9 @@ services:
             replicas: 1
             resources:
               reservations:
-                memory: "{{ prometheus_reservation_memory }}"
+                memory: "{{ prometheus_fed_reservation_memory| d(prometheus_reservation_memory) }}"
               limits:
-                memory: "{{ prometheus_limit_memory }}"
+                memory: "{{ prometheus_fed_limit_memory|d(prometheus_limit_memory) }}"
 
 configs:
   fed_prometheus.yml:

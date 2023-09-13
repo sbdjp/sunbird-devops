@@ -1,0 +1,780 @@
+env: ntpprod
+env_name: "{{ env }}"
+instance: prod
+instance_name: ntp
+cloud_storage_config_environment: prod
+cert_env_prefix: ntp-production
+
+#### overriding variables
+composite_search_indexer_container_count: 4
+publish_pipeline_container_count: 3
+publish_yarn_container_memory_mb: 2048
+dialcode_keyspace_name: "{{env}}_dialcode_store"
+plugin_media_base_url: https://diksha.gov.in
+sunbird_installation: diksha
+## Mahesh have to come back on this
+learning_content_h5p_library_path: https://s3.ap-south-1.amazonaws.com/ekstep-public-dev/content/templates/h5p-library-latest.zip
+
+############## Common ######################
+
+proto: https
+domain_name: diksha.gov.in
+
+ekstep_domain_name: https://api.ekstep.in
+
+#bootstrap
+ssh_public_key_deployer: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDhepW/SVVT+i2YMMHf9gj8lICp6Q6HVf2/bYxHq+dBMOlnA13Ps6ciKy4MlrLod7rp1gsP5LSsZj/QHQ+A9nOnrZXlrbJ2OmHS89CnQs7t+dwH4kQJpYOpTqGGAUp147pJylcYaDB9xswMxOk9WPSKt7c0Na+fpaC0jzZYeRr5IqYzJSHMzqqmCES+AExtYIw+IghTx9Y/IKa8BvgBqTVgS+nBoVVa9YxDFvwgVVKunPRgcwMfqWsyWGgfLQi6xDrDBcxDbbN+0kIAB1QmLg2DcUGHJO5LdAxmFEQjsO7d3wbKxMMwFgCYSkYb2BVEuckbTQnpS3pFrFUIsB2JQ6bTqnG5x1H2+Ooblg+luglCij2+dcWAlMKgNZlQXpY6YGaEbiimz6zah+PrMeO8yJyMhs77EZd7fVnBzOFnfL2YPKRuR8EnjBGB1bDxFE3Z5rT8nOKmo4CItlud1YuJAvRB3FHCBt+OVmz7zYE8s2jIuv33ql6u91OAjLiyMccbq6jhYSI2epFTAsfkbdOz/T4mU7Wq5fO8LY4hsYRavrOPfFhIh9fPJo8wp9LmQjUBGb1aok5k6f/MjiRto5Y8fWBn0xYZ5yHh6w5GVxMfAd/WWjju5cnsDUHQf59MGDZdygbNa8zA3YB6yZIVrf2vFT9FRUy8JEW4XxpWmJCvnnt2/w== deployerprod@key"
+bootstrap_user: ops
+bootstrap_key_path: /var/lib/jenkins/secrets/prodops_ssh_key
+###################### LP ############################
+
+azure_public_container: ntp-content-production
+##2-10 azure_account_name: ntpproductionall
+azure_account_name: "{{ sunbird_management_storage_account_name }}"
+learnings:
+  paths: ['/data', '/data/graphDB', '/data/logs', '/data/contentBundle', '/data/properties', '/home/learning/tmp', '/home/learning/platform']
+  service_config: ['consumer-config.xml']
+
+searchs:
+  paths: ['/data', '/data/logs', '/data/contentBundle', '/data/properties', '/home/learning/tmp', '/home/learning/platform', '/home/learning/platform/search', '/home/learning/platform/service', '/home/learning/platform/service/logs' ]
+
+
+environment_id: 30000000
+
+###########  jenkinspipeline upload artifact ############
+artifacts_container: artifacts
+##2-10 artifact_azure_account_name: "dikshaartifactstore"
+##2-10 artifact_azure_account_key: "{{ lp_vault_artifact_azure_account_key }}"
+
+#neo4j_home: "{{learner_user_home}}/{{neo4j_dir}}/neo4j-enterprise-3.3.0"
+neo4j_home: "{{learner_user_home}}/{{neo4j_dir}}/neo4j-enterprise-3.3.10-SNAPSHOT"
+#neo4j_zip: neo4j-enterprise-3.3.0-unix.tar.gz     # neo4j enterprise version.zip present in the artifacts folder
+neo4j_zip: neo4j-enterprise-3.3.10-SNAPSHOT-unix.tar.gz
+neo4j_enterprise: "true" 
+
+########
+tr_secondary_route_events: "LOG,ERROR"
+
+
+## over riding backup
+##backup_azure_storage_account_name: ntpbackupsproduction
+### overriding backup secret
+###backup_azure_storage_access_key: "{{lp_vault_backup_azure_storage_secret}}"
+
+########## For content tool ############
+ekstep_env_name: prod
+contenttool:
+ source:
+  url: https://api.ekstep.in/
+ destination:
+  url: http://11.4.3.21:8080/learning-service
+  storage_type: azure
+
+## Heap size update for learning-service
+tomcat_init_mem: -Xms2048m
+tomcat_max_mem: -Xmx12288m
+
+## Heap size for elasticsearch
+es_heap_size: 16g
+
+## Release-2.3.5 vars ###
+swarm_manager_lb_ip: 11.4.42.178
+
+## kubernetes variables ### overriding swarm manager lb ip to private ingress ip ### 
+private_ingressgateway_ip: 11.4.42.178
+learner_service_base_url: "http://{{private_ingressgateway_ip}}/learner"  ## lp samza jobs
+cert_service_base_url: "http://{{private_ingressgateway_ip}}/cert"    ### lp samza jobs
+kp_content_service_base_url: "http://{{private_ingressgateway_ip}}/content"  ## lp samza jobs
+cert_reg_service_base_url: "http://{{private_ingressgateway_ip}}/certreg"  ## lp samza jobs
+kp_print_service_base_url: "http://{{private_ingressgateway_ip}}/print"
+#course_batch_updater_container_count: 4
+#course_certificate_generator_container_count: 4
+samza_coordinator_replication_factor: 3
+samza_checkpoint_replication_factor: 3
+
+### kafka topics variables ####
+
+ingestion_kafka_topics:
+ingestion_kafka_overriden_topics:
+
+processing_kafka_topics:
+  - name: learning.graph.events
+    num_of_partitions: 16
+    replication_factor: 3
+  - name: learning.graph.events.fail
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: learning.job.request 
+    num_of_partitions: 6
+    replication_factor: 3
+  - name: learning.job.request.fail
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: learning.republish.job.request
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: telemetry.indexer.failed
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: coursebatch.job.request
+    num_of_partitions: 16
+    replication_factor: 3
+  - name: content.postpublish.request  
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: coursebatch.certificate.request
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: system.command
+    retention_time: 3600
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: qrimage.request
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: learning.events.failed
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: lms.audit.events
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: lms.sso.events
+    num_of_partitions: 4
+    replication_factor: 3
+  - name: lms.user.account.merge
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: lms.notification
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: auto.creation.job.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: auto.creation.job.request.failed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: contentstate.invalid
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: db.query.events
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: certificate.events.failed
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: activity.agg.failed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: questionset-publish
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: batch.enrolment.sync.request
+    num_of_partitions: 1
+    replication_factor: 3
+  # CNAME migration Topics
+  - name: csp.migration.job.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: live.video.stream.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: republish.job.request
+    num_of_partitions: 8
+    replication_factor: 1
+  - name: cassandra.data.migration.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: cassandra.data.migration.job.request.failed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: assessment.republish.request
+    num_of_partitions: 2
+    replication_factor: 1  
+  - name: assessment.postpublish.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: republish.events.failed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: republish.events.skipped
+    num_of_partitions: 1
+    replication_factor: 1
+
+processing_kafka_overriden_topics:
+  - name: learning.graph.events
+    retention_time: 604800000
+  - name: learning.graph.events.fail
+    retention_time: 604800000
+  - name: learning.job.request
+    retention_time: 1209600000 
+  - name: learning.job.request.fail
+    retention_time: 259200000
+  # Error/Failed Topics
+  - name: telemetry.indexer.failed
+    retention_time: 604800000
+  - name: coursebatch.job.request
+    retention_time: 604800000
+  - name: content.postpublish.request
+    retention_time: 259200000
+  - name: coursebatch.certificate.request
+    retention_time: 604800000
+  - name: system.command
+    retention_time: 172800000
+  - name: lms.audit.events
+    retention_time: 172800000
+  - name: lms.sso.events
+    retention_time: 1209600000
+  - name: lms.user.account.merge
+    retention_time: 172800000
+  - name: learning.events.failed
+    retention_time: 259200000
+  - name: learning.republish.job.request
+    retention_time: 172800000
+  - name: qrimage.request
+    retention_time: 604800000
+  - name: lms.notification
+    retention_time: 172800000
+  - name: auto.creation.job.request
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: auto.creation.job.request.failed
+    retention_time: 1296000000
+    replication_factor: 1
+  - name: contentstate.invalid
+    retention_time: 604800000
+  - name: db.query.events
+    retention_time: 1209600000
+  - name: certificate.events.failed
+    retention_time: 1296000000
+  - name: activity.agg.failed
+    retention_time: 604800000
+  - name: batch.enrolment.sync.request
+    retention_time: 604800000
+  # CNAME migration overriden_topics
+  - name: csp.migration.job.request
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: live.video.stream.request
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: republish.job.request
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: cassandra.data.migration.request
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: cassandra.data.migration.job.request.failed
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: assessment.republish.request
+    retention_time: 1209600000
+    replication_factor: 1 
+  - name: assessment.postpublish.request
+    retention_time: 1209600000
+    replication_factor: 1   
+  - name: republish.events.failed
+    retention_time: 604800000
+    replication_factor: 1
+  - name: republish.events.skipped
+    retention_time: 604800000
+    replication_factor: 1
+    
+##Release-2.8.8
+course_batch_updater_container_count: 8
+course_certificate_generator_container_count: 8
+certificate-pre-processor_container_count: 16
+
+
+### neo4j ###
+dbms_memory_heap_initial_size: 5g
+dbms_memory_heap_max_size: 7g
+dbms_memory_pagecache_size: 4g
+
+###Release-2.10.0
+kp_search_service_base_url: http://{{private_ingressgateway_ip}}/search
+
+###Storage account details
+sunbird_public_storage_account_name: ntpproductionall
+sunbird_management_storage_account_name: dikshaprodmanagement
+sunbird_artifact_storage_account_name: dikshaartifact
+
+
+#### vars for samza alerts###
+#samza_alert_slack_url: https://hooks.slack.com/services/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
+samza_alert_to_address: to=kaliraja.ramasamy@tarento.com&to=anandp@ilimi.in&to=noc@optit.in&to=sowmyad@ilimi.in&to=manjunathd@ilimi.in&to=revathi.kotla@tibilsolutions.com&to=noc@teamdiksha.org
+samza_alert_from_address: alerts@ntp.net.in
+SGUSER: apikey
+#SGUSER: azure_ed5bc89bbca87e5b61581f8013451090@azure.com # sendgrid username
+SGPASS: "{{ lp_vault_sendgrid_password }}"
+
+###Release-3.0.0
+lms_service_base_url: "http://{{private_ingressgateway_ip}}/lms"  ## lp samza jobs
+
+
+###Release-3.1.0 vars for flink
+dockerhub: "{{core_vault_docker_registry_url}}"
+docker_registry: ntphub
+imagepullsecrets: prodregistrysecret
+kubeconfig_path: /var/lib/jenkins/secrets/prod-dp-k8s.yaml
+
+
+###kafka-upgrade var
+kafka_version: 2.4.1
+
+### Overriding this var because in prod we have different servers for zookeeper.
+graphevent_kafka_url: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
+
+
+#### release-3.2.0 vars for dial service
+learningservice_ip: 11.4.3.21 # learning LB ip
+
+### class name vars
+flink_job_names:
+  activity-aggregate-updater:
+    job_class_name: 'org.sunbird.job.aggregate.task.ActivityAggregateUpdaterStreamTask'
+    replica: 4
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 1
+  relation-cache-updater:
+    job_class_name: 'org.sunbird.job.relationcache.task.RelationCacheUpdaterStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 1
+  post-publish-processor:
+    job_class_name: 'org.sunbird.job.postpublish.task.PostPublishProcessorStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 1   
+  certificate-generator:
+    job_class_name: 'org.sunbird.job.task.CertificateGeneratorStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  post-certificate-processor:
+    job_class_name: 'org.sunbird.job.task.PostCertificateProcessorStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  certificate-pre-processor:
+    job_class_name: 'org.sunbird.job.task.CertificatePreProcessorStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  questionset-publish:
+    job_class_name: 'org.sunbird.job.questionset.task.QuestionSetPublishStreamTask'
+    replica: 1
+    jobmanager_memory: 2048m
+    taskmanager_memory: 2048m
+    taskslots: 1
+    cpu_requests: 0.3
+  enrolment-reconciliation:
+    job_class_name: 'org.sunbird.job.recounciliation.task.EnrolmentReconciliationStreamTask'
+    replica: 4
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 1
+  video-stream-generator:
+    job_class_name: 'org.sunbird.job.videostream.task.VideoStreamGeneratorStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 1
+  search-indexer:
+    job_class_name: 'org.sunbird.job.searchindexer.task.SearchIndexerStreamTask'
+    replica: 4
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 1
+  asset-enrichment:
+    job_class_name: 'org.sunbird.job.assetenricment.task.AssetEnrichmentStreamTask'
+    replica: 1
+    jobmanager_memory: 2048m
+    taskmanager_memory: 2048m
+    taskslots: 1
+    cpu_requests: 0.3
+  audit-history-indexer:
+    job_class_name: 'org.sunbird.job.audithistory.task.AuditHistoryIndexerStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  collection-cert-pre-processor:
+    job_class_name: 'org.sunbird.job.collectioncert.task.CollectionCertPreProcessorTask'
+    replica: 4
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 4
+    cpu_requests: 0.3
+  auto-creator-v2 :
+    job_class_name: 'org.sunbird.job.task.AutoCreatorV2StreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  collection-certificate-generator :
+    job_class_name: 'org.sunbird.job.certgen.task.CertificateGeneratorStreamTask'
+    replica: 4
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 4
+    cpu_requests: 0.3
+  audit-event-generator:
+    job_class_name: 'org.sunbird.job.auditevent.task.AuditEventGeneratorStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  content-publish:
+    job_class_name: 'org.sunbird.job.content.task.ContentPublishStreamTask'
+    replica: 1
+    jobmanager_memory: 4096m
+    taskmanager_memory: 4096m
+    taskslots: 1
+    cpu_requests: 0.3
+  metrics-data-transformer:
+    job_class_name: 'org.sunbird.job.metricstransformer.task.MetricsDataTransformerStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  mvc-indexer:
+    job_class_name: 'org.sunbird.job.mvcindexer.task.MVCIndexerStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  content-auto-creator:
+    job_class_name: 'org.sunbird.job.contentautocreator.task.ContentAutoCreatorStreamTask'
+    replica: 1
+    jobmanager_memory: 2048m
+    taskmanager_memory: 2048m
+    taskslots: 1
+    cpu_requests: 0.3
+  qrcode-image-generator:
+    job_class_name: 'org.sunbird.job.qrimagegenerator.task.QRCodeImageGeneratorTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  dialcode-context-updater:
+    job_class_name: 'org.sunbird.job.dialcodecontextupdater.task.DialcodeContextUpdaterStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  merge-user-courses:
+    job_class_name: 'org.sunbird.job.merge.user.courses.task.MergeUserCoursesStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  assessment-aggregator:
+    job_class_name: 'org.sunbird.dp.assessment.task.AssessmentAggregatorStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    taskslots: 1
+    cpu_requests: 0.3
+    scale_enabled: false
+  notification-job:
+    job_class_name: 'org.sunbird.job.notification.task.NotificationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3  
+  csp-migrator:
+    job_class_name: 'org.sunbird.job.cspmigrator.task.CSPMigratorStreamTask'
+    replica: 1
+    jobmanager_memory: 4096m
+    taskmanager_memory: 4096m
+    taskslots: 1
+    cpu_requests: 0.7
+  live-node-publisher:
+    job_class_name: 'org.sunbird.job.livenodepublisher.task.LiveNodePublisherStreamTask'
+    replica: 8
+    jobmanager_memory: "{{live_node_publisher_job_memory | default('2048m') }}"
+    taskmanager_memory: "{{live_node_publisher_task_memory | default('2048m') }}"
+    taskslots: "{{live_node_publisher_taskslots | default('1') }}"
+    cpu_requests: "{{live_node_publisher_cpu_requests | default('0.7') }}"
+  live-video-stream-generator:
+    job_class_name: 'org.sunbird.job.livevideostream.task.LiveVideoStreamGeneratorStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  cassandra-data-migration:
+    job_class_name: 'org.sunbird.job.task.CassandraDataMigrationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+  async-questionset-publish:
+    job_class_name: 'org.sunbird.job.questionset.task.QuestionSetPublishStreamTask'
+    replica: 1
+    jobmanager_memory: 2048m
+    taskmanager_memory: 2048m
+    taskslots: 1
+    cpu_requests: 0.3
+  questionset-republish:
+    job_class_name: 'org.sunbird.job.questionset.republish.task.QuestionSetRePublishStreamTask'
+    replica: 1
+    jobmanager_memory: 8192m
+    taskmanager_memory: 8192m
+    taskslots: 1
+    cpu_requests: 0.3
+
+flink_namespace: flink-kp-prod
+##parallelism for flink jobs###
+activity_agg_parallelism: 4
+activity_agg_consumer_parallelism: 4
+activity_agg_checkpointing_interval: 180000
+activity_agg_checkpointing_pause_interval: 180000
+#activity_agg_batch_read_size: 100
+#activity_agg_batch_interval: 1800
+
+###activity aggregator enhancement vars ###
+activity_agg_window_shards: 1000
+activity_agg_dedup_parallelism: 4
+enrolment_complete_parallelism: 4
+activity_agg_batch_interval: 60
+activity_agg_batch_read_size: 10
+activity_agg_batch_write_size: 10
+activity_agg_dedup_index: 13
+activity_agg_dedup_expiry: 604800
+
+
+# publish pipleine job var
+publish_pipeline_task_opts: "-Dfile.encoding=UTF8 -XX:-UseG1GC -Xmx800m"
+
+# Enable Video Streaming
+content_streaming_enabled: true
+
+#3.4.0-vars
+sunbird_private_storage_account_name: dikshaprodprivate
+
+dedup_redis_host: "{{ groups['dedup-redis'][0] }}"
+
+## 3.7.0 vars##
+kp_dial_service_base_url: "http://{{private_ingressgateway_ip}}/dial"
+dial_service_generate_url: "{{kp_dial_service_base_url}}/dialcode/v3/generate"
+dial_service_search_url: "{{kp_dial_service_base_url}}/dialcode/v3/search"
+
+## 3.8.0 vars ##
+### Search Indexer Related Vars
+search_indexer_consumer_parallelism: 4
+transaction_event_router_parallelism: 4
+composite_search_indexer_parallelism: 4
+dialcode_external_indexer_parallelism: 1
+dialcode_metric_indexer_parallelism: 1
+schema_definition_cache_expiry_in_sec: 14400
+checkpoint_interval: 900000
+
+plugin_container_name: ntp-content-production
+kp_schema_base_path: "{{proto}}://{{sunbird_public_storage_account_name}}.blob.core.windows.net/{{plugin_container_name}}/schemas/local"
+
+###release-3.9.0 vars####
+##Media content
+media_service_azure_subscription_id: "5af454cb-5087-411d-a651-2d7d6c1b93a1"
+media_service_azure_tenant: "deepikaekstep.onmicrosoft.com"
+media_service_azure_account_name: "ntpprodmedia"
+media_service_azure_resource_group_name: "production_all"
+media_service_azure_token_client_key: "550928c0-03ad-459c-babd-89717d7c838c" 
+media_service_azure_token_client_secret: "O~KGWoRwFR91_fWl1hKooZ.Z0o0yy-QEF4"
+stream_base_url: "https://ntpprodmedia-inct.streaming.media.azure.net"
+azure_account_name: "{{ sunbird_management_storage_account_name }}"   ### storage for backup
+
+#### learning-lb
+lp_url: "http://{{ learningservice_ip }}:8080/learning-service"
+kp_learning_service_base_url: "http://{{ learningservice_ip }}:8080/learning-service"
+
+send_logs_to_graylog: true
+
+##release-4.0 vars##
+collection_cert_pre_processor_consumer_parallelism: 16
+collection_certificate_generator_parallelism: 4
+collection_certificate_generator_consumer_parallelism: 4
+generate_certificate_parallelism: 16  ##collection_cert_pre_processor
+
+##release 4.0 hotfix cert generator flink var ##
+#cert_azure_storage_secret: "{{ sunbird_public_storage_account_key }}"
+#cert_azure_storage_key: "{{ sunbird_public_storage_account_name }}"
+
+##release-4.1.0 var
+vdn_domain_name : "vdn.diksha.gov.in"
+source_base_url: "{{proto}}://{{vdn_domain_name}}/api"
+cert_env_prefix: ntp-production
+
+#####Redis-metadata2##
+metadata2_redis_host: "{{ groups['redis-metadata2'][0] }}"
+
+##release-4.2.0##
+dock_private_ingressgateway_ip: "11.7.8.128"
+
+
+###release-4.8.0 #####
+collection_certificate_generator_enable_rc_certificate : "TRUE"
+enable_suppress_exception : "TRUE"
+enable_rc_certificate : "TRUE"
+
+###Release-5.0.0 Var ##
+###  Merge User Courses Job related Vars
+merge_user_courses_consumer_parallelism: 1
+merge_user_courses_parallelism: 1
+merge_user_courses_course_batch_parallelism: 1
+merge_user_courses_course_date_format: "yyyy-MM-dd HH:mm:ss:SSSZ"
+
+###  Notification Job related Vars
+notification_job_consumer_parallelism: 1
+notification_job_parallelism: 1
+
+### assessment-aggregator related vars
+assessaggregator_parallelism: 1
+assessaggregator_consumer_parallelism: 1
+assessaggregator_downstream_parallelism: 1
+assessaggregator_scoreaggregator_parallelism: 1
+middleware_cassandra_courses_keyspace: sunbird_courses
+middleware_cassandra_assessment_aggregator_table: assessment_aggregator
+middleware_cassandra_assessment_question_type : question
+middleware_cassandra_user_enrolments_table: user_enrolments
+middleware_cassandra_user_activity_agg_table: user_activity_agg
+content_read_api_host: "https://{{ domain_name }}"
+content_read_api_endpoint: "/api/content/v1/read/"
+
+##release-5.0.0 vars
+sunbird_msg_91_auth: "{{ core_vault_msg_91_auth_key }}"
+sunbird_mail_server_from_email: "support@diksha.gov.in"
+sunbird_notification_msg_default_sender: DIKAPP 
+sunbird_mail_server_username: "apikey"
+sunbird_mail_server_host: smtp.sendgrid.net
+sunbird_mail_server_port: 587
+
+## release-5.1.0
+# CSP Name
+cloud_service_provider: azure
+
+cloudstorage_replace_absolute_path: 'true'
+cloudstorage_base_path: "https://obj.diksha.gov.in"
+valid_cloudstorage_base_urls: '["https://ntpproductionall.blob.core.windows.net","https://obj.diksha.gov.in"]'
+cloudstorage_relative_path_prefix: "CONTENT_STORAGE_BASE_PATH"
+cloudstorage_metadata_list: '["appIcon", "artifactUrl", "posterImage", "previewUrl", "thumbnail", "assetsMap", "certTemplate", "itemSetPreviewUrl", "grayScaleAppIcon", "sourceURL", "variants", "downloadUrl", "streamingUrl", "toc_url", "data", "question", "solutions", "editorState", "media", "pdfUrl", "transcripts"]'
+cloud_storage_base_url: "https://{{ sunbird_public_storage_account_name }}.blob.core.windows.net"
+cloud_storage_cname_url: "{{cloudstorage_base_path}}"
+
+dial_service_schema_base_path: "{{ cloud_storage_cname_url }}/{{ dial_plugin_storage }}/jsonld-schema/local"
+
+cloud_public_storage_accountname: "{{sunbird_public_storage_account_name}}"
+cloud_public_storage_endpoint: ""
+cloud_public_storage_region: "centralindia"
+cloud_public_storage_project: ""
+
+cloud_private_storage_accountname: "{{sunbird_private_storage_account_name}}"
+cloud_private_storage_endpoint: ""
+cloud_private_storage_region: "centralindia"
+cloud_private_storage_project: ""
+
+cloud_management_storage_accountname: "{{sunbird_management_storage_account_name}}"
+cloud_management_storage_endpoint: ""
+cloud_management_storage_region: "centralindia"
+cloud_management_storage_project: ""
+
+cloud_artifact_storage_accountname: "{{sunbird_artifact_storage_account_name}}"
+cloud_artifact_storage_endpoint: ""
+cloud_artifact_storage_region: "centralindia"
+cloud_artifact_storage_project: ""
+
+cloud_storage_certqr_bucketname: certqr #Yes (ntpproductionall)
+cloud_storage_chatbot_bucketname: chatbot #No
+cloud_storage_dial_bucketname: dial #Yes (ntpproductionall)
+cloud_storage_flink_bucketname: flink-state-backend # Yes (dikshaprodprivate)
+cloud_storage_playercdn_bucketname: player #Yes (ntpproductionall)
+cloud_storage_public_bucketname: public #Yes (ntpproductionall)
+cloud_storage_publicreports_bucketname: public-reports #Yes (ntpproductionall)
+cloud_storage_privatereports_bucketname: reports #Yes (ntpproductionall)
+cloud_storage_samiksha_bucketname: samiksha #Yes (ntpproductionall)
+cloud_storage_schema_bucketname: schema #No
+cloud_storage_sourcing_bucketname: sourcing #Yes (ntpproductionall)
+cloud_storage_offlineinstaller_bucketname: "{{env}}-offlineinstaller" #Yes (ntpproductionall) as ntp-production-offlineinstaller
+cloud_storage_content_bucketname: "ntp-content-production" #Yes (ntpproductionall) as ntp-content-production
+cloud_storage_telemetry_bucketname: telemetry-data-store #Yes (dikshaprodprivate)
+cloud_storage_termsandcondtions_bucketname: termsandcond #Yes (ntpproductionall)
+cloud_storage_user_bucketname: user #Yes (ntpproductionall)
+cloud_storage_desktopappcrashlogs_bucketname: desktopappcrashlogs #Yes (ntpproductionall)
+cloud_storage_label_bucketname: label #No
+cloud_storage_certservice_bucketname: "{{cert_env_prefix}}-e-credentials" #Yes (dikshaprodprivate)
+cloud_storage_uci_bucketname: "uci-{{env}}" #Yes (dikshaprodprivate)
+cloud_storage_cassandrabackup_bucketname: cassandra-cluster-new #Yes (dikshaprodmanagement)
+cloud_storage_dpcassandrabackup_bucketname: dp-cassandra-backup #Yes (dikshaprodmanagement)
+cloud_storage_dppostgresbackup_bucketname: dp-postgresql-backup #Yes (dikshaprodmanagement)
+cloud_storage_dpredisbackup_bucketname: dp-redis-backup #Yes (dikshaprodmanagement)
+cloud_storage_esbackup_bucketname: elasticsearch-snapshots #Yes (dikshaprodmanagement)
+cloud_storage_influxdbbackup_bucketname: influxdb-backup #Yes (dikshaprodmanagement)
+cloud_storage_jenkinsbackup_bucketname: jenkins-backup #Yes (dikshaprodmanagement)
+cloud_storage_mongobackup_bucketname: mongodb-backup #No
+cloud_storage_neo4jbackup_bucketname: neo4j-backup #Yes (dikshaprodmanagement)
+cloud_storage_redisbackup_bucketname: redis-backup #Yes (dikshaprodmanagement)
+cloud_storage_artifacts_bucketname: "{{ artifacts_container }}" #Yes (dikshaartifact)
+compositesearch_index_name: "compositesearch"
+cloud_storage_pathstyle_access: false
+is_multidc_enabled: false
+
+data_exhaust_webhook_url: ""     # Slack webhook url
+data_exhaust_Channel: ""         # Slack channel for data products alerts
+data_exhaust_name: ""
+
+postgres:
+  db_url: analytics-production-psql.postgres.database.azure.com
+  db_username: analytics@analytics-production-psql 
+  db_name: analytics
+  db_password: "{{dp_vault_pgdb_password}}"
+  db_table_name: ntpprod_consumer_channel_mapping
+  db_port: 5432
+  db_admin_user: pgntp@analytics-production-psql
+  db_admin_password: "{{dp_vault_pgdb_admin_password}}"
+
+## variables added while fixing the 5.1.0 issue
+cloudstorage_relative_path_prefix_content: "CONTENT_STORAGE_BASE_PATH"
+cloudstorage_relative_path_prefix_dial: "DIAL_STORAGE_BASE_PATH"
+
+## live-node-publisher-partition configuration
+live_node_publisher_consumer_parallelism: 8
+live_node_publisher_router_parallelism: 8
+#live_node_publisher_job_memory: 4096m
+#live_node_publisher_task_memory: 4096m
+
+## csp-migrator-partition configuration
+csp_migrator_consumer_parallelism: 1
+csp_migrator_router_parallelism: 1
+
+##sync_tool-cname-variables
+sync_tool_is_replace_string: true
+sync_tool_replace_src_string: "CONTENT_STORAGE_BASE_PATH"
+sync_tool_replace_dest_string: "{{cloudstorage_base_path}}/{{cloud_storage_content_bucketname}}"
+

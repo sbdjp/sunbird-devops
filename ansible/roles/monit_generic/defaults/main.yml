@@ -1,0 +1,6 @@
+---
+user: root
+group: root
+slack_channel: monit-alert-ntp-stg
+slack_user: Monit
+slack_web_hook: https://hooks.slack.com/services/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

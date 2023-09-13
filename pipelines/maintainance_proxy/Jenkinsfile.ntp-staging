@@ -1,0 +1,23 @@
+pipeline {
+  agent {
+      label 'general-staging'
+  }
+  stages {
+    stage('Checkout') {
+      steps {
+        sh('./pipelines/setupDevopsCode.sh')
+      }
+    }
+    stage('Pre-Build'){
+      steps {
+        sh('./sunbird-devops/ansible/installDeps.sh')
+      }
+    }
+
+    stage('Deploy') {
+      steps {
+        sh 'ENV=ntp-staging ./pipelines/maintainance_proxy/deploy.sh'
+      }
+    }
+  }
+}

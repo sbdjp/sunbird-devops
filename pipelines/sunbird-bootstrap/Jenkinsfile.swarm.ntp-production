@@ -1,0 +1,21 @@
+#!groovy
+
+node('master') {
+    currentBuild.result = "SUCCESS"
+
+    try {
+       stage('Checkout'){
+          checkout scm
+          sh('./pipelines/setupDevopsCode.sh')
+       }
+
+       stage('Build'){
+        sh('cd sunbird-devops/ansible && ansible-playbook -i ../../ansible/inventories/ntp-swarm-bootstrap bootstrap.yml --tags bootstrap_swarm --extra-vars "hosts=production-swarm-manager swarm_master=true bootstrap_secret_file=ntp-bootstrap" --vault-password-file  ~/vault-pass-ntp-demo')
+       }
+
+    }
+    catch (err) {
+        currentBuild.result = "FAILURE"
+        throw err
+    }
+}

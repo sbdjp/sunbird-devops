@@ -1,0 +1,110 @@
+#!/bin/bash
+#set -x
+
+###-------------------------------------------------------------------
+### Created By: Raghupathi
+### Description: To Send alert if the exhaust report file size is zero.
+###-------------------------------------------------------------------
+
+### variables
+env=$1
+execution_date=$(date --date=' 1 days ago' '+%Y-%m-%d')
+
+### removing the old files
+rm -rf ~/StatusFile ~/*ExhaustEmpty ~/*ExhaustNonEmpty
+
+### Collecting the reports requests from postgres
+ProgressExhaust=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select request_id from {{ env }}_job_request where job_id='progress-exhaust' and date(dt_job_submitted)='$execution_date';" | sort -n | sed -n '1,2!p'`
+ProgressExhaustCount=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select count(*) from {{ env }}_job_request where job_id='progress-exhaust' and date(dt_job_submitted)='$execution_date';"`
+ProgressSuccessCount=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select count(*) from {{ env }}_job_request where job_id='progress-exhaust' and status='SUCCESS' and date(dt_job_submitted)='$execution_date';"`
+ProgressFailedCount=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select count(*) from {{ env }}_job_request where job_id='progress-exhaust' and status='FAILED' and date(dt_job_submitted)='$execution_date';"`
+ProgressPendingCount=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select count(*) from {{ env }}_job_request where job_id='progress-exhaust' and status='SUBMITTED' and date(dt_job_submitted)='$execution_date';"`
+ResponseExhaust=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select request_id from {{ env }}_job_request where job_id='response-exhaust' and date(dt_job_submitted)='$execution_date';" | sort -n | sed -n '1,2!p'`
+ResponseExhaustCount=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select count(*) from {{ env }}_job_request where job_id='response-exhaust' and date(dt_job_submitted)='$execution_date';"`
+ResponseSuccessCount=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select count(*) from {{ env }}_job_request where job_id='response-exhaust' and status='SUCCESS' and date(dt_job_submitted)='$execution_date';"`
+ResponseFailedCount=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select count(*) from {{ env }}_job_request where job_id='response-exhaust' and status='FAILED' and date(dt_job_submitted)='$execution_date';"`
+ResponsePendingCount=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select count(*) from {{ env }}_job_request where job_id='response-exhaust' and status='SUBMITTED' and date(dt_job_submitted)='$execution_date';"`
+UserinfoExhaust=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select request_id from {{ env }}_job_request where job_id='userinfo-exhaust' and date(dt_job_submitted)='$execution_date';" | sort -n | sed -n '1,2!p'`
+UserinfoExhaustCount=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select count(*) from {{ env }}_job_request where job_id='userinfo-exhaust' and date(dt_job_submitted)='$execution_date';"`
+UserinfoSuccessCount=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select count(*) from {{ env }}_job_request where job_id='userinfo-exhaust' and status='SUCCESS' and date(dt_job_submitted)='$execution_date';"`
+UserinfoFailedCount=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select count(*) from {{ env }}_job_request where job_id='userinfo-exhaust' and status='FAILED' and date(dt_job_submitted)='$execution_date';"`
+UserinfoPendingCount=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select count(*) from {{ env }}_job_request where job_id='userinfo-exhaust' and status='SUBMITTED' and date(dt_job_submitted)='$execution_date';"`
+
+for i in $ProgressExhaust
+do 
+filesize=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select processed_batches from {{ env }}_job_request where request_id='$i';" | jq '.[].fileSize'`
+if [ "$filesize" == "0" ]
+then
+echo $i >> ~/ProgressExhaustEmpty
+else
+echo $i >> ~/ProgressExhaustNonEmpty
+fi
+done
+
+for i in $ResponseExhaust
+do 
+filesize=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select processed_batches from {{ env }}_job_request where request_id='$i';" | jq '.[].fileSize'`
+if [ "$filesize" == "0" ]
+then
+echo $i >> ~/ResponseExhaustEmpty
+else
+echo $i >> ~/ResponseExhaustNonEmpty
+fi
+done
+
+for i in $UserinfoExhaust
+do 
+filesize=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select processed_batches from {{ env }}_job_request where request_id='$i';" | jq '.[].fileSize'`
+if [ "$filesize" == "0" ]
+then
+echo $i >> ~/UserinfoExhaustEmpty
+else
+echo $i >> ~/UserinfoExhaustNonEmpty
+fi
+done
+
+#echo "Exhaust Reports Detailed Status \n" >> ~/StatusFile
+echo "Progress Exhaust Total Requests" $ProgressExhaustCount >> ~/StatusFile
+echo "Progress Exhaust Success Requests" $ProgressSuccessCount >> ~/StatusFile
+echo "Progress Exhaust Failed Requests" $ProgressFailedCount >> ~/StatusFile
+echo "Progress Exhaust Pending Requests" $ProgressPendingCount >> ~/StatusFile
+
+if [ -s ~/ProgressExhaustEmpty ]
+then
+echo "Progress Exhaust Requests Having Zero bytes of Files - $(cat ~/ProgressExhaustEmpty | wc -l) \n $(cat ~/ProgressExhaustEmpty)" >> ~/StatusFile
+echo "Progress Exhaust Requests Having Proper Files - $(cat ~/ProgressExhaustNonEmpty | wc -l)" >> ~/StatusFile
+else
+echo "All the Progress exhaust Requests has more then Zero bytes files - $(cat ~/ProgressExhaustNonEmpty | wc -l)" >> ~/StatusFile
+echo "Progress exhaust Requests having file size as zero - $(cat ~/ProgressExhaustEmpty | wc -l)" >> ~/StatusFile
+fi
+
+echo "Response Exhaust Total Requests" $ResponseExhaustCount >> ~/StatusFile
+echo "Response Exhaust Success Requests" $ResponseSuccessCount >> ~/StatusFile
+echo "Response Exhaust Failed Requests" $ResponseFailedCount >> ~/StatusFile
+echo "Response Exhaust Pending Requests" $ResponsePendingCount >> ~/StatusFile
+
+if [ -s ~/ResponseExhaustEmpty ]
+then
+echo "Response Exhaust Requests Having Zero bytes of Files - $(cat ~/ResponseExhaustEmpty | wc -l) \n $(cat ~/ResponseExhaustEmpty)" >> ~/StatusFile
+echo "Response Exhaust Requests Having Proper Files - $(cat ~/ResponseExhaustNonEmpty | wc -l)" >> ~/StatusFile
+else
+echo "All the Response exhaust Requests has more then Zero bytes files - $(cat ~/ResponseExhaustNonEmpty | wc -l)" >> ~/StatusFile
+echo "Response exhaust Requests having file size as zero - $(cat ~/ResponseExhaustEmpty | wc -l)" >> ~/StatusFile
+fi
+
+echo "Userinfo Exhaust Total Requests" $UserinfoExhaustCount >> ~/StatusFile
+echo "Userinfo Exhaust Success Requests" $UserinfoSuccessCount >> ~/StatusFile
+echo "Userinfo Exhaust Failed Requests" $UserinfoFailedCount >> ~/StatusFile
+echo "Userinfo Exhaust Pending Requests" $UserinfoPendingCount >> ~/StatusFile
+
+if [ -s ~/UserinfoExhaustEmpty ]
+then
+echo "Userinfo Exhaust Requests Having Zero bytes of Files - $(cat ~/UserinfoExhaustEmpty | wc -l) \n $(cat ~/UserinfoExhaustEmpty)" >> ~/StatusFile
+echo "Userinfo Exhaust Requests Having Proper Files - $(cat ~/UserinfoExhaustNonEmpty | wc -l)" >> ~/StatusFile
+else
+echo "All the Userinfo exhaust Requests has more then Zero bytes files - $(cat ~/UserinfoExhaustNonEmpty | wc -l)" >> ~/StatusFile
+echo "Userinfo exhaust Requests having file size as zero - $(cat ~/UserinfoExhaustEmpty | wc -l)" >> ~/StatusFile
+fi
+
+text=`echo -e "Exhaust Reports Detailed Status \n$(cat ~/StatusFile)"`
+curl -d "{{ dataproducts_mailing_list }}&fromname='Exhaust-Status-Alert'&fromname='Exhaust-Status-Alert'&fromname='Exhaust-Status-Alert'&fromname='Exhaust-Status-Alert'&subject='[$env] - Exhaust Reports Detailed Status'&text=${text}&from=alerts@ntp.net.in" -H 'Authorization: Bearer {{ SGPASS }}' https://api.sendgrid.com/api/mail.send.json

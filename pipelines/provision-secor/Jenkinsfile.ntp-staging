@@ -1,0 +1,28 @@
+#!groovy
+
+node('general-staging') {
+
+    currentBuild.result = "SUCCESS"
+
+    try {
+       stage('Checkout'){
+          checkout scm
+          sh('./pipelines/setupDevopsCode.sh')
+       }
+
+       stage('Pre-Build'){
+         sh('./sunbird-devops/ansible/installDeps.sh')
+       }
+
+       stage('Build'){
+        sh('rm -rf secor-0.24-SNAPSHOT-bin.tar.gz') 
+        sh('wget https://github.com/project-sunbird/secor/releases/download/untagged-cdd3ef95944483e5d043/secor-0.24-SNAPSHOT-bin.tar.gz')
+        sh('cp secor-0.24-SNAPSHOT-bin.tar.gz sunbird-devops/ansible/')
+        sh('cd sunbird-devops/ansible && ansible-playbook -i ../../ansible/inventories/ntp-staging provision-secor.yml --extra-vars secor_zip_path=.  --vault-password-file  /run/secrets/vault-pass ')
+       }
+    }
+    catch (err) {
+        currentBuild.result = "FAILURE"
+        throw err
+    }
+}

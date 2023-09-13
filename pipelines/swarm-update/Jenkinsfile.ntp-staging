@@ -1,0 +1,31 @@
+pipeline {
+    agent {
+        label 'android-slave'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                sh('./pipelines/setupDevopsCode.sh')
+                sh('./pipelines/setupDocker.sh')
+            }
+        }
+
+        stage('Pre-Build'){
+            steps {
+                sh('./sunbird-devops/ansible/installDeps.sh')
+            }
+        }
+
+        stage('Update') {
+            steps {
+                sh '''
+                cp cloud/azure/scripts/acs-engine-swarm/common/azuredeploy.json cloud/azure/scripts/acs-engine-swarm/ntp-staging/azuredeploy.json
+                export APP_DEPLOYMENT_JSON_PATH=`pwd`/cloud/azure/scripts/acs-engine-swarm/ntp-staging
+                ls -al $APP_DEPLOYMENT_JSON_PATH
+                cd sunbird-devops/deploy
+                DB_DEPLOYMENT=false ./provision-servers.sh
+                '''
+            }
+        }
+    }
+}

@@ -1,0 +1,18 @@
+---
+- name: run the collection reconcilation job
+  hosts: "{{ host }}"
+  become: yes
+  tasks:
+  - shell:
+      cmd: /mount/data/analytics/scripts/run-job.sh collection-reconciliation-job
+
+- name: Verify the status of the report execution
+  hosts: "{{ host }}"
+  become: yes
+  tasks: 
+  - shell:
+      cmd: cat /mount/data/analytics/scripts/logs/joblog.log | grep -i "CollectionReconciliationJob completed execution"
+    register: report_status
+
+  - debug:
+      var: report_status

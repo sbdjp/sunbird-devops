@@ -1,0 +1,3 @@
+sunbird_reports_proxy_azure_storage_account_url: "{{ sunbird_public_storage_account_name }}.blob.core.windows.net/{{ sunbird_public_azure_report_container_name }}"
+sunbird_public_azure_report_container_name: "public-reports"
+nginx_per_ip_connection_limit: 400

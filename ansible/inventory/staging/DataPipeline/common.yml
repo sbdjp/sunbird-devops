@@ -1,0 +1,518 @@
+############## Common ######################
+
+# Common vars for env
+env: ntpstaging
+proto: https
+domain_name: dev.diksha.gov.in
+env_name: ntpstaging
+ssh_public_key_deployer: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCxFtOamSxFClzoMfLLZ0mFOxLPOxS80xYuP4HVrh5kjl+zZxNKYH+8bL/LuDxzAkRi87iUprpD6nFkDkKkodlFedwBerLd7gdZhJSd9vOsGHa3IbAprFrcEPugGRrkzVhnTpu9zg6nv9Qk3lI65+8oHm/WUy8L/zR7Bccz3E0ylQ/9wXlqvMEzfJ9c8K88fbtjAzveC3loa7RFLOzwS1yrddR7zFbJ9U2Tv3mbmW+7tArbJmzz57c/0gY1mE7sKS+2+8FdD5/jeN31ViysEDwQDISIFbOJO6B0sfuZKbfr7RKkjiJ2ROVzgKLEhyHJHqIM5RcDGZ4955myOnx81GnK0m0s2z1h3LgOcDgIPZVrpjXQq6K6fvXW8vJ9bVN+SG7hKEqx9pvRNCzCHGOV0wIbzTNFUsB+2sI1txM3ssOsuJq/dEcb940LWdXhAaOthtO2Gi0UrpWGoaXklvmyrpjLE7OxoXuQIRNk0ONBpJW5eQDv86wIiWGcfr4dn/9UkumnL7GBV4yGE9OUZcleFHStG9u1h0NiWpQjtrUeRG9f2xAXyrUaAVl3Q8sfRt9qoCLs+MZpRbzKPDesDizASHluOGrI86YZ4FUkS0iLu86jQekOmbmG77845rw0lcOvcw2UmCYrQqmrtUGaVWAAxWV3Mn7K3cSw58w1NYgEHIw9UQ== deployer@dikshastaging"
+bootstrap_user: deployer
+bootstrap_key_path: /var/lib/jenkins/secrets/deployer_ssh_key
+ansible_ssh_private_key_file: /var/lib/jenkins/secrets/deployer_ssh_key
+
+#################### DP ##########################
+
+###artifact upload
+#artifact_azure_account_name: "dikshaartifactstore"
+
+#artifact_azure_account_key: "{{ dp_vault_artifact_azure_account_key }}"
+artifacts_container: artifacts
+
+secor_azure_container_name: telemetry-data-store
+secor_alerts_slack_channel: "#ntp-dp-staging-alerts"
+
+dp_azure_account_name: "{{ sunbird_private_storage_account_name }}"
+default_org_hash_id: "505c7c48ac6dc1edc9b08f21db5a571d"
+
+# Data products monitoring web hooks
+data_exhaust_webhook_url: "https://hooks.slack.com/services/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"
+data_exhaust_Channel: "ntp-dp-staging-alerts"
+data_exhaust_name: "dp-monitor"
+bucket: telemetry-data-store
+stream_base_url: "https://ntpstagingmedia-inct.streaming.media.azure.net"
+
+# Kafka topics
+ingestion_kafka_topics:
+  - name: telemetry.ingest
+    num_of_partitions: 4
+    replication_factor: 1
+
+ingestion_kafka_overriden_topics: 
+  - name: telemetry.ingest
+    retention_time: 604800000
+    replication_factor: 1
+
+processing_kafka_overriden_topics:
+  - name: telemetry.raw
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.valid
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.unique
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.duplicate
+    retention_time: 86400000
+    replication_factor: 1
+  - name: telemetry.sink
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.with_location
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.de_normalized
+    retention_time: 86400000
+    replication_factor: 1
+  - name: telemetry.log
+    retention_time: 86400000
+    replication_factor: 1
+  - name: analytics.job_queue
+    retention_time: 28800000
+    replication_factor: 1
+  - name: learning.graph.events
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: pipeline_metrics
+    retention_time: 259200000
+    replication_factor: 1
+  - name: metrics
+    retention_time: 604800000
+    replication_factor: 1
+  - name: learning.graph.events.fail
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: analytics_metrics
+    retention_time: 86400000
+    replication_factor: 1
+  - name: learning.job.request
+    retention_time: 1209600000 
+    replication_factor: 1
+  - name: learning.job.request.fail
+    retention_time: 1296000000
+    replication_factor: 1
+  - name: telemetry.derived
+    retention_time: 259200000
+    replication_factor: 1
+  # Error/Failed Topics
+  - name: telemetry.failed
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.malformed
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.extractor.failed
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.indexer.failed
+    retention_time: 604800000
+    replication_factor: 1
+  - name: qrimage.request
+    retention_time: 604800000
+    replication_factor: 1
+  - name: events.telemetry
+    retention_time: 604800000
+    replication_factor: 1
+  - name: events.summary
+    retention_time: 604800000
+    replication_factor: 1 
+
+
+# Media content
+media_service_azure_tenant: deepikaekstep.onmicrosoft.com
+media_service_azure_subscription_id: 5af454cb-5087-411d-a651-2d7d6c1b93a1
+media_service_azure_account_name: ntpstagingmedia
+media_service_azure_resource_group_name: staging_all
+media_service_azure_token_client_key: 07429c07-04f7-4c77-bd44-c79ce400a70f
+media_service_azure_token_client_secret: skA/pWodOLPZF/ea0ee8fSlVZsfPljwQJBc9Eb1gfRw=
+
+
+########## overriding variables
+telemetry_extractor_yarn_container_count: 2
+telemetry_validator_yarn_container_count: 2
+telemetry_de_duplication_yarn_container_count: 2
+telemetry_router_yarn_container_count: 4
+telemetry_reverse_search_yarn_container_count: 4
+telemetry_object_de_normalization_yarn_container_count: 1
+telemetry_es_indexer_yarn_container_count: 4
+telemetry_location_updater_yarn_container_count: 4
+events_router_yarn_container_count: 2
+samza_checkpoint_replication_factor: 2
+
+channel_data_exhaust_bucket: "telemetry-data-store"
+cassandra_hierarchy_store_prefix: "staging_"
+location_db_redis_key_expiry_seconds: 21600
+es_search_index: compositesearch
+compositesearch_index_name: compositesearch
+
+postgres:                                                                                          #### geetha
+  db_url: ntpstaging-pgsql.postgres.database.azure.com #"{{ groups['postgres'][0] }}"
+  db_username: analytics@ntpstaging-pgsql #analytics
+  db_name: analytics
+  db_password: "{{dp_vault_pgdb_password}}"
+  db_table_name: ntpstaging_consumer_channel_mapping
+  db_port: 5432
+  db_admin_user: pgntp@ntpstaging-pgsql
+  db_admin_password: "{{dp_vault_pgdb_admin_password}}"
+
+##################
+zk_port: 2181
+yarn_am_container_memory_mb: 128
+yarn_container_memory_mb: 128
+
+## over riding backup
+#backup_azure_storage_account_name: ntpbackupsstaging
+### overriding backup secret
+#backup_azure_storage_access_key: "{{dp_vault_backup_azure_storage_secret}}"
+
+### Release-1.15
+### samza monitoring variables
+samza_alert_slack_url: https://hooks.slack.com/services/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
+samza_alert_to_address: to=kaliraja.ramasamy@tarento.com&to=anandp@ilimi.in&to=harshavardhan.c@optit.co&to=altamash.s@optit.co&to=geetha.p@optit.co&to=sowmyad@ilimi.in&to=manjunathd@ilimi.in&to=revathi.kotla@tibilsolutions.com
+samza_alert_from_address: alerts@ntpstaging.net.in
+publish_pipeline_lag_alert_to_address: to=kaliraja.ramasamy@tarento.com&to=geetha.p@optit.co
+SGUSER: azure_9f4958288fdb111362201640e638d7ed@azure.com # sendgrid username
+SGPASS: "{{ dp_vault_sendgrid_password }}"
+sendgrid_hostname: smtp.sendgrid.net
+alert_from_address: alerts@ntpstaging.net.in 
+throughput_threshold_value: 30000
+influxdb_query_duration: 30
+kafka_heap_opts: "-Xmx2G -Xms2G"
+kafka_version: 2.4.1
+### Druid Vars ###
+
+# Druid broker node configuration
+
+druid_broker_heap_size: 5g
+druid_broker_max_direct_size: 3g
+druid_broker_processing_bufferBytes: 256000000
+
+# Druid historical node configuration
+
+druid_historical_heap_size: 5g
+druid_historical_max_direct_size: 3g
+druid_historical_processing_bufferBytes: 256000000
+
+swarm_manager_lb_ip: 11.3.5.10
+
+## Release-2.4.0 var ###
+producer_env: "staging.diksha"
+
+#report_azure_account_name: ntpstaging
+#report_azure_storage_secret: "{{dp_vault_reports_azure_key}}"
+
+## Maxmind db configuration
+maxmind_geocity_db_url: 'https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-City-CSV&license_key={{ maxmind_db_license_key }}&suffix=zip'
+maxmind_db_unarchived_dir_prefix: GeoIP2-City-CSV_*
+maxmind_db_geo_city_blocks_filename: GeoIP2-City-Blocks-IPv4.csv
+maxmind_db_geo_city_locations_filename: GeoIP2-City-Locations-en.csv
+maxmind_db_geo_city_ip_range_filename: GeoIP2-City-Range-IPv4.csv
+dp_play_http_secret_key: 'DFHdR74?tDvH2n`DAqk:RBl6NfkoO5tNYblTRmf3ZLcDIp5@oVjJM^ypkDOf2`<A'
+
+monitor_alerts_slack_channel: "#monit-alert-ntp-stg"
+monit_alerts_slack_url: https://hooks.slack.com/services/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
+
+# monitoring variables for redis dump.rdb state detection
+redis_dump_rdb_time_in_seconds: 900
+redis_dump_rdb_keys_to_save_state: 1
+redis_dump_rdb_mail_sender: "alerts@ntp-staging.org"
+redis_dump_rdb_mail_receivers: "{{samza_alert_to_address}}"
+redis_dump_rdb_mail_sendgrid_username: "azure_139dddf1c9ba120b125bebfa48922037@azure.com"
+redis_dump_rdb_mail_sendgrid_password: "{{ dp_vault_sendgrid_password }}"
+redis_dump_rdb_slack_url: "{{ monit_alerts_slack_url }}"
+redis_dump_rdb_cron_hour: "*/2"
+redis_dump_rdb_cron_minute: "0"
+redis_user: analytics # set value to analytics for production
+
+
+##### kubernetes variables #######
+private_ingressgateway_ip: "11.3.8.8"
+sunbird_learner_service_url: "http://{{private_ingressgateway_ip}}/learner"
+
+##### Portal reports variable #######
+search_lb_ip: 11.3.3.21                     # search service Load balancer IP 
+learning_lb_ip: 11.3.3.22                      # Load balancer IP for learning server
+cassandra_host: "{{ groups['cassandra'][0] }}"
+sunbird_druid_broker_host: "http://{{ groups['broker'][0] }}"
+samza_alert_slack_token: T656K29BP/BCCAMD90R/HBJg4Oz0yuOXqwtRH9abIKO0
+
+######################## Release-2.9.0 Storage Account variables ####################
+sunbird_private_storage_account_name: dikshastagingprivate
+sunbird_management_storage_account_name: dikshastagingmanagement
+sunbird_artifact_storage_account_name: dikshaartifact
+sunbird_druid_storage_account_name: ntpstagingall
+sunbird_public_storage_account_name: ntpstagingall
+
+########### Release-2.9.0 variables #################
+dialservice_ip: 11.3.3.24
+dialcode_host: "http://{{private_ingressgateway_ip}}/dial"
+dialcode_endpoint: "dialcode/v3/read/"
+
+### Flink variables
+
+kubeconfig_path: /var/lib/jenkins/secrets/staging-dp-k8s.yaml
+# PVC for prometheus
+storage_class_name: "managed-premium"
+prometheus_storage_spec:
+  volumeClaimTemplate:
+    spec:
+      storageClassName: "{{ storage_class_name }}"
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 100Gi
+
+# PVC for grafana
+grafana_persistence:
+  type: pvc
+  enabled: true
+  storageClassName: "{{ storage_class_name }}"
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+  finalizers:
+    - kubernetes.io/pvc-protection
+
+# To create the grafana service with private loadbalancer ip
+grafana_service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 3000
+  nodePort: 31280
+  portName: service
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: 'true'
+
+# To create the prometheus service with private loadbalancer ip
+prometheus_service:
+  type: LoadBalancer
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: 'true'
+
+# namespace of flink
+flink_namespace: flink-ntpstaging
+
+#flink alerts to address
+default_mailing_list: kaliraja.ramasamy@tarento.com, anandp@ilimi.in, manjunathd@ilimi.in, sowmyad@ilimi.in, revathi.kotla@tibilsolutions.com
+
+### base-config related vars
+flink_container_name: flink-state-backend
+
+# docker hub details
+dockerhub: ntphub.azurecr.io
+docker_registry: ntphub
+imagepullsecrets: diksha-registry-secret
+
+# slack alerts 
+dp_monitor_alerts_slack_url: https://hooks.slack.com/services/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
+dp_monitor_alerts_warning_slack_url: https://hooks.slack.com/services/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 
+dp_monitor_alerts_critical_slack_url: https://hooks.slack.com/services/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
+# Release-3.2.0 
+cassandra_hierarchy_store_keyspace: staging_hierarchy_store # related to course-progress-report
+
+#release-3.1.0
+sunbird_private_azure_report_container_name: 'reports'
+sunbird_public_azure_report_container_name: 'public-reports'
+
+learningservice_ip: 11.3.3.22
+
+####Denorm scale vars ####   
+content_port: 6379
+device_port: 6379
+user_port: 6379
+dialcode_port: 6379
+
+### monitoring related vars
+core_prom_ip: '11.4.42.178:9090' # core private ingress ip
+monitoring_stack:
+  - prometheus-operator
+  - additional-scrape-configs
+  - alertrules
+  - prometheus-adapter
+  - processing-kafka-exporter
+  - ingestion-kafka-exporter
+additional_scrape_configs: true
+additional_scrape_configs_enabled: "{{ additional_scrape_configs | lower }}"
+nginx_tps_threshold: 1000 # being used in flink jobs percentage lag alert rules
+flink_lag_percentage_threshold: 20 # being used in flink jobs percentage lag alert rule
+flink_lag_offset_duration: 30 # values in minutes and being used in alert rule
+
+###Overwriting flink default configs
+flink_job_names:
+  telemetry-extractor:
+    job_class_name: 'org.sunbird.dp.extractor.task.TelemetryExtractorStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: true
+    scale_target_value: 500000
+    min_replica: 1
+    max_replica: 2
+  pipeline-preprocessor:
+    job_class_name: 'org.sunbird.dp.preprocessor.task.PipelinePreprocessorStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: true
+    scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2
+  de-normalization-secondary:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: true
+    scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2
+  de-normalization-primary:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: true
+    scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2      
+  druid-validator:
+    job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: true
+    scale_target_value: 1000000
+    min_replica: 1
+    max_replica: 2
+  assessment-aggregator:
+    job_class_name: 'org.sunbird.dp.assessment.task.AssessmentAggregatorStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: false
+  content-cache-updater:
+    job_class_name: 'org.sunbird.dp.contentupdater.task.ContentCacheUpdaterStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: false
+  user-cache-updater-v2:
+    job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTaskV2'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: false
+  summary-denormalization:
+    job_class_name: 'org.sunbird.dp.denorm.task.SummaryDenormalizationStreamTask'
+    replica: 4
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 2
+    cpu_requests: 2
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: true
+    scale_target_value: 100
+    min_replica: 1
+    max_replica: 8
+
+  device-profile-updater:
+    job_class_name: 'org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: false
+  ingest-router:
+    job_class_name: 'org.sunbird.dp.ingestrouter.task.IngestRouterStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: true
+    scale_target_value: 500000
+    min_replica: 1
+    max_replica: 2
+  error-denormalization:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: false
+    
+###Spark hdinsight cluster###
+spark_storage_container: spark-cluster
+spark_cluster_user_name: admin
+spark_cluster_user_password: "{{azure_spark_cluster_http_password}}"
+
+##Graylog var
+send_logs_to_graylog: true
+
+##release-4.0 vars##
+report_user_enrolment_table: user_enrolments
+
+##release-4.1.0 vars##
+zookeeper_data_dir: /opt/zookeeper
+data_exhaust_batch_limit_per_request: 20   # On demand Exhaust throttling vars
+exhaust_batches_limit_per_channel: 100    # On demand Exhaust throttling vars
+exhaust_file_size_limit_bytes_per_channel: 10737418240   # On demand Exhaust throttling vars
+
+### release-4.1.1 vars ##
+content_read_api_host: "https://{{ domain_name }}"
+content_read_api_endpoint: "api/content/v1/read/"
+
+dock_learningservice_ip: 11.8.1.4
+
+## release-4.6.0 and release-4.7.0
+bucket: telemetry-data-store
+
+##release-4.8.0##
+sunbird_instance: diksha
+uci_env: ntpstaging
+sunbird_private_s3_storage_key: ""
+sunbird_private_s3_storage_secret: ""
+
+## release-4.10.0 #####
+exhaust_job_assessment_primary_category: ""

@@ -1,0 +1,13 @@
+---
+- name: Purge Elasticsearch indices
+  shell: |
+    index_prefix="{{ purge_indices_index_prefix }}"
+    [[ -z "${index_prefix}" ]] && exit
+    indices_to_purge=$(curl -s "http://localhost:9200/_cat/indices?pretty" | grep $index_prefix | awk '{print $3}' | sort | head -n -12)
+    if [[ -n "${indices_to_purge}" ]]; then
+      for indices in $indices_to_purge; do
+        curl -s -X DELETE "localhost:9200/${indices}" | jq '.'
+      done
+    fi
+  args:
+    executable: /bin/bash

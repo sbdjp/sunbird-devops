@@ -1,0 +1,6 @@
+---
+- name: Purge Elasticsearch Indices
+  hosts: "{{ remote }}"
+  become: yes
+  roles: 
+    - es-purge-indices

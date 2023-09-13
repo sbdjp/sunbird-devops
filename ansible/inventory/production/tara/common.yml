@@ -1,0 +1,4 @@
+vault_docker_registry_url: "{{core_vault_docker_registry_url}}"
+vault_docker_registry_user: "{{core_vault_docker_registry_user}}"
+vault_docker_registry_password: "{{core_vault_docker_registry_password}}"
+domain_name: diksha.gov.in

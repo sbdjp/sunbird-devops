@@ -1,0 +1,109 @@
+#!groovy
+
+node('slave-vm') {
+
+    currentBuild.result = "SUCCESS"
+
+   dir('org.ekstep.questionunit.ftb') {
+        git url: 'https://github.com/sunbird-content-plugins/org.ekstep.questionunit.ftb.git'
+    }
+
+    dir('org.ekstep.questionunit.sequence') {
+        git url: 'https://github.com/sunbird-content-plugins/org.ekstep.questionunit.sequence.git'
+    }
+
+    dir('org.ekstep.questionunit.reorder') {
+        git url: 'https://github.com/sunbird-content-plugins/org.ekstep.questionunit.reorder.git'
+    }
+    
+    dir('org.ekstep.questionset.quiz') {
+        git url: 'https://github.com/sunbird-content-plugins/org.ekstep.questionset.quiz.git'
+    }
+
+    dir('org.ekstep.questionset.preview') {
+        git url: 'https://github.com/sunbird-content-plugins/org.ekstep.questionset.preview.git'
+    }
+
+    dir('org.ekstep.questionunit.mtf') {
+        git url: 'https://github.com/sunbird-content-plugins/org.ekstep.questionunit.mtf.git'
+    }
+
+    dir('org.ekstep.questionunit.mcq') {
+        git url: 'https://github.com/sunbird-content-plugins/org.ekstep.questionunit.mcq.git'
+    }
+
+    dir('org.ekstep.questionunit') {
+        git url: 'https://github.com/sunbird-content-plugins/org.ekstep.questionunit.git'
+    }
+
+    dir('org.ekstep.questionbank') {
+        git url: 'https://github.com/sunbird-content-plugins/org.ekstep.questionbank.git'
+    }
+
+    dir('org.ekstep.question') {
+        git url: 'https://github.com/sunbird-content-plugins/org.ekstep.question.git'
+    }
+
+    dir('org.ekstep.questionset') {
+        git url: 'https://github.com/sunbird-content-plugins/org.ekstep.questionset.git'
+    }
+
+    dir('org.ekstep.mathtext') {
+        git url: 'https://github.com/sunbird-content-plugins/org.ekstep.mathtext.git'
+    }
+
+    dir('org.ekstep.libs.ckeditor') {
+        git url: 'https://github.com/sunbird-content-plugins/org.ekstep.libs.ckeditor.git'
+    }
+
+    dir('org.ekstep.keyboard') {
+        git url: 'https://github.com/sunbird-content-plugins/org.ekstep.keyboard.git'
+    }
+    
+    dir('ntp-devops') {
+        git branch: 'lp-switch', credentialsId: 'diksha-deploy', url: 'https://github.com/DIKSHA-NCTE/ntp-devops.git'
+    } 
+    
+    stage('pre-build'){
+    sh ('chmod 775 ntp-devops/pipelines/diksha-plugins-build/npm_modules.sh')
+    sh ('./ntp-devops/pipelines/diksha-plugins-build/npm_modules.sh')
+    }
+    
+    stage('build')
+    sh ('cp ./ntp-devops/pipelines/diksha-plugins-build/gulpfile.* org.ekstep.questionunit.ftb/ && chmod 777 org.ekstep.questionunit.ftb/gulpfile.sh && sh org.ekstep.questionunit.ftb/gulpfile.sh && cd org.ekstep.questionunit.ftb && gulp makezip')
+    sh ('cp ./ntp-devops/pipelines/diksha-plugins-build/gulpfile.* org.ekstep.questionunit.sequence/ && chmod 777 org.ekstep.questionunit.sequence/gulpfile.sh && sh org.ekstep.questionunit.sequence/gulpfile.sh && cd org.ekstep.questionunit.sequence && gulp makezip')
+    sh ('cp ./ntp-devops/pipelines/diksha-plugins-build/gulpfile.* org.ekstep.questionunit.reorder && cd org.ekstep.questionunit.reorder && gulp makezip')
+    sh ('cp ./ntp-devops/pipelines/diksha-plugins-build/gulpfile.* org.ekstep.questionset.quiz && cd org.ekstep.questionset.quiz && gulp makezip')
+    sh ('cp ./ntp-devops/pipelines/diksha-plugins-build/gulpfile.* org.ekstep.questionset.preview && cd org.ekstep.questionset.preview && gulp makezip')
+    sh ('cp ./ntp-devops/pipelines/diksha-plugins-build/gulpfile.* org.ekstep.questionunit.mtf && cd org.ekstep.questionunit.mtf && gulp makezip')
+    sh ('cp ./ntp-devops/pipelines/diksha-plugins-build/gulpfile.* org.ekstep.questionunit.mcq && cd org.ekstep.questionunit.mcq && gulp makezip')
+    sh ('cp ./ntp-devops/pipelines/diksha-plugins-build/gulpfile.* org.ekstep.questionunit && cd org.ekstep.questionunit && gulp makezip')
+    sh ('cp ./ntp-devops/pipelines/diksha-plugins-build/gulpfile.* org.ekstep.questionbank && cd org.ekstep.questionbank && gulp makezip')
+    sh ('cp ./ntp-devops/pipelines/diksha-plugins-build/gulpfile.* org.ekstep.questionset && cd org.ekstep.questionset && gulp makezip')
+    sh ('cp ./ntp-devops/pipelines/diksha-plugins-build/gulpfile.* org.ekstep.mathtext && cd org.ekstep.mathtext && gulp makezip')
+    sh ('cp ./ntp-devops/pipelines/diksha-plugins-build/gulpfile.* org.ekstep.libs.ckeditor && cd org.ekstep.libs.ckeditor && gulp makezip')
+    sh ('cp ./ntp-devops/pipelines/diksha-plugins-build/gulpfile.* org.ekstep.keyboard && cd org.ekstep.keyboard && gulp makezip')
+    sh ('cp ./ntp-devops/pipelines/diksha-plugins-build/gulpfile.* org.ekstep.question && cd org.ekstep.question && gulp makezip')
+
+    stage('artifacts')
+    sh '''
+ 
+      cp ./org.ekstep.question/dist/*.zip artifacts/
+      cp ./org.ekstep.questionunit.ftb/dist/*.zip artifacts/
+      cp ./org.ekstep.questionunit.sequence/dist/*.zip artifacts/
+      cp ./org.ekstep.questionunit.reorder/dist/*.zip artifacts/
+      cp ./org.ekstep.questionset.quiz/dist/*.zip artifacts/
+      cp ./org.ekstep.questionset.preview/dist/*.zip artifacts/
+      cp ./org.ekstep.questionunit.mtf/dist/*.zip artifacts/
+      cp ./org.ekstep.questionunit.mcq/dist/*.zip artifacts/
+      cp ./org.ekstep.questionunit/dist/*.zip artifacts/
+      cp ./org.ekstep.questionbank/dist/*.zip artifacts/
+      cp ./org.ekstep.questionset/dist/*.zip artifacts/
+      cp ./org.ekstep.mathtext/dist/*.zip artifacts/
+      cp ./org.ekstep.libs.ckeditor/dist/*.zip artifacts/
+      cp ./org.ekstep.keyboard/dist/*.zip artifacts/
+      '''
+}
+
+
+ 

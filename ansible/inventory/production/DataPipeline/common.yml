@@ -1,0 +1,1680 @@
+############## Common ######################
+
+# Common vars for env
+env: ntpprod
+proto: https
+producer_env: prod.diksha
+domain_name: diksha.gov.in
+env_name: ntpprod
+ssh_public_key_deployer: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDhepW/SVVT+i2YMMHf9gj8lICp6Q6HVf2/bYxHq+dBMOlnA13Ps6ciKy4MlrLod7rp1gsP5LSsZj/QHQ+A9nOnrZXlrbJ2OmHS89CnQs7t+dwH4kQJpYOpTqGGAUp147pJylcYaDB9xswMxOk9WPSKt7c0Na+fpaC0jzZYeRr5IqYzJSHMzqqmCES+AExtYIw+IghTx9Y/IKa8BvgBqTVgS+nBoVVa9YxDFvwgVVKunPRgcwMfqWsyWGgfLQi6xDrDBcxDbbN+0kIAB1QmLg2DcUGHJO5LdAxmFEQjsO7d3wbKxMMwFgCYSkYb2BVEuckbTQnpS3pFrFUIsB2JQ6bTqnG5x1H2+Ooblg+luglCij2+dcWAlMKgNZlQXpY6YGaEbiimz6zah+PrMeO8yJyMhs77EZd7fVnBzOFnfL2YPKRuR8EnjBGB1bDxFE3Z5rT8nOKmo4CItlud1YuJAvRB3FHCBt+OVmz7zYE8s2jIuv33ql6u91OAjLiyMccbq6jhYSI2epFTAsfkbdOz/T4mU7Wq5fO8LY4hsYRavrOPfFhIh9fPJo8wp9LmQjUBGb1aok5k6f/MjiRto5Y8fWBn0xYZ5yHh6w5GVxMfAd/WWjju5cnsDUHQf59MGDZdygbNa8zA3YB6yZIVrf2vFT9FRUy8JEW4XxpWmJCvnnt2/w== deployerprod@key"
+bootstrap_user: ops
+bootstrap_key_path: /var/lib/jenkins/secrets/prodops_ssh_key
+ansible_ssh_private_key_file: /var/lib/jenkins/secrets/proddeployer_ssh_key
+
+#################### DP ##########################
+
+###artifact upload
+artifact_azure_account_name: "dikshaartifactstore"
+artifact_azure_account_key: "{{ dp_vault_artifact_azure_account_key }}"
+
+secor_azure_container_name: telemetry-data-store
+#secor_alerts_slack_channel: "#ntp-dp-prod-alerts"  #old-sunbird slack 
+secor_alerts_slack_channel: "#prod_samza_alerts"  #new diksha slack
+
+
+dp_azure_account_name: ntpproductionall
+default_org_hash_id: "505c7c48ac6dc1edc9b08f21db5a571d"
+
+# Data products monitoring web hooks
+#data_exhaust_webhook_url: "https://hooks.slack.com/services/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" #old-sunbird slack
+#data_exhaust_webhook_url: "https://hooks.slack.com/services/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" #new diksha slack
+#data_exhaust_Channel: "ntp-dp-prod-alerts"  #old-sunbird slack
+data_exhaust_Channel: "ntpprod_flink_alerts" #new diksha slack
+samza_slack_channel: "#prod_samza_alerts" #new diksha slack
+data_exhaust_name: "dp-monitor"
+bucket: telemetry-data-store
+stream_base_url: "https://ntpprodmedia-inct.streaming.media.azure.net"
+kafka_version: 2.4.1
+# Kafka topics
+
+ingestion_kafka_topics:
+  - name: telemetry.ingestion
+    num_of_partitions: 32
+    replication_factor: 3
+  - name: events.deviceprofile
+    num_of_partitions: 1
+    replication_factor: 3
+
+ingestion_kafka_overriden_topics:
+  - name: telemetry.ingestion
+    retention_time: 259200000
+    replication_factor: 3
+    max_message_bytes: 5242880
+  - name: events.deviceprofile
+    retention_time: 518400000
+    replication_factor: 3
+
+
+processing_kafka_topics:
+  - name: analytics.job_queue
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: analytics_metrics
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: druid.events.error
+    num_of_partitions: 4
+    replication_factor: 3
+  - name: druid.events.log
+    num_of_partitions: 8
+    replication_factor: 3
+  - name: druid.events.summary
+    num_of_partitions: 8
+    replication_factor: 3
+  - name: druid.events.telemetry
+    num_of_partitions: 32
+    replication_factor: 3
+  - name: events.deviceprofile
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: prom.monitoring.metrics
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: telemetry.assess
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: telemetry.assess.failed
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: telemetry.assess.raw
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: telemetry.audit
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: telemetry.denorm 
+    num_of_partitions: 32
+    replication_factor: 3
+  - name: telemetry.derived
+    num_of_partitions: 16
+    replication_factor: 3
+  - name: telemetry.derived.unique
+    num_of_partitions: 4
+    replication_factor: 3
+  - name: telemetry.duplicate
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: telemetry.error
+    num_of_partitions: 4
+    replication_factor: 1
+  - name: telemetry.extractor.duplicate
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: telemetry.extractor.failed
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: telemetry.failed
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: telemetry.ingest
+    num_of_partitions: 16
+    replication_factor: 3
+  - name: telemetry.metrics
+    num_of_partitions: 1
+    replication_factor: 3
+  - name: telemetry.raw
+    num_of_partitions: 32
+    replication_factor: 3
+  - name: telemetry.unique
+    num_of_partitions: 32
+    replication_factor: 3
+  - name: telemetry.unique.latest
+    num_of_partitions: 32
+    replication_factor: 3
+  - name: telemetry.unique.primary
+    num_of_partitions: 32
+    replication_factor: 3
+  - name: telemetry.unique.secondary
+    num_of_partitions: 32
+    replication_factor: 3
+
+processing_kafka_overriden_topics:
+  - name: analytics.job_queue
+    retention_time: 28800000
+    replication_factor: 1
+  - name: analytics_metrics
+    retention_time: 172800000
+    replication_factor: 1
+  - name: druid.events.error
+    retention_time: 259200000
+    replication_factor: 3
+    max_message_bytes: 4194304
+  - name: druid.events.log
+    retention_time: 172800000
+    replication_factor: 3
+    max_message_bytes: 4194304
+  - name: druid.events.summary
+    retention_time: 259200000
+    replication_factor: 3
+    max_message_bytes: 1572864
+  - name: druid.events.telemetry
+    retention_time: 259200000
+    replication_factor: 3
+    max_message_bytes: 4194304
+  - name: events.deviceprofile
+    retention_time: 259200000
+    replication_factor: 3
+  - name: prom.monitoring.metrics
+    retention_time: 172800000
+    replication_factor: 3
+  - name: telemetry.assess
+    retention_time: 259200000
+    replication_factor: 3
+  - name: telemetry.assess.failed
+    retention_time: 259200000
+    replication_factor: 3
+  - name: telemetry.assess.raw
+    retention_time: 259200000
+    replication_factor: 3
+    max_message_bytes: 4194304
+  - name: telemetry.audit
+    retention_time: 259200000
+    replication_factor: 3
+    max_message_bytes: 4194304
+  - name: telemetry.denorm 
+    retention_time: 259200000
+    replication_factor: 3
+    max_message_bytes: 4194304
+  - name: telemetry.derived
+    retention_time: 259200000
+    replication_factor: 3
+  - name: telemetry.derived.unique
+    retention_time: 259200000
+    replication_factor: 3
+  - name: telemetry.duplicate
+    retention_time: 86400000
+    replication_factor: 3
+    max_message_bytes: 4194304
+  - name: telemetry.error
+    retention_time: 259200000
+    replication_factor: 1
+    max_message_bytes: 4194304
+  - name: telemetry.extractor.duplicate
+    retention_time: 259200000
+    replication_factor: 3
+    max_message_bytes: 5242880
+  - name: telemetry.extractor.failed
+    retention_time: 259200000
+    replication_factor: 3
+  - name: telemetry.failed
+    retention_time: 259200000
+    replication_factor: 3
+    max_message_bytes: 10000000
+  - name: telemetry.ingest
+    retention_time: 172800000
+    replication_factor: 3
+    max_message_bytes: 5242880
+  - name: telemetry.metrics
+    retention_time: 259200000 
+    replication_factor: 3
+  - name: telemetry.raw
+    retention_time: 259200000 
+    replication_factor: 3
+    max_message_bytes: 4194304
+  - name: telemetry.unique
+    retention_time: 259200000
+    replication_factor: 3
+    max_message_bytes: 4194304
+  - name: telemetry.unique.latest
+    retention_time: 259200000
+    replication_factor: 3
+    max_message_bytes: 1572864
+  - name: telemetry.unique.primary
+    retention_time: 259200000
+    replication_factor: 3
+    max_message_bytes: 4194304 
+  - name: telemetry.unique.secondary
+    retention_time: 259200000
+    replication_factor: 3
+    max_message_bytes: 4194304
+
+# Media content
+media_service_azure_tenant: deepikaekstep.onmicrosoft.com
+media_service_azure_subscription_id: 5af454cb-5087-411d-a651-2d7d6c1b93a1
+media_service_azure_account_name: ntpprodmedia
+media_service_azure_resource_group_name: production_all
+media_service_azure_token_client_key: 550928c0-03ad-459c-babd-89717d7c838c
+
+
+########## overriding variables
+#telemetry_extractor_yarn_container_count: 2
+#telemetry_validator_yarn_container_count: 4
+#telemetry_de_duplication_yarn_container_count: 2
+#telemetry_router_yarn_container_count: 4
+#telemetry_reverse_search_yarn_container_count: 4
+#telemetry_object_de_normalization_yarn_container_count: 1
+#telemetry_es_indexer_yarn_container_count: 4
+#telemetry_location_updater_yarn_container_count: 4
+#telemetry_extractor_container_memory_mb: 2048
+#events_router_yarn_container_count: 8
+#samza_checkpoint_replication_factor: 3
+maxmind_custom_data_mapping_url: "https://ntpproductionall.blob.core.windows.net/public/maxmind_custom_data_mapping.csv"
+channel_data_exhaust_bucket: "telemetry-data-store"
+cassandra_hierarchy_store_prefix: "prod_"
+location_db_redis_key_expiry_seconds: 86400
+es_search_index: compositesearch
+compositesearch_index_name: compositesearch
+video_stream_job_schedule: 30
+kafka_heap_opts: "-Xmx6G -Xms6G"
+maxmind_geocity_db_url: 'https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-City-CSV&license_key={{ maxmind_db_license_key }}&suffix=zip'
+maxmind_db_license_key: NCMBOXvlizvE 
+maxmind_db_unarchived_dir_prefix: GeoIP2-City-CSV_*
+maxmind_db_geo_city_blocks_filename: GeoIP2-City-Blocks-IPv4.csv
+maxmind_db_geo_city_locations_filename: GeoIP2-City-Locations-en.csv
+maxmind_db_geo_city_ip_range_filename: GeoIP2-City-Range-IPv4.csv
+middleware_cassandra_location_table: location
+
+heap_memory: -Xmx50g
+
+spark:
+  driver_memory: 15g
+  memory_fraction: 0.3
+  storage_fraction: 0.5  
+  executor_extraJavaOptions: -Dconfig.file=/mount/data/analytics/models-{{ model_version }}/{{ env }}.conf -Dlog4j.configurationFile=file:////mount/data/analytics/models-{{ model_version }}/log4j2.xml
+  driver_extraJavaOptions: -Dconfig.file=/mount/data/analytics/models-{{ model_version }}/{{ env }}.conf -Dlog4j.configurationFile=file:////mount/data/analytics/models-{{ model_version }}/log4j2.xml
+  executor_memory: 2g
+  heap_conf_str: '"-XX:+UseG1GC -XX:MaxGCPauseMillis=100 -Xms250m {{ heap_memory }} -XX:+UseStringDeduplication"'
+  home: "{{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7"
+  public_dns: 54.255.154.146
+  master:
+    url: spark://172.31.11.117:7077
+    host: 172.31.11.117
+  worker:
+    instances: 1
+    cores: 2
+    memory: 4g
+  driver:
+    memory: 10g
+  executor:
+    memory: 2g
+
+postgres:
+  db_url: analytics-production-psql.postgres.database.azure.com #"{{ groups['postgres'][0] }}" preprod-lp-dp.postgres.database.azure.com
+  db_username: analytics@analytics-production-psql #analytics
+  db_name: analytics
+  db_password: "{{dp_vault_pgdb_password}}"
+  db_table_name: ntpprod_consumer_channel_mapping
+  db_port: 5432
+  db_admin_user: pgntp@analytics-production-psql
+  db_admin_password: "{{dp_vault_pgdb_admin_password}}"  
+
+
+##################
+zk_port: 2181
+#yarn_am_container_memory_mb: 128
+#yarn_container_memory_mb: 128
+
+## over riding backup
+backup_azure_storage_account_name: ntpbackupsproduction
+### overriding backup secret
+backup_azure_storage_access_key: "{{dp_vault_backup_azure_storage_secret}}"
+
+### Release-1.15
+### samza monitoring variables
+#samza_alert_slack_url: https://hooks.slack.com/services/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
+samza_alert_to_address: to=noc@optit.in&to=raghupathi.g@optit.co&to=naveenprabhu.v@optit.co&to=sandeep.r@optit.co&to=samatha.j@optit.co&to=kalaipandiyan.k@optit.co&to=vinay.b@optit.co&to=rajasimman.s@teamdiskha.org
+samza_alert_from_address: alerts@ntp-prod.net.in
+alert_from_address: "{{ samza_alert_from_address }}"
+SGUSER: apikey # sendgrid username
+SGPASS: "{{ dp_vault_sendgrid_password }}"
+sendgrid_hostname: smtp.sendgrid.net
+throughput_threshold_value: 30000
+influxdb_query_duration: 30
+
+
+
+####Druid####
+#Druid coordinator node configuration
+#druid_coordinator_heap_size: 2g
+#druid_coordinator_period: PT60S
+#druid_coordinator_startDelay: PT300S
+#Druid overlord node configuration
+#druid_overlord_heap_size: 1g
+#Druid broker node configuration
+#druid_broker_heap_size: 6g
+#druid_broker_max_direct_size: 3g
+#druid_broker_http_numConnections: 20
+#druid_broker_server_http_numThread: 25
+#druid_broker_processing_bufferBytes: 256741824
+#druid_broker_processing_threads: 2
+#Druid historical node configuration
+#druid_historical_heap_size: 12g
+#druid_historical_max_direct_size: 8g
+#druid_historical_http_numConnections: 5
+#druid_historical_server_http_numThread: 25
+#druid_historical_processing_bufferBytes: 524288000
+#druid_historical_processing_threads: 8
+#druid_historical_enable_cache: false
+#druid_historical_segmentcache_size: 429496729600
+#druid_historical_server_maxsize: 2000000000000
+#druid_historical_processing_num_merge_buffers: 4
+#druid_historical_segmentcache_path: "/data/segmentstore"
+
+#Druid middlemanager configuration
+#druid_middlemanager_heap_size: 256m
+#druid_middlemanager_worker_cap: 3
+#druid_mm_java_opts_array: "-server -Xms512m -Xmx5632m -XX:+UseG1GC -XX:HeapDumpPath=/var/log/druid/crash_logs/middlemanager.hprof -XX:MaxGCPauseMillis=100"
+#druid_middlemanager_peon_server_http_numThread: 25
+#druid_middlemanager_peon_processing_bufferBytes: 256000000
+#druid_middlemanager_peon_processing_threads: 2
+#druid_middlemanager_peon_server_maxsize: 0
+#druid_indexing_queue_startDelay: PT1M
+#druid_azure_container_name: telemetry-data-store #Druid-GA
+
+### Release-2.0.1
+#denormalization_yarn_container_count : 4
+#druid_events_validator_yarn_container_count : 8
+
+### Release-2.1.0
+analytics_api_min_heap: 2g
+analytics_api_max_heap: 5g
+dedup_include_env_producer_ids: "prod.diksha.portal,prod.sunbird.desktop"
+dp_redis_max_memory: 28g
+
+### Release-2.3.0 vars ###
+swarm_manager_lb_ip: 11.4.42.178 
+#denormalization_yarn_container_count: 8
+
+#Release-2.4.0
+##analytics_job_list: '"pipeline-failed-events-audit", "pipeline-druid-events-audit", "pipeline-audit", "wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "dialcode-usage-summary", "dialcode-usage-updater", "etb-coverage-summary", "content-rating-updater", "data-exhaust", "ds", "dpu", "monitor-job-summ"'
+#analytics_jobs_count: 15
+
+###Release-2.5.0##
+maxmind_geocity_db_url: 'https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-City-CSV&license_key={{ maxmind_db_license_key }}&suffix=zip'
+maxmind_db_unarchived_dir_prefix: GeoIP2-City-CSV_*
+maxmind_db_geo_city_blocks_filename: GeoIP2-City-Blocks-IPv4.csv
+maxmind_db_geo_city_locations_filename: GeoIP2-City-Locations-en.csv
+maxmind_db_geo_city_ip_range_filename: GeoIP2-City-Range-IPv4.csv
+report_azure_account_name: ntpproductionall
+report_azure_storage_secret: "{{dp_vault_reports_azure_key}}"
+
+
+# monitoring variables for redis dump.rdb state detection
+redis_dump_rdb_time_in_seconds: 14400
+redis_dump_rdb_keys_to_save_state: 10000
+redis_dump_rdb_mail_sender: "alerts@ntp-prod.org"
+redis_dump_rdb_mail_receivers: "{{samza_alert_to_address}}"
+redis_dump_rdb_mail_sendgrid_username: "azure_ed5bc89bbca87e5b61581f8013451090@azure.com"
+redis_dump_rdb_mail_sendgrid_password: "{{ dp_vault_sendgrid_password }}"
+redis_dump_rdb_slack_url: "{{ monit_alerts_slack_url }}"
+redis_dump_rdb_cron_hour: "*/4"
+redis_dump_rdb_cron_minute: "0"
+redis_user: analytics # set value to analytics for production
+monitor_alerts_slack_channel: prod_alerts  #new diksha slack
+monit_alerts_slack_url: https://hooks.slack.com/services/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 #new diksha slack
+
+
+##### Portal reports variable #######
+search_lb_ip: 11.4.3.20  # search service Load balancer IP
+learning_lb_ip: 11.4.3.21                      # Load balancer IP for learning server
+cassandra_host: "{{ groups['cassandra'][0] }}"
+sunbird_druid_broker_host: "http://{{ groups['raw-coordinator'][0] }}"
+druid_broker_host: "{{groups['raw-broker'][0]}}"
+sunbird_druid_rollup_broker_host: "http://{{ groups['rollup-broker'][0] }}"
+
+###R-2.8.0 vars
+samza_alert_slack_token: TQ1SJ5P35/BR3KA3XN0/A9gq8kdpX5s9R6aLV9Uh0gwG #new diksha slack
+
+##Redis-metadata##
+metadata_redis_host: "{{ groups['redis-metadata'][0] }}"
+
+### kafka variables
+kafka_data_dir: /data/kafka
+replica_fetch_max_size: 5242880
+openfile_limit: 300000
+vm_mmap_count: 300000
+### secor variables
+ingestion_kafka_brokers: "{{groups['ingestion-cluster-kafka']|join(':9092,')}}:9092"
+ingestion_zookeepers: "{{groups['ingestion-cluster-zookeeper']|join(':2181,')}}:2181"
+telemetry_ingestion_topic: "{{ env }}.telemetry.ingestion"
+kafka_broker: "{{groups['ingestion-cluster-kafka'][0]}}:9092"
+
+# release-2.8.6
+####azure storage###
+sunbird_private_storage_account_name: dikshaprodprivate 
+sunbird_management_storage_account_name: dikshaprodmanagement
+sunbird_artifact_storage_account_name: dikshaartifact
+sunbird_druid_storage_account_name: ntpproductionall
+
+#dialcode_host: "https://api.ekstep.in"
+#dialcode_endpoint: "/api/dialcode/v3/read/"
+#dialcode_endpoint: "dialcode/v3/read/"
+
+###Release-2.8.8 vars
+druid_rollup_broker_host: "{{ groups['rollup-broker'][0] }}"
+
+####heap size in spark ###
+
+##2-10-vars
+private_ingressgateway_ip: "11.4.42.178" #to be added after k8s bootstrap
+
+
+###2.10.1 vars
+hierarchySearchServiceUrl: http://{{ private_ingressgateway_ip }}/content/content
+reports_container: "reports"
+
+analytics_job_list: '"monitor-job-summ"'
+
+### Flink variables
+kubeconfig_path: /var/lib/jenkins/secrets/prod-dp-k8s.yaml
+# PVC for prometheus
+storage_class_name: "managed-premium"
+prometheus_storage_spec:
+  volumeClaimTemplate:
+    spec:
+      storageClassName: "{{ storage_class_name }}"
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 500Gi
+          
+prometheus_retention_time: 120d
+
+grafana_persistence:
+  type: pvc
+  enabled: true
+  storageClassName: "{{ storage_class_name }}"
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+  finalizers:
+    - kubernetes.io/pvc-protection
+
+# To create the grafana service with private loadbalancer
+grafana_service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 3000
+  nodePort: 31280
+  portName: service
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: 'true'
+
+# To create the prometheus service with private loadbalancer ip
+prometheus_service:
+  type: LoadBalancer
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: 'true'
+
+# namespace of flink
+flink_namespace: flink-production
+
+#flink alerts to address
+default_mailing_list:  noc@optit.in, raghupathi.g@optit.co, naveenprabhu.v@optit.co,shashank.n@optit.co, sandeep.r@optit.co, samatha.j@optit.co, kalaipandiyan.k@optit.co, vinay.b@optit.co, rajasimman.s@teamdiskha.org, noc@teamdiksha.org
+
+# docker hub details
+dockerhub: ntphub.azurecr.io
+docker_registry: ntphub
+imagepullsecrets: diksha-registry-secret
+
+### base-config related vars
+postgres_max_connections: 8
+flink_container_name: flink-state-backend
+checkpoint_interval: 10000
+producer_max_request_size: 4194304
+#device_profile_table: ntpprod_device_profile_flink
+
+### Extractor job related vars
+#extractor_consumer_parallelism: 2
+#dedup_parallelism: 2
+#extraction_parallelism: 2
+#redactor_parallelism: 1
+telemetry_extractor_key_expiry_seconds: 432000
+
+### Pipeline-preprocessor related vars
+#pipeline_preprocessor_consumer_parallelism: 16
+#telemetry_validation_parallelism: 16
+#telemetry_router_parallelism: 16
+#share_events_flattener_parallelism: 2
+portal_id: prod.diksha.portal
+desktop_id: prod.diksha.desktop
+pipeline_preprocessor_key_expiry_seconds: 86400
+
+### De-normalization related vars
+#denorm_consumer_parallelism: 16
+#denorm_parallelism: 16
+#denorm_sink_parallelism: 16
+de_normalization_duplicationstore_key_expiry_seconds: 86400
+de_normalization_key_expiry_seconds: 86400
+
+### summary-denormalization related vars
+#summary_denorm_consumer_parallelism: 8
+summary_denorm_parallelism: 8
+summary_denorm_sink_parallelism: 8
+#summary_denorm_dedup_parallelism: 8
+summary_denorm_duplication_key_expiry_seconds: 86400
+summary_denorm_key_expiry_seconds: 86400
+summary_denorm_summary_sink_parallelism: 8
+
+### Druid-validator related vars
+#druid_validator_consumer_parallelism: 8
+#validator_parallelism: 16
+#router_parallelism: 16
+druid_validator_key_expiry_seconds: 86400
+
+### assesment-aggreagtor job vars
+#middleware_cassandra_assessment_aggregator_table: assessment_aggregator_flink_tmp
+#middleware_cassandra_assessment_question_type: question_flink_tmp
+
+###error-denorm vars
+error_denorm_consumer_parallelism : 1
+error_denorm_operators_parallelism : 1
+
+### class name vars
+flink_job_names:
+  telemetry-extractor:
+    job_class_name: 'org.sunbird.dp.extractor.task.TelemetryExtractorStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 4096m
+    taskslots: 4
+    cpu_requests: 3.5
+    taskmanager_process_memory: 4700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: true
+    scale_target_value: 500000
+    min_replica: 1
+    max_replica: 4
+  pipeline-preprocessor:
+    job_class_name: 'org.sunbird.dp.preprocessor.task.PipelinePreprocessorStreamTask'
+    replica: 2
+    jobmanager_memory: 1024m
+    taskmanager_memory: 4096m
+    taskslots: 4
+    cpu_requests: 3.5
+    taskmanager_process_memory: 4700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: true
+    scale_target_value: 6000000
+    min_replica: 2
+    max_replica: 8
+  de-normalization-primary:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 2
+    jobmanager_memory: 1024m
+    taskmanager_memory: 4096m
+    taskslots: 4
+    cpu_requests: 3.5
+    taskmanager_process_memory: 4700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: true
+    scale_target_value: 4000000
+    min_replica: 2
+    max_replica: 6
+  de-normalization-secondary:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 2
+    jobmanager_memory: 1024m
+    taskmanager_memory: 4096m
+    taskslots: 4
+    cpu_requests: 3.5
+    taskmanager_process_memory: 4700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: true
+    scale_target_value: 20000000
+    min_replica: 2
+    max_replica: 8 
+  druid-validator:
+    job_class_name: 'org.sunbird.dp.validator.task.DruidValidatorStreamTask'
+    replica: 2
+    jobmanager_memory: 1024m
+    taskmanager_memory: 4096m
+    taskslots: 4
+    cpu_requests: 3.5
+    taskmanager_process_memory: 4700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: true
+    scale_target_value: 4000000
+    min_replica: 2
+    max_replica: 8
+  assessment-aggregator:
+    job_class_name: 'org.sunbird.dp.assessment.task.AssessmentAggregatorStreamTask'
+    replica: 2
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 1
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: false
+    scale_target_value: 500000
+  content-cache-updater:
+    job_class_name: 'org.sunbird.dp.contentupdater.task.ContentCacheUpdaterStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 1
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: false
+    scale_target_value: 500000
+  user-cache-updater-v2:
+    job_class_name: 'org.sunbird.dp.usercache.task.UserCacheUpdaterStreamTaskV2'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 2048m
+    taskslots: 1
+    cpu_requests: 1
+    taskmanager_process_memory: 2700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: false
+    scale_target_value: 500000
+  summary-denormalization:
+    job_class_name: 'org.sunbird.dp.denorm.task.SummaryDenormalizationStreamTask'
+    replica: 4
+    jobmanager_memory: 1024m
+    taskmanager_memory: 2048m
+    taskslots: 2
+    cpu_requests: 2
+    taskmanager_process_memory: 2700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: true
+    scale_target_value: 100
+    min_replica: 1
+    max_replica: 8
+  device-profile-updater:
+    job_class_name: 'org.sunbird.dp.deviceprofile.task.DeviceProfileUpdaterStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 1
+    taskmanager_process_memory: 1700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: false
+    scale_target_value: 500000
+  ingest-router:
+    job_class_name: 'org.sunbird.dp.ingestrouter.task.IngestRouterStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 4096m
+    taskslots: 4
+    cpu_requests: 3.5
+    taskmanager_process_memory: 4700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: false
+    scale_target_value: 500000
+  error-denormalization:
+    job_class_name: 'org.sunbird.dp.denorm.task.DenormalizationStreamTask'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 2048m
+    taskslots: 1
+    cpu_requests: 1
+    taskmanager_process_memory: 2700m
+    jobmanager_process_memory: 1600m
+    scale_enabled: false
+    scale_target_value: 500000
+
+
+# flink Jobs lag vars critical 
+telemetry_extractor_threshold_critical: 20000000 # 20M
+pipeline_preprocessor_threshold_critical: 20000000 # 20M
+druid_validator_threshold_critical: 20000000 # 20M
+assessment_aggregator_threshold_critical: 20000000 # 20M
+content_cache_updater_threshold_critical: 20000000 # 20M
+user_cache_updater_threshold_critical: 20000000 # 20M
+summary_denormalization_threshold_critical: 20000000 # 20M
+device_profile_updater_threshold_critical: 20000000 # 20M
+ingest_router_threshold_critical: 2000000 # 2M
+de_normalization_threshold_critical: 20000000 # 20M
+error_denormalization_threshold_critical: 20000000 # 20M
+de_normalization_primary_threshold_critical: 20000000 # 20M
+de_normalization_secondary_threshold_critical: 20000000 # 20M
+
+# Flink jobs lag warning
+telemetry_extractor_threshold_warning: 10000000 # 10M
+pipeline_preprocessor_threshold_warning: 10000000 # 10M
+druid_validator_threshold_warning: 10000000 # 10M
+assessment_aggregator_threshold_warning: 10000000 # 10M
+content_cache_updater_threshold_warning: 10000000 # 10M
+user_cache_updater_threshold_warning: 10000000 # 10M
+summary_denormalization_threshold_warning: 10000000 # 10M
+device_profile_updater_threshold_warning: 10000000 # 10M
+ingest_router_threshold_warning: 1000000   # 1M
+de_normalization_threshold_warning: 10000000 # 10M
+error_denormalization_threshold_warning: 10000000 # 10M
+de_normalization_primary_threshold_warning: 10000000 # 10M
+de_normalization_secondary_threshold_warning: 10000000 # 10M
+
+# Flink KP Jobs lag vars critical
+activity_aggregater_updater_threshold_critical: 1000000   # 1M
+relation_cache_updater_threshold_critical: 1000000   # 1M 
+post_publish_processor_threshold_critical: 1000000   # 1M
+
+# Flink KP Jobs lag vars warning
+activity_aggregater_updater_threshold_warning: 500000 # 0.5M
+relation_cache_updater_threshold_warning: 500000 # 0.5M 
+post_publish_processor_threshold_critical: 500000 # 0.5M
+
+# slack alerts
+#dp_monitor_alerts_slack_url: https://hooks.slack.com/services/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
+#dp_monitor_alerts_warning_slack_url: https://hooks.slack.com/services/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
+#dp_monitor_alerts_critical_slack_url: https://hooks.slack.com/services/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
+
+#release-3.1.0
+sunbird_private_azure_report_container_name: 'reports'
+sunbird_public_azure_report_container_name: 'public-reports'
+sunbird_public_storage_account_name: ntpproductionall
+
+#### release-3.2.5 vars
+cassandra_hierarchy_store_keyspace: prod_hierarchy_store  # related to course-progress-report
+
+## related to dail service
+#dialservice_ip: 11.4.3.56      ## new variable
+#dialcode_host: "http://{{dialservice_ip}}:9001"
+dialcode_endpoint: "dialcode/v3/read/"
+
+### flink new vars
+extractor_consumer_parallelism: 4
+extractor_operators_parallelism: 4
+pipeline_preprocessor_consumer_parallelism: 8 
+pipeline_preprocessor_operators_parallelism: 16
+denorm_consumer_parallelism: 32
+telemetry_denorm_operators_parallelism: 64
+summary_denorm_consumer_parallelism: 4
+summary_denorm_operators_parallelism: 8
+druid_validator_consumer_parallelism: 8
+druid_validator_operators_parallelism: 16
+ingest_router_consumer_parallelism: 4
+ingest_router_operators_parallelism: 4
+denorm_secondary_consumer_parallelism: 8
+telemetry_denorm_secondary_operators_parallelism: 16
+denorm_primary_consumer_parallelism: 8
+telemetry_denorm_primary_operators_parallelism: 16
+telemetry_extractor_consumer_parallelism: 4
+telemetry_extractor_operators_parallelism: 4
+assessment_aggregator_consumer_parallelism: 4
+assessment_aggregator_operators_parallelism: 16
+
+##redis backup var
+redis_backup_dir: "/mnt/redis-backup"
+
+druid_validation_enabled: false
+
+###Spark hdinsight cluster###
+spark_storage_container: spark-cluster
+spark_cluster_user_name: admin
+spark_cluster_user_password: "{{azure_spark_cluster_http_password}}"
+
+#####Redis-metadata2##
+metadata2_redis_host: "{{ groups['redis-metadata2'][0] }}"
+
+### monitoring related vars
+core_prom_ip: '11.4.42.178:9090' # core private ingress ip
+monitoring_stack:
+  - prometheus-operator
+  - additional-scrape-configs
+  - alertrules
+  - prometheus-adapter
+  - processing-kafka-exporter
+  - ingestion-kafka-exporter
+additional_scrape_configs: true
+additional_scrape_configs_enabled: "{{ additional_scrape_configs | lower }}"
+nginx_tps_threshold: 1000 # being used in flink jobs percentage lag alert rules
+flink_lag_percentage_threshold: 20 # being used in flink jobs percentage lag alert rule
+flink_lag_offset_duration: 30 # values in minutes and being used in alert rule
+
+
+#### denorm-scale changes
+content_port: 6379
+device_port: 6380
+user_port: 6381
+dialcode_port: 6382
+
+### this was used for redis mulit-proc provision ##
+#redis:
+#  config:
+#    device:
+#      port: "{{ device_port }}"
+#      name: 'device'
+#      max_memory: 1000mb
+#    user:
+#      port: "{{ user_port }}"
+#      name: 'user'
+#      max_memory: 1000mb
+#    content:
+#      port: "{{ content_port }}"
+#     name: 'content'
+#     max_memory: 1000mb
+#    dialcode:
+#      port: "{{ dialcode_port }}"
+#      name: 'dialcode'
+#     max_memory: 1000mb
+      
+###Druid upgrade vars ##
+druid_historical_segmentcache_path: "/data/segmentstore"
+druid_extensions_list : '"druid-azure-extensions", "graphite-emitter", "postgresql-metadata-storage", "druid-kafka-indexing-service", "druid-datasketches"'
+druid_url: "https://archive.apache.org/dist/druid/0.22.1/apache-druid-0.22.1-bin.tar.gz"
+private_druid_configs:
+  raw:
+   #Druid Postgres Details
+   druid_postgres_db: "druid"
+   druid_postgres_host: "{{ postgres.db_url }}"
+   druid_postgres_port: "{{ postgres.db_port }}"
+   druid_postgres_user: "druid@{{ postgres.db_url }}"
+   #Druid Azure Details 
+   druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
+   azure_account_name: "{{ sunbird_druid_storage_account_name }}"
+   azure_storage_secret: "{{ sunbird_druid_storage_account_key }}"
+   azure_container: "telemetry-data-store"
+   #Logging the indexing logs to azure
+   druid_log_azure_container: "telemetry-data-store"
+   druid_log_azure_folder: "druidlogs"
+   druid_coordinator_heap_size: 2g
+   druid_coordinator_period: PT60S
+   druid_coordinator_startDelay: PT300S
+   druid_coordinator_balance_strategy: cachingCost
+   #Druid overlord node configuration
+   druid_overlord_heap_size: 1g
+   #Druid broker node configuration
+   druid_broker_min_heap_size: 6g
+   druid_broker_max_heap_size: 14g
+   druid_broker_max_direct_size: 3g
+   druid_broker_http_numConnections: 20
+   druid_broker_server_http_numThread: 25
+   druid_broker_processing_bufferBytes: 256741824
+   druid_broker_processing_threads: 2
+   #Druid historical node configuration
+   druid_historical_min_heap_size: 12g
+   druid_historical_max_heap_size: 14g
+   druid_historical_max_direct_size: 8g
+   druid_historical_http_numConnections: 5
+   druid_historical_server_http_numThread: 25
+   druid_historical_processing_bufferBytes: 524288000
+   druid_historical_processing_threads: 8
+   druid_historical_enable_cache: false
+   druid_historical_segmentcache_size: '"1500g"'
+   druid_historical_server_maxsize: 7146825580544
+   druid_historical_processing_num_merge_buffers: 4
+   druid_query_ondiskstorage_enabled: true
+   druid_historical_maxMergingDictionarySize: 100000000
+   druid.query.groupBy.maxOnDiskStorage: 10737418240
+   druid_historical_segmentcache_path: "/data/segmentstore"
+   druid_historical_segmentcache_numloadingthreads: 8
+   #Druid middlemanager configuration
+   druid_middlemanager_heap_size: 256m
+   druid_middlemanager_worker_cap: 12
+   druid_mm_java_opts_array: "-server -Xms1g -Xmx4g -XX:+UseG1GC -XX:HeapDumpPath=/var/log/druid/crash_logs/middlemanager.hprof -XX:MaxGCPauseMillis=100"
+   druid_middlemanager_peon_server_http_numThread: 25
+   druid_middlemanager_peon_processing_bufferBytes: 256000000
+   druid_middlemanager_peon_processing_threads: 2
+   druid_middlemanager_peon_server_maxsize: 0
+   druid_indexing_queue_startDelay: PT1M
+   druid_router_heap_size: 1g
+   druid_router_http_numConnections: 50
+   druid_router_http_readTimeout: PT5M
+   druid_router_http_numMaxThreads: 100
+   druid_server_http_numThreads: 100
+   druid_router_managementProxy_enabled: true
+   druid_historical_maxOnDiskStorage: 10737418240
+  rollup:
+    #Druid Postgres Details
+   druid_postgres_db: "druid-rollup"
+   druid_postgres_host: "{{ postgres.db_url }}"
+   druid_postgres_port: "{{ postgres.db_port }}"
+   druid_postgres_user: "druid@{{ postgres.db_url }}"
+   #Druid Azure Details 
+   druid_postgres_pass: "{{ dp_vault_druid_postgress_pass }}"
+   azure_account_name: "{{ sunbird_druid_storage_account_name }}"
+   azure_storage_secret: "{{ sunbird_druid_storage_account_key }}"
+   azure_container: "druid-data-store"
+   #Logging the indexing logs to azure
+   druid_log_azure_container: "druid-data-store"
+   druid_log_azure_folder: "druidrolluplogs"
+   druid_coordinator_heap_size: 2g
+   druid_coordinator_period: PT60S
+   druid_coordinator_startDelay: PT300S
+   druid_coordinator_balance_strategy: cachingCost
+   #Druid overlord node configuration
+   druid_overlord_heap_size: 1g
+   #Druid broker node configuration
+   druid_broker_min_heap_size: 6g
+   druid_broker_max_heap_size: 6g
+   druid_broker_max_direct_size: 3g
+   druid_broker_http_numConnections: 20
+   druid_broker_server_http_numThread: 25
+   druid_broker_processing_bufferBytes: 256741824
+   druid_broker_processing_threads: 2
+   #Druid historical node configuration
+   druid_historical_min_heap_size: 8g
+   druid_historical_max_heap_size: 16g
+   druid_historical_max_direct_size: 20g
+   druid_historical_http_numConnections: 5
+   druid_historical_server_http_numThread: 20
+   druid_historical_processing_bufferBytes: 1073741824
+   druid_historical_processing_threads: 6
+   druid_historical_enable_cache: false
+   druid_historical_segmentcache_size: '"345g"'
+   druid_historical_server_maxsize: 1649267988852
+   druid_historical_processing_num_merge_buffers: 4
+   druid_query_ondiskstorage_enabled: false
+   druid_historical_maxMergingDictionarySize: 100000000
+   druid_historical_segmentcache_path: "/var/segmentstore"
+   druid_historical_segmentcache_numloadingthreads: 8
+   druid.query.groupBy.maxOnDiskStorage: 10737418240
+   #Druid middlemanager configuration
+   druid_middlemanager_heap_size: 256m
+   druid_middlemanager_worker_cap: 6
+   druid_mm_java_opts_array: "-server -Xms2g -Xmx4g -XX:+UseG1GC -XX:HeapDumpPath=/var/log/druid/crash_logs/middlemanager.hprof -XX:MaxGCPauseMillis=100"
+   druid_middlemanager_peon_server_http_numThread: 25
+   druid_middlemanager_peon_processing_bufferBytes: 256000000
+   druid_middlemanager_peon_processing_threads: 2
+   druid_middlemanager_peon_server_maxsize: 0
+   druid_indexing_queue_startDelay: PT1M
+   druid_router_heap_size: 1g
+   druid_router_http_numConnections: 50
+   druid_router_http_readTimeout: PT5M
+   druid_router_http_numMaxThreads: 100
+   druid_server_http_numThreads: 100 
+
+### 3.6.0 vars ###
+druid_report_postgres_db_username: "druid@analytics-production-psql.postgres.database.azure.com"
+druid_report_postgres_db_name: "druid-rollup"
+
+extractor_max_request_size: 10000000
+
+# learning service
+learningservice_ip: 11.4.3.21  # Load balancer IP for learning server
+dock_learningservice_ip: 11.7.3.13 ## load balancer IP for dock learning server
+
+# 3.7.0 vars ## 
+dialcode_host: "http://{{private_ingressgateway_ip}}/dial"
+druid_rollup_cluster_ingestion_task_url : "http://11.4.0.53:8090"
+
+
+##secor monitoring vars##
+core_kubeconfig_path: /var/lib/jenkins/secrets/prod_k8s_1.yaml
+secor_ingestion_kafka_brokers: "{{groups['ingestion-cluster-kafka']|join(',')}}"
+ingestion_zookeepers: "{{groups['ingestion-cluster-zookeeper']|join(':2181,')}}:2181"
+
+secor_jobs:
+  raw-telemetry-backup:
+    replicas: 4
+    consumer_group: "{{env_name}}.telemetry.raw.events.backup"
+    service_name: "raw_telemetry_backup"
+    base_path: "raw"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{env_name}}.telemetry.raw"
+    kafka_broker_host: "{{ groups['processing-cluster-kafka']|join(',') }}"
+    zookeeper_quorum: "{{ groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    message_channel_identifier: ""
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 20Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 10000000
+    lag_threshold_critical: 20000000
+  failed-telemetry-backup:
+    replicas: 1
+    service_name: "failed_telemetry_backup"
+    consumer_group: "{{ env_name }}.telemetry.failed.backup"
+    base_path: "failed"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.failed"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 500000
+    lag_threshold_critical: 1000000
+  unique-telemetry-backup:
+    replicas: 4
+    service_name: "unique_telemetry_backup"
+    consumer_group: "{{ env_name }}.telemetry.unique.events.backup"
+    base_path: "unique/raw"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.unique"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 20Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 10000000
+    lag_threshold_critical: 20000000
+  denorm-events-backup:
+    replicas: 4
+    service_name: "denorm_events_backup"
+    consumer_group: "{{ env_name }}.telemetry.denorm.backup"
+    base_path: "telemetry-denormalized"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.denorm"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "true"
+    partition_prefix_key: "eid"
+    partition_prefix_mapping: '{"ME_WORKFLOW_SUMMARY":"summary","DEFAULT":"raw"}'
+    output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 20Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 10000000
+    lag_threshold_critical: 20000000
+  derived-denorm-events-backup:
+    replicas: 1
+    service_name: "derived_denorm_events_backup"
+    consumer_group: "{{ env_name }}.summary.backup"
+    base_path: "telemetry-denormalized/summary"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.druid.events.summary"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser" 
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 10000000
+    lag_threshold_critical: 20000000
+  channel-telemetry-backup:
+    replicas: 4
+    service_name: "channel_telemetry_backup"
+    consumer_group: "{{ env_name }}.telemetry.channel.backup"
+    base_path: "data-exhaust/raw"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.denorm"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: "eid"
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
+    message_channel_identifier: "derivedlocationdata.state"
+    message_parser: "com.pinterest.secor.parser.ChannelDateMessageParser"
+    storage:
+      size: 20Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 10000000
+    lag_threshold_critical: 20000000
+  channel-summary-backup:
+    replicas: 1
+    service_name: "channel_summary_backup"
+    consumer_group: "{{ env_name }}.summary.channel.backup"
+    base_path: "data-exhaust/summary"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.druid.events.summary"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{kafkaPartition}-{currentTimestamp}.json"
+    message_channel_identifier: "derivedlocationdata.state"
+    message_parser: "com.pinterest.secor.parser.ChannelDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 10000000
+    lag_threshold_critical: 20000000
+  extractor-failed-backup:
+    replicas: 1
+    service_name: "extractor_failed_backup"
+    consumer_group: "{{ env_name }}.extractor.failed.backup"
+    base_path: "extractor-failed"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.extractor.failed"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 21600
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 500000
+    lag_threshold_critical: 1000000
+  assess-raw-events-backup:
+    replicas: 1
+    service_name: "assess_raw_events_backup"
+    consumer_group: "{{ env_name }}.telemetry.assess.raw"
+    base_path: "telemetry-raw-assess"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.assess.raw"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 21600
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 10000000
+    lag_threshold_critical: 20000000
+  telemetry-duplicate-backup:
+    replicas: 1
+    service_name: "telemetry_duplicate_backup"
+    consumer_group: "{{ env_name }}.telemetry.duplicate.backup"
+    base_path: "telemetry-duplicate"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.duplicate"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 500000
+    lag_threshold_critical: 1000000
+  extractor-duplicate-backup:
+    replicas: 1
+    service_name: "extractor_duplicate_backup"
+    consumer_group: "{{ env_name }}.extractor.duplicate.backup"
+    base_path: "extractor-duplicate"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.extractor.duplicate"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 500000
+    lag_threshold_critical: 1000000
+  derived-telemetry-backup:
+    replicas: 1
+    service_name: "derived_telemetry_backup"
+    consumer_group: "{{ env_name }}.telemetry.derived.unique.backup"
+    base_path: "unique/summary"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.derived.unique"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(',')}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 600
+    partition_prefix_enabled: "true"
+    partition_prefix_key: "eid"
+    partition_prefix_mapping: '{"ME_WORKFLOW_SUMMARY":"workflow_summary","DEFAULT":"me"}'
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 10000000
+    lag_threshold_critical: 20000000
+  device-profile-backup:
+    replicas: 1
+    service_name: "device_profile_backup"
+    consumer_group: "{{ env_name }}.events.device.profile.backup"
+    base_path: "device-profile-events"
+    timestamp_key: "updated_date"
+    fallback_timestamp_key: "updated_date"
+    topic: "{{ env_name }}.events.deviceprofile"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 5000000
+    lag_threshold_critical: 10000000
+  learning-events-backup:
+    replicas: 1
+    service_name: "learning_events_backup"
+    consumer_group: "{{ env_name }}.learning.graph.events.backup"
+    base_path: "learning-events"
+    timestamp_key: "createdOn"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.learning.graph.events"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 200000
+    lag_threshold_critical: 500000
+  learning-failed-backup:
+    replicas: 1
+    service_name: "learning_failed_backup"
+    consumer_group: "{{ env_name }}.failed.learning.events.backup"
+    base_path: "learning-failed-events"
+    timestamp_key: "ets"
+    fallback_timestamp_key: "@timestamp"
+    azure_account_name: "{{ secor.azure.account_name }}"
+    container_name: "{{ secor.azure.container_name }}"
+    azure_account_key: "{{ secor.azure.account_key }}"
+    topic: "{{ env_name }}.learning.events.failed"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 3600
+    partition_prefix_enabled: "true"
+    partition_prefix_key: "jobName"
+    partition_prefix_mapping: '{"publish-pipeline":"publish_pipeline","composite-search-indexer":"cs_index","DEFAULT":"failed_events"}'
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 200000
+    lag_threshold_critical: 500000
+  assess-events-backup:
+    replicas: 1
+    service_name: "assess_events_backup"
+    consumer_group: "{{ env_name }}.telemetry.assess.events.backup"
+    base_path: "telemetry-batch-assess"
+    timestamp_key: "assessmentTs"
+    fallback_timestamp_key: "assessmentTs"
+    topic: "{{ env_name }}.telemetry.assess"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 21600
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 1000000
+    lag_threshold_critical: 2000000
+  ingestion-telemetry-backup:
+    replicas: 2
+    service_name: "ingestion_telemetry_backup"
+    consumer_group: "{{ env_name }}.telemetry.ingestion.events.backup"
+    base_path: "ingestion-telemetry"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.telemetry.ingestion"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 20Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 10000000
+    lag_threshold_critical: 20000000
+  content-consumption-events-backup:
+    replicas: 1
+    service_name: "content_consumption_events_backup"
+    consumer_group: "{{ env_name }}.coursebatch.job.request.backup"
+    base_path: "content-consumption-events"
+    timestamp_key: "ets"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.coursebatch.job.request"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 1000000
+    lag_threshold_critical: 2000000
+  issue-certificate-events-backup:
+    replicas: 1
+    service_name: "issue_certificate_events_backup"
+    consumer_group: "{{ env_name }}.issue.certificate.request.backup"
+    base_path: "issue-certificate-events"
+    timestamp_key: "ets"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.issue.certificate.request"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 1000000
+    lag_threshold_critical: 2000000
+  content-auto-creation-events-backup:
+    replicas: 1
+    service_name: "content_auto_creation_events_backup"
+    consumer_group: "{{ env_name }}.auto.creation.job.request.backup"
+    base_path: "content-auto-creation-events"
+    timestamp_key: "ets"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env_name }}.auto.creation.job.request"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 1000000
+    lag_threshold_critical: 2000000
+  error-telemetry-backup:
+    replicas: 1
+    consumer_group: "{{env_name}}.druid.events.error.backup"
+    service_name: "error_telemetry_backup"
+    base_path: "error_events"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{env_name}}.druid.events.error"
+    kafka_broker_host: "{{ groups['processing-cluster-kafka']|join(',') }}"
+    zookeeper_quorum: "{{ groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: 100000000
+    max_file_age: 14400
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    message_channel_identifier: ""
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 500000
+    lag_threshold_critical: 1000000
+  batch-assess-failed-events-backup:
+    replicas: 1
+    service_name: "batch_assess_failed_events_backup"
+    consumer_group: "{{ env_name }}.telemetry.assess.failed.events.backup"
+    base_path: "telemetry-batch-assess-failed"
+    timestamp_key: "assessmentTs"
+    fallback_timestamp_key: "assessmentTs"
+    topic: "{{ env_name }}.telemetry.assess.failed"
+    kafka_broker_host: "{{ secor_ingestion_kafka_brokers }}"
+    zookeeper_quorum: "{{ ingestion_zookeepers }}"
+    max_file_size: 100000000
+    max_file_age: 21600
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    message_channel_identifier: ""
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+    storage:
+      size: 10Gi
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    lag_threshold_warning: 50000
+    lag_threshold_critical: 100000 
+  
+# Druid ingestion supervisors task count
+raw_offline_desktop_taskcount: 1
+raw_summary_events_taskcount: 1
+raw_telemetry_events_taskcount: 8
+raw_telemetry_feedback_events_taskcount: 1
+rollup_error_hourly_syncts_taskcount: 1
+rollup_summary_distinct_counts_taskcount: 1
+rollup_summary_syncts_taskcount: 1
+rollup_telemetry_audit_syncts_taskcount: 4
+rollup_telemetry_hourly_syncts_taskcount: 4
+rollup_telemetry_syncts_taskcount: 4
+rollup_tpd_hourly_taskcount: 2
+
+send_logs_to_graylog: true
+
+ingestion_spec_configs:
+  raw_telemetry_events:
+    minTaskMemory: 2g
+    maxTaskMemory: 4g
+  rollup_telemetry_syncts:
+    minTaskMemory: 2g
+    maxTaskMemory: 4g
+  rollup_telemetry_hourly_syncts:
+    minTaskMemory: 2g
+    maxTaskMemory: 4g
+  
+  
+##release-4.0 vars##
+report_user_enrolment_table: user_enrolments
+
+dataproducts_reports_config_table: "ntpprod_report_config"
+dataproducts_mailing_list: "to=noc@teamdiksha.org&to=santhosh.g@optit.in&to=noc@optit.in&to=raghupathi.g@optit.co&to=naveenprabhu.v@optit.co&to=sandeep.r@optit.co&to=samatha.j@optit.co&to=kalaipandiyan.k@optit.co&to=vinay.b@optit.co&to=rajasimman.s@teamdiskha.org"
+
+
+##release-4.1.0 vars##
+zookeeper_data_dir: /opt/zookeeper
+data_exhaust_batch_limit_per_request: 20   # On demand Exhaust throttling vars
+exhaust_batches_limit_per_channel: 100    # On demand Exhaust throttling vars
+exhaust_file_size_limit_bytes_per_channel: 10737418240   # On demand Exhaust throttling vars
+
+### release-4.1.1 vars ##
+content_read_api_host: "https://{{ domain_name }}"
+content_read_api_endpoint: "api/content/v1/read/"
+
+##release-4.7.0##
+bucket: telemetry-data-store
+
+##release-4.8.0##
+sunbird_instance: diksha
+uci_env: ntp-production
+sunbird_private_s3_storage_key: ""
+sunbird_private_s3_storage_secret: ""
+
+###UCI postgress Var###
+uci_postgres_user: userorgpsql@userorg-prod
+uci_postgres_host: "userorg-prod.postgres.database.azure.com"
+
+### Release-4.10.0 #####
+exhaust_job_assessment_primary_category: ""
+
+## release-5.1.0
+# CSP Name
+cloud_service_provider: azure
+
+cloudstorage_replace_absolute_path: true
+cloudstorage_base_path: "https://obj.diksha.gov.in"
+valid_cloudstorage_base_urls: '["https://ntpproductionall.blob.core.windows.net","https://obj.diksha.gov.in"]'
+cloudstorage_relative_path_prefix: "CONTENT_STORAGE_BASE_PATH"
+cloudstorage_metadata_list: '["appIcon", "artifactUrl", "posterImage", "previewUrl", "thumbnail", "assetsMap", "certTemplate", "itemSetPreviewUrl", "grayScaleAppIcon", "sourceURL", "variants", "downloadUrl", "streamingUrl", "toc_url", "data", "question", "solutions", "editorState", "media", "pdfUrl", "transcripts"]'
+cloud_storage_base_url: "https://ntpproductionall.blob.core.windows.net"
+cloud_storage_cname_url: "{{cloudstorage_base_path}}"
+
+cloud_public_storage_accountname: "{{sunbird_public_storage_account_name}}"
+cloud_public_storage_endpoint: ""
+cloud_public_storage_region: "centralindia"
+cloud_public_storage_project: ""
+
+cloud_private_storage_accountname: "{{sunbird_private_storage_account_name}}"
+cloud_private_storage_endpoint: ""
+cloud_private_storage_region: "centralindia"
+cloud_private_storage_project: ""
+
+cloud_management_storage_accountname: "{{sunbird_management_storage_account_name}}"
+cloud_management_storage_endpoint: ""
+cloud_management_storage_region: "centralindia"
+cloud_management_storage_project: ""
+
+cloud_artifact_storage_accountname: "{{sunbird_artifact_storage_account_name}}"
+cloud_artifact_storage_endpoint: ""
+cloud_artifact_storage_region: "centralindia"
+cloud_artifact_storage_project: ""
+
+cloud_storage_certqr_bucketname: certqr #Yes (ntpproductionall)
+cloud_storage_chatbot_bucketname: chatbot #No
+cloud_storage_dial_bucketname: dial #Yes (ntpproductionall)
+cloud_storage_flink_bucketname: flink-state-backend # Yes (dikshaprodprivate)
+cloud_storage_playercdn_bucketname: player #Yes (ntpproductionall)
+cloud_storage_public_bucketname: public #Yes (ntpproductionall)
+cloud_storage_publicreports_bucketname: public-reports #Yes (ntpproductionall)
+cloud_storage_privatereports_bucketname: reports #Yes (ntpproductionall)
+cloud_storage_samiksha_bucketname: samiksha #Yes (ntpproductionall)
+cloud_storage_schema_bucketname: schema #No
+cloud_storage_sourcing_bucketname: sourcing #Yes (ntpproductionall)
+cloud_storage_offlineinstaller_bucketname: "{{env}}-offlineinstaller" #Yes (ntpproductionall) as ntp-production-offlineinstaller
+cloud_storage_content_bucketname: "ntp-content-production" #Yes (ntpproductionall) as ntp-content-production
+cloud_storage_telemetry_bucketname: telemetry-data-store #Yes (dikshaprodprivate)
+cloud_storage_termsandcondtions_bucketname: termsandcond #Yes (ntpproductionall)
+cloud_storage_user_bucketname: user #Yes (ntpproductionall)
+cloud_storage_desktopappcrashlogs_bucketname: desktopappcrashlogs #Yes (ntpproductionall)
+cloud_storage_label_bucketname: label #No
+cloud_storage_certservice_bucketname: "ntp-production-e-credentials" #Yes (ntpproductionall)
+cloud_storage_uci_bucketname: "uci" #Yes (ntpproductionall)
+cloud_storage_cassandrabackup_bucketname: cassandra-cluster-new #Yes (dikshaprodmanagement)
+cloud_storage_dpcassandrabackup_bucketname: dp-cassandra-backup #Yes (dikshaprodmanagement)
+cloud_storage_dppostgresbackup_bucketname: dp-postgresql-backup #Yes (dikshaprodmanagement)
+cloud_storage_dpredisbackup_bucketname: dp-redis-backup #Yes (dikshaprodmanagement)
+cloud_storage_esbackup_bucketname: elasticsearch-snapshots #Yes (dikshaprodmanagement)
+cloud_storage_influxdbbackup_bucketname: influxdb-backup #Yes (dikshaprodmanagement)
+cloud_storage_jenkinsbackup_bucketname: jenkins-backup #Yes (dikshaprodmanagement)
+cloud_storage_mongobackup_bucketname: mongodb-backup #No
+cloud_storage_neo4jbackup_bucketname: neo4j-backup #Yes (dikshaprodmanagement)
+cloud_storage_redisbackup_bucketname: redis-backup #Yes (dikshaprodmanagement)
+cloud_storage_artifacts_bucketname: "{{ artifacts_container }}" #Yes (dikshaartifact)
+cloud_storage_pathstyle_access: false

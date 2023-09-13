@@ -1,5 +1,0 @@
----
-- name: Remove the keys directory post helm install
-  file:
-    path: "{{chart_path}}/keys"
-    state: absent

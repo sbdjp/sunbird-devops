@@ -1,0 +1,9 @@
+- hosts: dp-yarn-master
+  tasks: 
+   - name: List of running samza application
+     shell: "/usr/local/hadoop/bin/yarn application --list | awk '{print $1, $2, $6, $9}' | column -t"
+     become: yes
+     register: out
+
+   - name: printing the running application list
+     debug: var=out.stdout_lines

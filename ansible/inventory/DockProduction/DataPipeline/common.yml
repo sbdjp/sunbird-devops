@@ -1,0 +1,305 @@
+############## Common ######################
+
+# Common vars for env
+env: ntp-prod-dock
+proto: https
+producer_env: vdn.diksha
+domain_name: vdn.diksha.gov.in 
+env_name: ntp-prod-dock
+ssh_public_key_deployer: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDhepW/SVVT+i2YMMHf9gj8lICp6Q6HVf2/bYxHq+dBMOlnA13Ps6ciKy4MlrLod7rp1gsP5LSsZj/QHQ+A9nOnrZXlrbJ2OmHS89CnQs7t+dwH4kQJpYOpTqGGAUp147pJylcYaDB9xswMxOk9WPSKt7c0Na+fpaC0jzZYeRr5IqYzJSHMzqqmCES+AExtYIw+IghTx9Y/IKa8BvgBqTVgS+nBoVVa9YxDFvwgVVKunPRgcwMfqWsyWGgfLQi6xDrDBcxDbbN+0kIAB1QmLg2DcUGHJO5LdAxmFEQjsO7d3wbKxMMwFgCYSkYb2BVEuckbTQnpS3pFrFUIsB2JQ6bTqnG5x1H2+Ooblg+luglCij2+dcWAlMKgNZlQXpY6YGaEbiimz6zah+PrMeO8yJyMhs77EZd7fVnBzOFnfL2YPKRuR8EnjBGB1bDxFE3Z5rT8nOKmo4CItlud1YuJAvRB3FHCBt+OVmz7zYE8s2jIuv33ql6u91OAjLiyMccbq6jhYSI2epFTAsfkbdOz/T4mU7Wq5fO8LY4hsYRavrOPfFhIh9fPJo8wp9LmQjUBGb1aok5k6f/MjiRto5Y8fWBn0xYZ5yHh6w5GVxMfAd/WWjju5cnsDUHQf59MGDZdygbNa8zA3YB6yZIVrf2vFT9FRUy8JEW4XxpWmJCvnnt2/w== deployerprod@key"
+bootstrap_user: ops
+bootstrap_key_path: /var/lib/jenkins/secrets/prodops_ssh_key
+ansible_ssh_private_key_file: /var/lib/jenkins/secrets/proddeployer_ssh_key
+
+#################### DP ##########################
+
+###artifact upload
+#artifact_azure_account_name: "dikshaartifactstore"
+#artifact_azure_account_key: "{{ dp_vault_artifact_azure_account_key }}"
+
+default_org_hash_id: "505c7c48ac6dc1edc9b08f21db5a571d"
+
+# Data products monitoring web hooks
+#data_exhaust_webhook_url: "https://hooks.slack.com/services/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" #old diksha slack
+#data_exhaust_Channel: "ntp-dp-prod-alerts"  #old-sunbird slack
+data_exhaust_Channel: "ntpprod_flink_alerts" #new diksha slack
+samza_slack_channel: "#prod_samza_alerts" #new diksha slack
+data_exhaust_name: "dp-monitor"
+bucket: telemetry-data-store
+stream_base_url: "https://ntpprodmedia-inct.streaming.media.azure.net"
+
+# Media content
+media_service_azure_tenant: deepikaekstep.onmicrosoft.com
+media_service_azure_subscription_id: 5af454cb-5087-411d-a651-2d7d6c1b93a1
+media_service_azure_account_name: ntpprodmedia
+media_service_azure_resource_group_name: production_all
+media_service_azure_token_client_key: 550928c0-03ad-459c-babd-89717d7c838c
+media_service_azure_token_client_secret: 0vLasDEnRIVnzT1l7iIvDQKT/TrMQbtR09RQPfzIGUU=
+
+maxmind_custom_data_mapping_url: "https://ntpproductionall.blob.core.windows.net/public/maxmind_custom_data_mapping.csv"
+channel_data_exhaust_bucket: "telemetry-data-store"
+cassandra_hierarchy_store_prefix: "prod_"
+location_db_redis_key_expiry_seconds: 86400
+es_search_index: compositesearch
+compositesearch_index_name: compositesearch
+video_stream_job_schedule: 30
+kafka_heap_opts: "-Xmx6G -Xms6G"
+maxmind_geocity_db_url: 'https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-City-CSV&license_key={{ maxmind_db_license_key }}&suffix=zip'
+maxmind_db_license_key: NCMBOXvlizvE 
+maxmind_db_unarchived_dir_prefix: GeoIP2-City-CSV_*
+maxmind_db_geo_city_blocks_filename: GeoIP2-City-Blocks-IPv4.csv
+maxmind_db_geo_city_locations_filename: GeoIP2-City-Locations-en.csv
+maxmind_db_geo_city_ip_range_filename: GeoIP2-City-Range-IPv4.csv
+middleware_cassandra_location_table: location
+
+heap_memory: -Xmx50g
+
+spark:
+  driver_memory: 15g
+  memory_fraction: 0.3
+  storage_fraction: 0.5  
+  executor_extraJavaOptions: -Dconfig.file=/mount/data/analytics/models-{{ model_version }}/{{ env }}.conf -Dlog4j.configurationFile=file:////mount/data/analytics/models-{{ model_version }}/log4j2.xml
+  driver_extraJavaOptions: -Dconfig.file=/mount/data/analytics/models-{{ model_version }}/{{ env }}.conf -Dlog4j.configurationFile=file:////mount/data/analytics/models-{{ model_version }}/log4j2.xml
+  executor_memory: 2g
+  heap_conf_str: '"-XX:+UseG1GC -XX:MaxGCPauseMillis=100 -Xms250m {{ heap_memory }} -XX:+UseStringDeduplication"'
+  home: "{{ analytics.home }}/spark-{{ spark_version }}-bin-hadoop2.7"
+  public_dns: 54.255.154.146
+  master:
+    url: spark://172.31.11.117:7077
+    host: 172.31.11.117
+  worker:
+    instances: 1
+    cores: 2
+    memory: 4g
+  driver:
+    memory: 10g
+  executor:
+    memory: 2g
+
+postgres:
+  db_url: dock-prod-new.postgres.database.azure.com 
+  db_username: dockprodnew@dock-prod-new
+  db_name: sunbird_programs
+  db_password: "{{dp_vault_pgdb_password}}"
+  db_port: 5432
+  db_admin_user: pgntp@ntpproduction-pgsql
+  db_admin_password: "{{dp_vault_pgdb_admin_password}}"  
+
+
+##################
+zk_port: 2181
+#yarn_am_container_memory_mb: 128
+#yarn_container_memory_mb: 128
+
+## over riding backup
+backup_azure_storage_account_name: ntpbackupsproduction
+### overriding backup secret
+backup_azure_storage_access_key: "{{dp_vault_backup_azure_storage_secret}}"
+
+### Release-1.15
+### samza monitoring variables
+#samza_alert_slack_url: https://hooks.slack.com/services/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
+samza_alert_to_address: to=kaliraja.ramasamy@tarento.com&to=anandp@ilimi.in&to=noc@optit.in&to=sowmyad@ilimi.in&to=manjunathd@ilimi.in&to=revathi.kotla@tibilsolutions.com
+samza_alert_from_address: alerts@ntp-prod.net.in
+alert_from_address: "{{ samza_alert_from_address }}"
+SGUSER: azure_ed5bc89bbca87e5b61581f8013451090@azure.com # sendgrid username
+SGPASS: "{{ dp_vault_sendgrid_password }}"
+sendgrid_hostname: smtp.sendgrid.net
+throughput_threshold_value: 30000
+influxdb_query_duration: 30
+
+
+
+####Druid####
+#Druid coordinator node configuration
+druid_coordinator_heap_size: 2g
+druid_coordinator_period: PT60S
+druid_coordinator_startDelay: PT300S
+#Druid overlord node configuration
+druid_overlord_heap_size: 1g
+#Druid broker node configuration
+druid_broker_heap_size: 6g
+druid_broker_max_direct_size: 3g
+druid_broker_http_numConnections: 20
+druid_broker_server_http_numThread: 25
+druid_broker_processing_bufferBytes: 256741824
+druid_broker_processing_threads: 2
+#Druid historical node configuration
+druid_historical_heap_size: 12g
+druid_historical_max_direct_size: 8g
+druid_historical_http_numConnections: 5
+druid_historical_server_http_numThread: 25
+druid_historical_processing_bufferBytes: 524288000
+druid_historical_processing_threads: 8
+druid_historical_enable_cache: false
+druid_historical_segmentcache_size: 429496729600
+druid_historical_server_maxsize: 2000000000000
+druid_historical_processing_num_merge_buffers: 4
+druid_historical_segmentcache_path: "/data/segmentstore"
+
+#Druid middlemanager configuration
+druid_middlemanager_heap_size: 256m
+druid_middlemanager_worker_cap: 3
+druid_mm_java_opts_array: "-server -Xms512m -Xmx5632m -XX:+UseG1GC -XX:HeapDumpPath=/var/log/druid/crash_logs/middlemanager.hprof -XX:MaxGCPauseMillis=100"
+druid_middlemanager_peon_server_http_numThread: 25
+druid_middlemanager_peon_processing_bufferBytes: 256000000
+druid_middlemanager_peon_processing_threads: 2
+druid_middlemanager_peon_server_maxsize: 0
+druid_indexing_queue_startDelay: PT1M
+druid_azure_container_name: telemetry-data-store #Druid-GA
+
+### Release-2.0.1
+#denormalization_yarn_container_count : 4
+#druid_events_validator_yarn_container_count : 8
+
+### Release-2.1.0
+analytics_api_min_heap: 2g
+analytics_api_max_heap: 5g
+dedup_include_env_producer_ids: "prod.diksha.portal,prod.sunbird.desktop"
+dp_redis_max_memory: 28g
+
+### Release-2.3.0 vars ###
+swarm_manager_lb_ip: 11.7.8.128
+#denormalization_yarn_container_count: 8
+
+#Release-2.4.0
+##analytics_job_list: '"pipeline-failed-events-audit", "pipeline-druid-events-audit", "pipeline-audit", "wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "dialcode-usage-summary", "dialcode-usage-updater", "etb-coverage-summary", "content-rating-updater", "data-exhaust", "ds", "dpu", "monitor-job-summ"'
+#analytics_jobs_count: 15
+
+###Release-2.5.0##
+maxmind_geocity_db_url: 'https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-City-CSV&license_key={{ maxmind_db_license_key }}&suffix=zip'
+maxmind_db_unarchived_dir_prefix: GeoIP2-City-CSV_*
+maxmind_db_geo_city_blocks_filename: GeoIP2-City-Blocks-IPv4.csv
+maxmind_db_geo_city_locations_filename: GeoIP2-City-Locations-en.csv
+maxmind_db_geo_city_ip_range_filename: GeoIP2-City-Range-IPv4.csv
+report_azure_account_name: ntpproductionall
+report_azure_storage_secret: "{{dp_vault_reports_azure_key}}"
+
+
+# monitoring variables for redis dump.rdb state detection
+redis_dump_rdb_time_in_seconds: 14400
+redis_dump_rdb_keys_to_save_state: 10000
+redis_dump_rdb_mail_sender: "alerts@ntp-prod.org"
+redis_dump_rdb_mail_receivers: "{{samza_alert_to_address}}"
+redis_dump_rdb_mail_sendgrid_username: "azure_ed5bc89bbca87e5b61581f8013451090@azure.com"
+redis_dump_rdb_mail_sendgrid_password: "{{ dp_vault_sendgrid_password }}"
+redis_dump_rdb_slack_url: "{{ monit_alerts_slack_url }}"
+redis_dump_rdb_cron_hour: "*/4"
+redis_dump_rdb_cron_minute: "0"
+redis_user: analytics # set value to analytics for production
+monitor_alerts_slack_channel: prod_alerts  #new diksha slack
+#monit_alerts_slack_url: https://hooks.slack.com/services/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 #new diksha slack
+
+
+##### Portal reports variable #######
+learning_lb_ip: 11.7.3.13                      # Load balancer IP for learning server
+cassandra_host: "{{ groups['cassandra'][0] }}"
+sunbird_druid_broker_host: "http://{{ groups['raw-coordinator'][0] }}"
+druid_broker_host: "{{groups['raw-broker'][0]}}"
+sunbird_druid_rollup_broker_host: "http://{{ groups['rollup-broker'][0] }}"
+
+###R-2.8.0 vars
+samza_alert_slack_token: TQ1SJ5P35/BR3KA3XN0/A9gq8kdpX5s9R6aLV9Uh0gwG #new diksha slack
+
+##Redis-metadata##
+metadata_redis_host: "{{ groups['redis-metadata'][0] }}"
+
+### kafka variables
+kafka_data_dir: /data/kafka
+replica_fetch_max_size: 5242880
+openfile_limit: 300000
+vm_mmap_count: 300000
+### secor variables
+ingestion_kafka_brokers: "{{groups['ingestion-cluster-kafka']|join(':9092,')}}:9092"
+ingestion_zookeepers: "{{groups['ingestion-cluster-zookeeper']|join(':2181,')}}:2181"
+telemetry_ingestion_topic: "{{ env }}.telemetry.ingestion"
+kafka_broker: "{{groups['ingestion-cluster-kafka'][0]}}:9092"
+
+# release-2.8.6
+####azure storage###
+sunbird_private_storage_account_name: dikshaprodprivate 
+sunbird_artifact_storage_account_name: dikshaartifact
+sunbird_druid_storage_account_name: ntpproductionall
+
+#dialcode_host: "https://api.ekstep.in"
+#dialcode_endpoint: "/api/dialcode/v3/read/"
+#dialcode_endpoint: "dialcode/v3/read/"
+
+###Release-2.8.8 vars
+druid_rollup_broker_host: "{{ groups['rollup-broker'][0] }}"
+
+####heap size in spark ###
+
+##2-10-vars
+private_ingressgateway_ip: "11.7.8.128" #to be added after k8s bootstrap
+
+
+###2.10.1 vars
+hierarchySearchServiceUrl: http://{{ private_ingressgateway_ip }}/content/content
+reports_container: "reports"
+
+analytics_job_list: '"content-rating-updater", "monitor-job-summ"'
+
+
+#flink alerts to address
+default_mailing_list: kaliraja.ramasamy@tarento.com, anandp@ilimi.in, manjunathd@ilimi.in, sowmyad@ilimi.in, revathi.kotla@tibilsolutions.com, noc@teamdiksha.org
+
+# docker hub details
+dockerhub: ntphub.azurecr.io
+docker_registry: ntphub
+imagepullsecrets: diksha-registry-secret
+
+#release-3.1.0
+sunbird_private_azure_report_container_name: 'reports'
+
+
+#### release-3.2.5 vars
+cassandra_hierarchy_store_keyspace: prod_hierarchy_store  # related to course-progress-report
+
+## related to dail service
+dialservice_ip: 11.4.3.56      ## new variable
+dialcode_host: "http://{{dialservice_ip}}:9001"
+dialcode_endpoint: "dialcode/v3/read/"
+
+
+##redis backup var
+redis_backup_dir: "/mnt/redis-backup"
+
+druid_validation_enabled: false
+
+###Spark hdinsight cluster###
+spark_storage_container: spark-cluster
+spark_cluster_user_name: admin
+spark_cluster_user_password: "{{azure_spark_cluster_http_password}}"
+
+sunbird_private_storage_account_name: dikshaprodprivate
+sunbird_artifact_storage_account_name: dikshaartifactstore
+
+#####Redis-metadata2##
+metadata2_redis_host: "{{ groups['redis-metadata2'][0] }}"
+
+dockdataproducts: true
+
+cloud_storage:
+  object_key: "druid-content-snapshot/vdn-snapshot.txt"
+  container: "telemetry-data-store" # Container is different in all env so override this.
+  provider: "azure"
+  account_name: "{{sunbird_public_storage_account_name}}"
+  account_key: "{{sunbird_public_storage_account_key}}"
+
+druid:
+  coordinator_host: "{{groups['rollup-coordinator'][0]}}"
+  data_source: "vdn-content-model-snapshot"
+  ingestion_spec_path: "{{ content_snapshot_jar_path }}/etl-jobs-1.0/druid_models/vdn_content_index_batch.json"
+
+output_file_path: "{{ content_snapshot_path }}/compositeSearchBatchDataVDN"
+
+#sunbird_public_storage_account_name: dockprodall
+sunbird_public_storage_account_name: ntpproductionall
+sunbird_private_storage_account_name: dikshaprodprivate
+sunbird_management_storage_account_name: dockbackupsproduction
+
+
+# learning service
+learningservice_ip: 11.7.3.13                    # Load balancer IP for learning server
+

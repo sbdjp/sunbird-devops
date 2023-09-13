@@ -1,0 +1,11 @@
+- name: copy the files 
+  template: src=config.j2 dest="{{demo_dir}}/config.ini"
+
+- name: copy the files 
+  template: src=DemoReset.j2 dest="{{demo_dir}}/DemoReset.sh" mode=777
+
+- name: Run the script 
+  become: yes
+  command: sh DemoReset.sh 
+  args:
+       chdir: "{{demo_dir}}/"

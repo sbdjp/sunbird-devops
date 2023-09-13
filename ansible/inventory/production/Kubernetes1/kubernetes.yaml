@@ -1,0 +1,48 @@
+# Kubernetes 1 variable
+kubernetes_cluster_name: Kubernetes-1
+kubeconfig_path: "/var/lib/jenkins/secrets/prod_k8s_1.yaml"
+private_ingressgateway_ip: 11.4.42.178 
+grafana_data_sources:
+  - name: prom-fed
+    access: proxy
+    editable: false
+    type: prometheus
+    url: http://{{groups['swarm-dashboard-1'][0]}}:29090/prometheus
+  - name: Prometheus_DS1
+    access: proxy
+    editable: false
+    type: prometheus
+    url: http://{{groups['swarm-manager'][0]}}:9090/prometheus
+  - name: Prometheus_Stateful
+    access: proxy
+    editable: false
+    type: prometheus
+    url: http://{{groups['swarm-dashboard'][0]}}:19090/prometheus
+  - name: InfluxDB_Datapipeline
+    access: proxy
+    editable: false
+    type: influxdb
+    url: http://{{groups['dp-influx-ps'][0]}}:8086
+    database: monitoring_events
+prometheus_spec_overrides:
+  resources:
+    limits:
+      memory: 6Gi
+      cpu: "4"
+    requests:
+      memory: 4Gi
+      cpu: "3"
+  additionalAlertManagerConfigs:
+    - static_configs:
+      - targets:
+        - sunbird-monitoring-alertmanager.monitoring.svc.cluster.local:9093
+alertmanager_spec_overrides:
+  service:
+    annotations:
+      service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    type: LoadBalancer
+    # make sure this ip is in valid ip range
+    # For aws this won't work, as aws will only give domain_name
+    #loadBalancerIP: " "   #What should be this IP ??
+
+helm_install_timeout: 20m

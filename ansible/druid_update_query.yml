@@ -1,0 +1,9 @@
+---
+- hosts: local
+  become: yes
+  gather_facts: no
+  vars_files:
+    - "{{inventory_dir}}/common.yml"
+    - "{{inventory_dir}}/secrets.yml"
+  roles: 
+    - druid_update_query

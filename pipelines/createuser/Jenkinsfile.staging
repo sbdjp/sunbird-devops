@@ -1,0 +1,33 @@
+#!groovy
+
+node('general-staging') {
+
+    currentBuild.result = "SUCCESS"
+
+    try {
+
+       stage('Checkout'){
+
+          checkout scm
+          sh('./pipelines/setupDevopsCode.sh')
+       }
+
+       stage('Pre-Build'){
+         sh('chmod 775 ./pipelines/createuser/installDeps.sh')
+         sh('./pipelines/createuser/installDeps.sh')
+
+       }
+
+       stage('Deploy'){       
+         sh '''
+         chmod 775 ./pipelines/createuser/deploy.sh
+         ENV=ntp-staging ./pipelines/createuser/deploy.sh
+         '''
+       }
+    }
+    catch (err) {
+        currentBuild.result = "FAILURE"
+        throw err
+    }
+
+}

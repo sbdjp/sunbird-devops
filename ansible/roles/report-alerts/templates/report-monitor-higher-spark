@@ -1,0 +1,36 @@
+#!/bin/bash
+>/home/deployer/alerts
+dir=/mount/data/analytics/scripts/logs
+filename="$(echo joblog-$(date -d "yesterday" "+%m-%d-%Y"))"
+cd $dir
+report_job()
+{
+i="$1"
+ja=$(echo $i | cut -d '=' -f1)
+name=$(echo $i | cut -d '=' -f2)
+status=$(cat $dir/$filename* joblog.log | grep -i $ja | grep -i 'job_end' | tail -1 | jq .ets | wc -l)
+if [ $status -ne 0 ]
+then
+status_job=$(cat $dir/$filename* joblog.log | grep -i $ja | grep -i job_end | tail -1 | jq .edata.status | tr -d '"')
+else
+status_job="FAILED"
+fi
+echo "$name : $status_job"
+}
+day=$(date -d 'today' "+%d-%b-%Y")
+echo -e "\nHigher Spark Report Jobs(11.4.3.49) - $day" >/home/deployer/alerts
+echo -e "--------------------------------\n" >>/home/deployer/alerts
+report_job "cassandramig=Cassandra Migration job" >>/home/deployer/alerts
+report_job "collectionsum=collection Summary Rreport V2" >>/home/deployer/alerts
+report_job "collectionrec=Collection Reconciliation Job" >>/home/deployer/alerts
+report_job "workflow=Work Flow Summary" >>/home/deployer/alerts
+echo -e "\n--------------------------------" >>/home/deployer/alerts
+echo -e "\n\nVDN Report Jobs" >>/home/deployer/alerts
+echo -e "--------------------------------\n" >>/home/deployer/alerts
+report_job "funnel=Funnel Report Job" >>/home/deployer/alerts
+report_job "contentd=Content Details Job" >>/home/deployer/alerts
+report_job "sourcingm=Sourcing Metrics Job" >>/home/deployer/alerts
+echo -e "\n--------------------------------"  >>/home/deployer/alerts
+
+text=$(cat /home/deployer/alerts)
+curl -d "to=noc@teamdiksha.org&fromname='Report-Jobs-Alerts'&fromname='Report-Jobs'&fromname='Report-Jobobs'&subject='Report job Status - $day'&text=${text}&from=alerts@ntp.net.in" -H 'Authorization: Bearer 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' https://api.sendgrid.com/api/mail.send.json

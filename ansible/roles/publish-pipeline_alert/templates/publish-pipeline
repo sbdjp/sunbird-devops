@@ -1,0 +1,14 @@
+#!/bin/bash
+failure=`influx -execute "SELECT sum("failed") FROM "pipeline_metrics" WHERE  "job_name" = 'publish-pipeline' and time > now() - 2h;"  -database=monitoring_events | awk 'FNR == 4 {print $2}'
+`
+success=`influx -execute "SELECT sum("success") FROM "pipeline_metrics" WHERE  "job_name" = 'publish-pipeline' and time > now() - 2h;"  -database=monitoring_events | awk 'FNR == 4 {print $2}'
+`
+if [ $failure == 0 ]
+then
+text=`echo "Publish pipeline all are successful and count is:$success "`
+curl -d "{{ dataproducts_mailing_list }}&fromname='Publishpipeline-alerts'&fromname='Publishpipelin-alerts'&fromname='Publishpipeline-alerts'&fromname='Publishpipeline-alerts'&subject='[$env] - Puplishpipeline success alert'&text=${text}&from=alerts@ntp.net.in" -H 'Authorization: Bearer {{ SGPASS }}' https://api.sendgrid.com/api/mail.send.json
+else
+text=`echo "publish pipeline failure count:$failure"`
+curl -d "{{ dataproducts_mailing_list }}&fromname='Publishpipeline-alerts'&fromname='Publishpipeline-alerts'&fromname='Publishpipeline-alerts'&fromname='Publishpipeline-alerts'&subject='[$env] - Publishpipeline failure-alerts'&text=${text}&from=alerts@ntp.net.in" -H 'Authorization: Bearer {{ SGPASS }}' https://api.sendgrid.com/api/mail.send.json
+fi
+

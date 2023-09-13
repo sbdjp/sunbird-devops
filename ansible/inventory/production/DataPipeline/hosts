@@ -1,0 +1,486 @@
+################ Core #########################
+
+# Sunbird zookeeper
+#[ingestion-cluster-zookeepers]
+
+[core-cassandra]
+11.4.2.11
+
+[core-es-1]
+11.4.2.6
+
+[core-es-2]
+11.4.2.9
+
+[core-es-3]
+11.4.2.10
+
+[core-es:children]
+core-es-1
+core-es-2
+core-es-3
+
+#[log-es-1]
+#11.4.2.69
+
+#[log-es-2]
+#11.4.2.70
+
+#[log-es-3]
+#11.4.2.71
+
+#[log-es:children]
+#log-es-1
+#log-es-2
+#log-es-3
+
+### Gray log Intro ##
+[log-es-1]
+11.4.2.100 node_name=log-es-1 es_instance_name=log-es-1 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-2]
+11.4.2.101 node_name=log-es-2 es_instance_name=log-es-2 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-3]
+11.4.2.103 node_name=log-es-3 es_instance_name=log-es-3 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-4]
+11.4.2.106 node_name=log-es-4 es_instance_name=log-es-4 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-5]
+11.4.2.107 node_name=log-es-5 es_instance_name=log-es-5 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-6]
+11.4.2.22 node_name=log-es-6 es_instance_name=log-es-6 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-7]
+11.4.2.23 node_name=log-es-7 es_instance_name=log-es-7 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-8]
+11.4.2.24 node_name=log-es-8 es_instance_name=log-es-8 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-9]
+11.4.2.28 node_name=log-es-9 es_instance_name=log-es-9 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-10]
+11.4.2.29 node_name=log-es-10 es_instance_name=log-es-10 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-11]
+11.4.2.32 node_name=log-es-11 es_instance_name=log-es-11 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-12]
+11.4.2.33 node_name=log-es-12 es_instance_name=log-es-12 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-13]
+11.4.2.37 node_name=log-es-13 es_instance_name=log-es-13 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-14]
+11.4.2.38 node_name=log-es-14 es_instance_name=log-es-14 es_etc_node_master=true es_etc_node_data=true
+
+[log-es-15]
+11.4.2.39 node_name=log-es-15 es_instance_name=log-es-15 es_etc_node_master=true es_etc_node_data=true
+
+[log-es:children]
+log-es-1
+log-es-2
+log-es-3
+log-es-4
+log-es-5
+log-es-6
+log-es-7
+log-es-8
+log-es-9
+log-es-10
+log-es-11
+log-es-12
+log-es-13
+log-es-14
+log-es-15
+
+[graylog-1]
+11.4.2.102 mongodb_master=True graylog_is_master=True
+
+[graylog-2]
+11.4.2.104 mongodb_master=False graylog_is_master=False
+
+[graylog-3]
+11.4.2.105 mongodb_master=False graylog_is_master=False
+
+[graylog-4]
+11.4.2.19 mongodb_master=False graylog_is_master=False
+
+[graylog-5]
+11.4.2.20 mongodb_master=False graylog_is_master=False
+
+[graylog-6]
+11.4.2.21 mongodb_master=False graylog_is_master=False
+
+[graylog:children]
+graylog-1
+graylog-2
+graylog-3
+graylog-4
+graylog-5
+graylog-6
+
+################# LP ##########################
+[search]
+#11.4.3.18
+
+[learning]
+11.4.3.27 ansible_ssh_port=2200
+
+[composite-search-cluster]
+11.4.2.15
+11.4.2.16
+11.4.2.17
+
+[lp-cassandra]
+11.4.2.11
+
+[dp-cassandra]
+11.4.2.30
+
+[lp-redis]
+11.4.2.36
+
+################# LPA #########################
+[analytics-api]
+11.4.3.10
+#11.4.3.15
+
+[secor]
+11.4.3.52   ## old server ip and not in use
+
+[secor-1]
+11.4.3.65
+
+[secor-2]
+11.4.3.66
+
+[secor-3]
+11.4.3.67
+
+[spark]
+#11.4.3.12 spark.driver_memory=15GB 
+11.4.3.6 spark.driver_memory=15GB
+
+[spark-dp]
+#11.4.3.49 spark.driver_memory=110GB 
+11.4.3.7 spark.driver_memory=110GB
+
+[prod-spark-content]
+11.4.3.8 ansible_python_interpreter=/usr/bin/python3
+
+[cassandra]
+11.4.2.30
+
+
+[Prod-py-spark-sl]
+11.4.3.69   #Prod-py-spark-sl
+
+
+[prod-py-spark-sl-2]
+11.4.3.74   #prod-py-spark-sl-2
+
+
+[appserver-prod]
+10.2.10.4    #appserver-prod
+
+[lpa:children]
+spark
+spark-dp
+spark-3-auto
+secor
+analytics-api
+cassandra
+########################### DP #############################
+
+[kafka-indexer]
+11.4.2.44
+
+[influxdb]
+11.4.2.7
+
+[telemetry-indexer-logstash]
+11.4.2.58
+
+[processing-cluster-kafka]
+11.4.2.45 ansible_ssh_port=2200
+11.4.2.46 ansible_ssh_port=2200
+11.4.2.47 ansible_ssh_port=2200
+11.4.2.48 ansible_ssh_port=2200
+11.4.2.49 ansible_ssh_port=2200
+
+[processing-cluster-zookeepers]
+11.4.2.51 ansible_ssh_port=2200
+11.4.2.52 ansible_ssh_port=2200
+11.4.2.53 ansible_ssh_port=2200
+
+[ingestion-cluster-kafka]
+11.4.2.73
+11.4.2.74
+11.4.2.75
+
+[ingestion-cluster-zookeeper]
+11.4.2.76
+11.4.2.77
+11.4.2.78
+
+[telemetry-search-cluster1]
+11.4.2.18
+
+[telemetry-search-cluster2]
+11.4.2.19
+
+[telemetry-search-cluster3]
+11.4.2.20
+
+
+[telemetry-search-cluster:children]
+telemetry-search-cluster1
+telemetry-search-cluster2
+telemetry-search-cluster3
+
+[zookeeper:children]
+processing-cluster-zookeepers
+
+[telemetry-search-cluster-kibana-node:children]
+telemetry-search-cluster2
+
+[redis]
+11.4.2.57 ansible_ssh_port=2200
+
+[redis-metadata]
+11.4.2.31         #redis-dp-metatdata
+
+[redisall:children]  ### for redis backup
+redis-metadata2
+#redis-metadata
+#redis
+
+[redis-metadata2]
+11.4.2.58 ansible_ssh_port=2200
+
+[redisall-backup]
+11.4.2.87  
+
+[report-cassandra]
+11.4.2.99
+
+[local]
+localhost ansible_connection=local
+
+[dp:children]
+local
+processing-cluster-kafka
+processing-cluster-zookeepers
+zookeeper
+telemetry-search-cluster
+telemetry-search-cluster-kibana-node
+kafka-indexer
+telemetry-indexer-logstash
+influxdb
+lpa
+redisall
+druid
+druid-graphite
+druid-zookeeper
+redis-metadata
+ingestion-cluster-kafka
+ingestion-cluster-zookeeper
+spark-hdinsight-cluster
+redis-metadata2
+druid-raw
+druid-rollup
+redisall-backup
+log-es
+report-cassandra
+graylog
+
+[env:children]
+dp
+raw-historical
+
+[env:vars]
+ansible_ssh_user=deployer
+ansible_ssh_private_key_file=/var/lib/jenkins/secrets/proddeployer_ssh_key
+
+##### Spark HDinsight cluster #####
+[spark-hdinsight]
+0.0.0.0
+
+[spark-hdinsight-cluster:children]
+spark-hdinsight
+
+####### Druid ######
+[coordinator]
+11.4.3.41
+
+[broker]
+11.4.3.41
+
+[druid-zookeeper]
+#24.0.0.4
+#24.0.0.5
+24.0.0.6 #druid-prod-vm-2
+
+#[druid-postgres]
+#24.0.0.4
+
+#[druid-graphite]
+#24.0.0.4
+
+#[overlord]
+#24.0.0.4
+
+#[coordinator]
+#24.0.0.4
+
+#[broker]
+#24.0.0.6
+
+#[historical]
+#24.0.0.4
+
+#[middlemanager]
+#24.0.0.5
+
+##Druid-GA####
+
+[raw-zookeeper]
+11.4.3.70 cluster=raw
+11.4.3.71 cluster=raw
+11.4.3.72 cluster=raw
+
+[raw-overlord]
+11.4.3.41 cluster=raw
+
+[raw-coordinator]
+11.4.3.41 cluster=raw
+
+[raw-historical]
+11.4.3.60 cluster=raw
+11.4.3.61 cluster=raw
+11.4.3.62 cluster=raw
+
+#11.4.3.43
+#11.4.3.44
+#11.4.3.27 #New GA machine
+
+[raw-graphite]
+11.4.3.41 cluster=raw
+
+[raw-broker]
+11.4.3.41 cluster=raw
+
+[raw-middlemanager]
+11.4.3.42 cluster=raw
+11.4.3.23 cluster=raw
+11.4.3.33 cluster=raw  #prod-druid-raw-mm-1 iGot scalup
+11.4.3.75 cluster=raw
+
+[raw-router]
+11.4.3.41 cluster=raw
+
+[internal-proxy]
+11.4.3.46
+
+[external-spark]
+10.2.2.12
+
+[rollup-zookeeper]
+11.4.0.8 cluster=rollup
+11.4.0.9 cluster=rollup
+11.4.0.10 cluster=rollup
+
+[rollup-graphite]
+11.4.0.53 cluster=rollup
+
+[rollup-overlord]
+11.4.0.53 cluster=rollup
+
+[rollup-coordinator]
+11.4.0.53 cluster=rollup
+
+[rollup-historical]
+11.4.0.51 cluster=rollup
+11.4.0.77 cluster=rollup
+11.4.0.66 cluster=rollup
+11.4.0.4  cluster=rollup
+11.4.0.7  cluster=rollup
+11.4.0.11 cluster=rollup
+
+[rollup-middlemanager]
+11.4.3.10 cluster=rollup 
+11.4.0.52 cluster=rollup
+11.4.0.54 cluster=rollup  #prod-druid-rollup-reply-temp
+11.4.0.58 cluster=rollup  #prod-druid-rollup-mm-1 iGot scaleup
+11.4.0.6  cluster=rollup
+11.4.0.5  cluster=rollup
+
+[rollup-broker]
+11.4.0.53 cluster=rollup
+11.4.0.4  cluster=rollup
+
+[rollup-router]
+11.4.0.53 cluster=rollup
+
+[druid-rollup:children]
+rollup-coordinator
+rollup-overlord
+rollup-historical
+rollup-broker
+rollup-middlemanager
+rollup-router
+
+[druid-rollup:vars]
+druid_azure_container_name=druid-data-store #Druid-Rollup
+
+[druid-raw:children]
+raw-coordinator
+raw-overlord
+raw-broker
+raw-historical
+raw-middlemanager
+raw-router
+raw-zookeeper
+
+########################### Centralized logs ####################
+[centralised-logs]
+10.20.1.6
+
+########################### Monitoring ##########################
+[logstash-ps:children]
+kafka-indexer
+
+[es-ps:children]
+telemetry-search-cluster
+composite-search-cluster
+
+[process-exporter:children]
+logstash-ps
+es-ps
+secor-ps
+analytics-ps
+kafka-ps
+druid-zookeeper-ps
+druid-postgres-ps
+overlord-ps
+coordinator-ps
+historical-ps
+broker-ps
+middlemanager-ps
+
+[secor-ps:children]
+secor
+
+[analytics-ps:children]
+analytics-api
+
+[kafka-ps:children]
+processing-cluster-kafka
+
+[all:vars]
+ansible_ssh_user=deployer
+ansible_ssh_private_key_file=/var/lib/jenkins/secrets/proddeployer_ssh_key

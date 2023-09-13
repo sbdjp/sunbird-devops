@@ -1,0 +1,10 @@
+- name: Cleanup old script file
+  file: dest=/tmp/{{ env }}_publish_alert.sh state=absent
+
+- name: copy the alert script
+  template: src=publish-pipeline dest=/tmp/{{ env }}_publish_alert.sh mode=755 force=yes
+  
+    
+- name: Run the alert script
+  command: /tmp/{{ env }}_publish_alert.sh {{ env }}
+  

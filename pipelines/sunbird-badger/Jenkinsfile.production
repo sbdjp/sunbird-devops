@@ -1,0 +1,37 @@
+#!groovy
+
+node('general-production') {
+
+    currentBuild.result = "SUCCESS"
+
+    try {
+
+       stage('Checkout'){
+
+          checkout scm
+          sh('./pipelines/setupDevopsCode.sh')
+       }
+
+       stage('Pre-Build'){
+
+         sh('./pipelines/sunbird-badger/installDeps.sh')
+
+       }
+        stage('Metadata'){
+
+         sh('./pipelines/metadata.sh  .badger > ./pipelines/sunbird-badger/metadata.json')
+
+       }
+
+       stage('Deploy'){
+          sh 'METADATA_FILE=./pipelines/sunbird-badger/metadata.json ARTIFACT_LABEL=gold ENV=ntp-production ./pipelines/sunbird-badger/deploy.sh'
+          archive includes: "metadata.json"
+       }
+
+    }
+    catch (err) {
+        currentBuild.result = "FAILURE"
+        throw err
+    }
+
+}

@@ -1,0 +1,219 @@
+######################## LP ########################
+
+[learning1]
+11.5.3.27 ansible_ssh_port=2200
+
+[learningall:children]
+learning1
+
+[search1]
+11.5.3.15
+
+[searchall:children]
+search1
+
+[dial1]
+11.5.3.35
+
+[dial:children]
+dial1
+
+[redis1]
+#11.5.3.9
+11.5.2.22 ansible_ssh_port=2200
+
+
+[dp-redis]
+11.5.3.16 ansible_ssh_port=2200
+
+[lms-redis]
+#11.5.3.9
+11.5.2.22 ansible_ssh_port=2200
+
+[redis-metadata2]
+11.5.3.16 ansible_ssh_port=2200
+
+[redisall:children]
+redis1
+
+[learning-neo4j-node1]  
+#11.5.2.6  #current used IP
+#11.5.2.11  #new Ip with prod data
+11.5.2.21
+
+
+# Enable following host, if you're have neo4j cluster and an arbiter for election
+# [arbiter]
+# <ip> dbms_mode=ARBITER
+
+[learning-neo4j-cluster:children]
+learning-neo4j-node1
+
+[cassandra-node-1]
+11.5.2.16 
+
+[cassandra-node-2]
+11.5.2.17
+
+[cassandra-node-3]
+11.5.2.18 
+
+[cassandra:children]
+cassandra-node-1
+cassandra-node-2
+cassandra-node-3
+
+
+[dp-cassandra]
+11.5.2.4  #DP-cassandra
+#11.5.2.12 #new IP of prod data
+
+[core-cassandra]
+11.5.2.16 #cassandra LP-core cluster
+11.5.2.17 #cassandra LP-core cluster
+11.5.2.18 #cassandra LP-core cluster
+#11.5.2.5
+
+[composite-search-cluster]
+11.5.2.7 #current used IP
+
+
+[yarn-master]
+11.5.3.14
+
+[yarn-slave]
+11.5.3.11
+11.5.3.5
+
+[yarn:children]
+yarn-master
+yarn-slave
+
+[processing-cluster-kafka]
+11.5.2.58 ansible_ssh_port=2200
+
+[processing-cluster-zookeepers]
+11.5.2.58 ansible_ssh_port=2200
+
+[log-es-2] 
+11.5.0.13
+
+[log-es-1]
+11.5.0.8 node_name=log-es-1 es_instance_name=log-es-1 es_etc_node_master=true es_etc_node_data=true
+
+[log-es:children]
+#log-es-2
+log-es-1
+
+[graylog-1]
+11.5.0.19 mongodb_master=True graylog_is_master=True
+
+[graylog:children]
+graylog-1
+
+[zookeeper:children]
+processing-cluster-zookeepers
+
+[local]
+localhost ansible_connection=local
+
+[db-backup-server]
+11.5.3.15
+
+[raw-broker]
+11.5.2.10 cluster=raw
+
+[report-cassandra]
+11.5.2.98
+
+[postgres]
+0.0.0.0
+
+[raw-coordinator]
+11.5.2.10 cluster=raw
+
+[raw-overlord]
+11.5.2.10 cluster=raw
+
+[lp-cassandra]
+11.5.2.16
+11.5.2.17
+11.5.2.18
+
+[redis]
+11.5.3.18
+
+
+
+
+
+[lp:children]
+learningall
+searchall
+learning-neo4j-cluster
+cassandra
+redisall
+yarn
+composite-search-cluster
+processing-cluster-kafka
+zookeeper
+local
+db-backup-server
+dp-redis
+dial
+lms-redis
+dedup-redis
+redis-metadata2
+raw-broker
+spark
+
+[core-es-1]
+11.5.2.13
+
+[core-es:children]
+core-es-1
+
+[env:children]
+lp
+spark
+
+[env:vars]
+ansible_ssh_user="deployer"
+ansible_ssh_private_key_file=/var/lib/jenkins/secrets/preproddeployer_ssh_key
+
+####################### Monitoring ########################
+[logstash-ps]
+#11.5.3.9
+11.5.2.22 
+#11.5.2.6
+11.5.2.21
+11.5.2.11 #new Ip with prod data
+
+[process-exporter:children]
+logstash-ps
+cassandra-ps
+
+[cassandra-ps]
+11.5.2.4  #old IP
+#11.5.2.12 #new IP of prod data
+11.5.2.16 #cassandra LP-core cluster
+11.5.2.17 #cassandra LP-core cluster
+11.5.2.18 #cassandra LP-core cluster
+
+[process-exporter:vars]
+ansible_ssh_user="deployer"
+ansible_ssh_private_key_file=/var/lib/jenkins/secrets/preproddeployer_ssh_key
+
+[all:vars]
+ansible_ssh_user=deployer
+ansible_ssh_private_key_file=/var/lib/jenkins/secrets/preproddeployer_ssh_key
+
+#Dummy values
+[es7]
+0.0.0.0
+
+[mlworkbench]
+0.0.0.0
+
+[spark]
+11.5.3.13

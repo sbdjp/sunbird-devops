@@ -1,0 +1,5 @@
+location ~* (Gruntfile|package|package-lock)\.(json|jsonc)$ {
+   deny all;
+   access_log off;
+   log_not_found off;
+}

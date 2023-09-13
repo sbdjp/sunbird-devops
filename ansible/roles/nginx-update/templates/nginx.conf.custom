@@ -1,0 +1,417 @@
+server {
+ listen                443 ssl;
+ server_name           {{ dialpage_url }};
+ ssl_certificate       /run/secrets/play_proxy_site.crt;
+ ssl_certificate_key   /run/secrets/play_proxy_site.key;
+
+    
+location /dialpage/index.html {
+    if ($query_string ~* "dialcode=(.*)"){
+      return 301 {{ proto }}://{{ proxy_server_name }}/get/dial/$1;
+    }
+}
+
+location / {    
+    return 301 {{ proto }}://{{ proxy_server_name }}/get;
+}
+
+}
+
+{% if proto=='https' %}
+server {
+  listen 80;
+  listen [::]:80;
+  server_name {{ igot_server_name }};
+{% if nginx_server_config is defined and nginx_server_config %}
+  {{ nginx_server_config | indent( width=4, indentfirst=True)  }}
+{% endif %}
+  # Limitting open connection per ip
+  return 301 https://{{ igot_server_name }}$request_uri;
+}
+{% endif %}
+server {
+{% if proto=='http' %}
+  listen                80;
+  listen    [::]:80;
+{% else %}
+  listen                443 ssl;
+  ssl_certificate       /run/secrets/igot_proxy_site.crt;
+  ssl_certificate_key   /run/secrets/igot_proxy_site.key;
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_ciphers "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA HIGH !RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS";
+{% endif  %}
+  server_name {{ igot_server_name }};
+{% if nginx_server_config is defined and nginx_server_config %}
+  {{ nginx_server_config | indent( width=4, indentfirst=True)  }}
+{% endif %}
+  resolver 127.0.0.11 valid=5s;
+  location = / {
+    return 301 https://{{ igot_server_name }}/igot;
+  }
+  location / {
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_pass http://player;
+  }
+  location ~* ^/auth/(.*)/impersonation/ {
+      return 301 {{proto}}://{{ proxy_server_name }};
+    }
+
+  location ~* ^/auth/realms/master/ {
+      return 301 {{proto}}://{{ proxy_server_name }};
+    }
+
+  location ~* ^/auth/admin/master/console/ {
+      return 301 {{proto}}://{{ proxy_server_name }};
+    }
+  location ~* ^/auth/v1/refresh/token  {
+    rewrite ^/auth/(.*) /auth/$1 break;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_pass http://player;
+  }
+  location ~* /auth/.*/favicon.ico {
+    # setting proxy for favicon.ico
+    proxy_cache tmp_cache;
+    proxy_cache_revalidate on;
+    proxy_cache_min_uses 3;
+    proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+    proxy_cache_background_update on;
+
+    set $target {{ keycloak_url }};
+    rewrite ^/auth/(.*) /auth/$1 break;
+    proxy_pass $target;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Scheme $scheme;
+    proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+  location /auth/ {
+    set $target {{ keycloak_url }};
+    rewrite ^/auth/(.*) /auth/$1 break;
+    proxy_pass $target;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Scheme $scheme;
+    proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+  location /api/ {
+    if ($request_method = OPTIONS ) {
+            add_header Access-Control-Allow-Origin "*" ;
+            add_header Access-Control-Allow-Methods "GET, OPTIONS, PATCH, POST";
+            add_header Access-Control-Allow-Headers "Access-Control-Allow-Origin, Authorization, Content-Type, user-id, Content-Encoding";
+            add_header Content-Length 0;
+            add_header Content-Type text/plain;
+            return 200;
+    }
+    client_max_body_size 60M;
+    rewrite ^/api/(.*) /$1 break;
+    proxy_set_header Connection "";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Scheme $scheme;
+    proxy_set_header    X-Forwarded-For   $remote_addr;
+    proxy_connect_timeout 5;
+    proxy_send_timeout 60;
+    proxy_read_timeout 70;
+    proxy_http_version 1.1;
+    header_filter_by_lua_block {
+      local h = ngx.req.get_headers()
+
+      ngx.log(ngx.WARN, "Deviceid: ", h["x-device-id"], "  Channelid: ", h["x-channel-id"], "  Appid: ", h["x-app-id"])
+    }
+    proxy_pass http://kong;
+  }
+ location /encryption/ {
+    set $target http://encryption-service:8013;
+    rewrite ^/encryption/(.*) /$1 break;
+    proxy_pass $target;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Scheme $scheme;
+    proxy_connect_timeout 1;
+    proxy_send_timeout 30;
+    proxy_read_timeout 40;
+    proxy_set_header    X-Forwarded-Proto $scheme;
+    # root   /usr/share/nginx/www;
+  }
+  location /badging/ {
+    set $target http://badger-service:8004;
+    rewrite ^/badging/(.*) /$1 break;
+    proxy_pass $target;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Scheme $scheme;
+    proxy_connect_timeout 1;
+    proxy_send_timeout 30;
+    proxy_read_timeout 40;
+    proxy_set_header    X-Forwarded-Proto $scheme;
+  }
+  location ~* ^/assets/public/(.*) {
+        # Enabling cache for Response code 200
+        expires 1M;
+        add_header Pragma public;
+        add_header Cache-Control "public";
+        # Enabling compression
+        gzip            on;
+        gzip_min_length 100000;
+        gzip_proxied    expired no-cache no-store private auth;
+        gzip_types application/javascript application/x-javascript text/javascript;
+        if ($request_method = OPTIONS ) {
+                add_header Access-Control-Allow-Origin "*" ;
+                add_header Access-Control-Allow-Methods "GET, OPTIONS, PATCH, POST";
+                add_header Access-Control-Allow-Headers "Access-Control-Allow-Origin, Authorization, Content-Type, user-id";
+                # add_header Access-Control-Allow-Credentials "true";
+                add_header Content-Length 0;
+                add_header Content-Type text/plain;
+                return 200;
+        }
+    set $bucket        "{{upstream_url}}";
+    set $url_full         '$1';
+    proxy_http_version     1.1;
+    proxy_set_header       Host "{{upstream_url.split('/')[0]|lower}}";
+    proxy_set_header       Authorization '';
+    proxy_hide_header      Access-Control-Allow-Origin;
+    proxy_hide_header      Access-Control-Allow-Methods;
+    proxy_hide_header      x-amz-id-2;
+    proxy_hide_header      x-amz-request-id;
+    proxy_hide_header      Set-Cookie;
+    proxy_ignore_headers   "Set-Cookie";
+    proxy_buffering        off;
+    proxy_intercept_errors on;
+        add_header             Access-Control-Allow-Origin "*";
+        add_header             Access-Control-Allow-Methods GET;
+    proxy_pass             https://$bucket/$url_full;
+}
+ location ~* ^/content/preview/(.*) {
+        # Enabling compression
+        gzip            on;
+        gzip_min_length 100000;
+        gzip_proxied    expired no-cache no-store private auth;
+        gzip_types application/javascript application/x-javascript text/css text/javascript;
+        if ($request_method = OPTIONS ) {
+                add_header Access-Control-Allow-Origin "*" ;
+                add_header Access-Control-Allow-Methods "GET, OPTIONS, PATCH, POST";
+                add_header Access-Control-Allow-Headers "Access-Control-Allow-Origin, Authorization, Content-Type, user-id";
+                # add_header Access-Control-Allow-Credentials "true";
+                add_header Content-Length 0;
+                add_header Content-Type text/plain;
+                return 200;
+        }
+    set $s3_bucket        "{{plugin_upstream_url}}";
+    set $url_full         '$1';
+    proxy_http_version     1.1;
+    proxy_set_header       Host "{{plugin_upstream_url.split('/')[0]|lower}}";
+    proxy_set_header       Authorization '';
+    proxy_hide_header      Access-Control-Allow-Origin;
+    proxy_hide_header      Access-Control-Allow-Methods;
+    proxy_hide_header      x-amz-id-2;
+    proxy_hide_header      x-amz-request-id;
+    proxy_hide_header      Set-Cookie;
+    proxy_ignore_headers   "Set-Cookie";
+    proxy_buffering        off;
+    proxy_intercept_errors on;
+    add_header             Access-Control-Allow-Origin "*" ;
+    add_header             Access-Control-Allow-Methods GET;
+    proxy_pass             https://$s3_bucket/v3/preview/$url_full;
+}
+   location ~ /content-editor/telemetry|collection-editor/telemetry {
+      rewrite ^/(.*) /$1 break;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP {{ nginx_client_public_ip_header | d('$remote_addr') }};
+      proxy_set_header X-Scheme $scheme;
+      proxy_connect_timeout 5;
+      proxy_send_timeout 60;
+      proxy_read_timeout 70;
+      proxy_set_header    X-Forwarded-Proto $scheme;
+      proxy_set_header Connection "";
+      proxy_http_version 1.1;
+      proxy_pass http://player;
+    }
+  location ~* ^/content-editor/(.*) {
+          # Enabling compression
+          gzip            on;
+          gzip_min_length 100000;
+          gzip_proxied    expired no-cache no-store private auth;
+          gzip_types application/javascript application/x-javascript text/css text/javascript;
+          if ($request_method = OPTIONS ) {
+                  add_header Access-Control-Allow-Origin "*" ;
+                  add_header Access-Control-Allow-Methods "GET, OPTIONS, PATCH, POST";
+                  add_header Access-Control-Allow-Headers "Access-Control-Allow-Origin, Authorization, Content-Type, user-id";
+                  # add_header Access-Control-Allow-Credentials "true";
+                  add_header Content-Length 0;
+                  add_header Content-Type text/plain;
+                  return 200;
+          }
+      set $s3_bucket        "{{plugin_upstream_url}}";
+      set $url_full         '$1';
+      proxy_http_version     1.1;
+      proxy_set_header       Host "{{plugin_upstream_url.split('/')[0]|lower}}";
+      proxy_set_header       Authorization '';
+      proxy_hide_header      Access-Control-Allow-Origin;
+      proxy_hide_header      Access-Control-Allow-Methods;
+      proxy_hide_header      x-amz-id-2;
+      proxy_hide_header      x-amz-request-id;
+      proxy_hide_header      Set-Cookie;
+      proxy_ignore_headers   "Set-Cookie";
+      proxy_buffering        off;
+      proxy_intercept_errors on;
+      add_header             Access-Control-Allow-Origin "*" ;
+      add_header             Access-Control-Allow-Methods GET;
+      proxy_pass             https://$s3_bucket/content-editor/$url_full;
+  }
+    location ~* ^/collection-editor/(.*) {
+          # Enabling compression
+          gzip            on;
+          gzip_min_length 100000;
+          gzip_proxied    expired no-cache no-store private auth;
+          gzip_types application/javascript application/x-javascript text/css text/javascript;
+          if ($request_method = OPTIONS ) {
+                  add_header Access-Control-Allow-Origin "*" ;
+                  add_header Access-Control-Allow-Methods "GET, OPTIONS, PATCH, POST";
+                  add_header Access-Control-Allow-Headers "Access-Control-Allow-Origin, Authorization, Content-Type, user-id";
+                  # add_header Access-Control-Allow-Credentials "true";
+                  add_header Content-Length 0;
+                  add_header Content-Type text/plain;
+                  return 200;
+          }
+      set $s3_bucket        "{{plugin_upstream_url}}";
+      set $url_full         '$1';
+      proxy_http_version     1.1;
+      proxy_set_header       Host "{{plugin_upstream_url.split('/')[0]|lower}}";
+      proxy_set_header       Authorization '';
+      proxy_hide_header      Access-Control-Allow-Origin;
+      proxy_hide_header      Access-Control-Allow-Methods;
+      proxy_hide_header      x-amz-id-2;
+      proxy_hide_header      x-amz-request-id;
+      proxy_hide_header      Set-Cookie;
+      proxy_ignore_headers   "Set-Cookie";
+      proxy_buffering        off;
+      proxy_intercept_errors on;
+      add_header             Access-Control-Allow-Origin "*" ;
+      add_header             Access-Control-Allow-Methods GET;
+      proxy_pass             https://$s3_bucket/collection-editor/$url_full;
+  }
+    location ~* ^/generic-editor/(.*) {
+          # Enabling compression
+          gzip            on;
+          gzip_min_length 100000;
+          gzip_proxied    expired no-cache no-store private auth;
+          gzip_types application/javascript application/x-javascript text/css text/javascript;
+          if ($request_method = OPTIONS ) {
+                  add_header Access-Control-Allow-Origin "*" ;
+                  add_header Access-Control-Allow-Methods "GET, OPTIONS, PATCH, POST";
+                  add_header Access-Control-Allow-Headers "Access-Control-Allow-Origin, Authorization, Content-Type, user-id";
+                  # add_header Access-Control-Allow-Credentials "true";
+                  add_header Content-Length 0;
+                  add_header Content-Type text/plain;
+                  return 200;
+          }
+      set $s3_bucket        "{{plugin_upstream_url}}";
+      set $url_full         '$1';
+      proxy_http_version     1.1;
+      proxy_set_header       Host "{{plugin_upstream_url.split('/')[0]|lower}}";
+      proxy_set_header       Authorization '';
+      proxy_hide_header      Access-Control-Allow-Origin;
+      proxy_hide_header      Access-Control-Allow-Methods;
+      proxy_hide_header      x-amz-id-2;
+      proxy_hide_header      x-amz-request-id;
+      proxy_hide_header      Set-Cookie;
+      proxy_ignore_headers   "Set-Cookie";
+      proxy_buffering        off;
+      proxy_intercept_errors on;
+      add_header             Access-Control-Allow-Origin "*" ;
+      add_header             Access-Control-Allow-Methods GET;
+      proxy_pass             https://$s3_bucket/generic-editor/$url_full;
+  }
+location ~* ^/content-plugins/(.*) {
+        # Enabling cache for Response code 200
+        expires 1M;
+        add_header Pragma public;
+        add_header Cache-Control "public";
+        # Enabling compression
+        gzip            on;
+        gzip_min_length 100000;
+        gzip_proxied    expired no-cache no-store private auth;
+        gzip_types application/javascript application/x-javascript text/css text/javascript;
+        if ($request_method = OPTIONS ) {
+                add_header Access-Control-Allow-Origin "*" ;
+                add_header Access-Control-Allow-Methods "GET, OPTIONS, PATCH, POST";
+                add_header Access-Control-Allow-Headers "Access-Control-Allow-Origin, Authorization, Content-Type, user-id";
+                # add_header Access-Control-Allow-Credentials "true";
+                add_header Content-Length 0;
+                add_header Content-Type text/plain;
+                return 200;
+        }
+       set $s3_bucket        "{{plugin_upstream_url}}";
+       set $url_full         '$1';
+       proxy_http_version     1.1;
+       proxy_set_header       Host "{{plugin_upstream_url.split('/')[0]|lower}}";
+       proxy_set_header       Authorization '';
+       proxy_hide_header      Access-Control-Allow-Origin;
+       proxy_hide_header      Access-Control-Allow-Methods;
+       proxy_hide_header      x-amz-id-2;
+       proxy_hide_header      x-amz-request-id;
+       proxy_hide_header      Set-Cookie;
+       proxy_ignore_headers   "Set-Cookie";
+       proxy_buffering        off;
+       proxy_intercept_errors on;
+       add_header             Access-Control-Allow-Origin "*";
+       add_header             Access-Control-Allow-Methods GET;
+       proxy_pass             https://$s3_bucket/content-plugins/$url_full;
+}
+  location /thirdparty {
+        # Enabling cache for Response code 200
+        expires 1M;
+        add_header Pragma public;
+        add_header Cache-Control "public";
+        # Enabling compression
+        gzip            on;
+        gzip_min_length 100000;
+        gzip_proxied    expired no-cache no-store private auth;
+        gzip_types application/javascript application/x-javascript text/css text/javascript;
+    rewrite ^/(.*) /$1 break;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Scheme $scheme;
+    proxy_connect_timeout 5;
+    proxy_send_timeout 60;
+    proxy_read_timeout 70;
+    proxy_set_header    X-Forwarded-Proto $scheme;
+    proxy_set_header Connection "";
+    proxy_http_version 1.1;
+    proxy_pass http://player;
+  }
+  location /v3/device/register {
+    proxy_pass http://kong;
+    proxy_set_header Connection "";
+    rewrite ^/v3/device/register/(.*) /v3/device/register/$1 break;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Scheme $scheme;
+    proxy_connect_timeout 5;
+    proxy_send_timeout 60;
+    proxy_read_timeout 70;
+    proxy_http_version 1.1;
+  }
+  location /action/data/v3/metrics {
+    proxy_pass http://kong;
+    proxy_set_header Connection "";
+    rewrite ^/action/data/v3/metrics/(.*) /data/v3/metrics/$1 break;
+
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Scheme $scheme;
+    proxy_connect_timeout 5;
+    proxy_send_timeout 60;
+    proxy_read_timeout 70;
+  }
+  client_max_body_size 60M;
+}

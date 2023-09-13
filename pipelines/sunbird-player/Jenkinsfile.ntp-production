@@ -1,0 +1,33 @@
+#!groovy
+
+node('general-production') {
+
+    currentBuild.result = "SUCCESS"
+
+    try {
+
+       stage('Checkout'){
+
+          checkout scm
+          sh('./pipelines/setupDevopsCode.sh')
+       }
+
+       stage('Pre-Build'){
+
+         sh('./pipelines/sunbird-player/installDeps.sh')
+
+       }
+       
+       stage('Deploy'){
+        step ([$class: 'CopyArtifact',
+          projectName: 'Build/Player',
+          filter: 'metadata.json']);
+          sh 'METADATA_FILE=metadata.json ENV=ntp-production ./pipelines/sunbird-player/deploy.sh'
+          archive includes: "metadata.json"
+       }
+      }
+    catch (err) {
+        currentBuild.result = "FAILURE"
+        throw err
+    }
+}

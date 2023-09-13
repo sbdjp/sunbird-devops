@@ -1,0 +1,35 @@
+#!groovy
+
+node('general-staging') {
+
+    currentBuild.result = "SUCCESS"
+
+    try {
+
+       stage('Checkout'){
+         cleanWs()
+          checkout scm
+          sh('./pipelines/setupDevopsCode.sh')
+       }
+
+       stage('Pre-Build'){
+
+         sh('./pipelines/sunbird-telemetry-service/installDeps.sh')
+
+       }
+        stage('Metadata'){
+
+         sh('./pipelines/metadata.sh  .telemetry > ./pipelines/sunbird-telemetry-service/metadata.json')
+
+       }
+      stage('Deploy to Staging'){
+        sh 'METADATA_FILE=./pipelines/sunbird-telemetry-service/metadata.json ENV=ntp-staging ARTIFACT_LABEL=gold ./pipelines/sunbird-telemetry-service/deploy.sh'
+        archive includes: "metadata.json"
+       }
+    }
+    catch (err) {
+        currentBuild.result = "FAILURE"
+        throw err
+    }
+
+}

@@ -1,0 +1,298 @@
+################ Core #########################
+[es-1]
+11.5.2.9 es_instance_name=es-1 es_etc_node_master=true es_etc_node_data=true
+
+#[core-es:children]
+#es-1
+
+# Sunbird zookeeper
+#[ingestion-cluster-zookeepers]
+
+[core-cassandra]
+11.5.2.16
+11.5.2.17
+11.5.2.18
+#11.5.2.5
+
+[core-es-1]
+11.5.2.13
+
+[core-es:children]
+core-es-1
+
+[log-es-1]
+11.5.0.8 node_name=log-es-1 es_instance_name=log-es-1 es_etc_node_master=true es_etc_node_data=true
+
+[log-es:children]
+log-es-1
+
+[graylog-1]
+11.5.0.19 mongodb_master=True graylog_is_master=True
+
+[graylog:children]
+graylog-1
+
+################# LP ##########################
+[search]
+11.5.3.15
+
+[data-spark-preprod-1]
+11.5.3.31  #Data-spark
+
+[learning]
+11.5.3.27 ansible_ssh_port=2200
+
+[composite-search-cluster]
+11.5.2.7
+
+[lp-cassandra]
+11.5.2.16
+11.5.2.17
+11.5.2.18
+#11.5.2.4
+
+[dp-cassandra]
+11.5.2.4
+
+[ingestion-cluster-kafka]
+11.5.2.58 ansible_ssh_port=2200
+
+[ingestion-cluster-zookeeper]
+11.5.2.58 ansible_ssh_port=2200
+################# LPA #########################
+[analytics-api]
+11.5.3.18 ansible_ssh_port=2200
+
+[secor]
+11.5.3.10
+
+[spark]
+11.5.3.13
+
+[cassandra]
+11.5.2.4
+
+[lpa:children]
+spark
+secor
+analytics-api
+cassandra
+########################### DP #############################
+
+[kafka-indexer]
+11.5.3.10
+
+[influxdb]
+11.5.3.10
+
+[processing-cluster-kafka]
+11.5.2.23 
+11.5.2.24 
+11.5.2.25 
+
+[processing-cluster-zookeepers]
+11.5.2.23 
+11.5.2.24 
+11.5.2.25 
+
+[telemetry-search-cluster1]
+11.5.2.7
+
+[telemetry-search-cluster:children]
+telemetry-search-cluster1
+
+[zookeeper:children]
+processing-cluster-zookeepers
+
+[telemetry-search-cluster-kibana-node:children]
+telemetry-search-cluster1
+
+[redis]
+11.5.3.18 ansible_ssh_port=2200
+
+[redisall:children]
+redis-metadata2
+
+[redisall-backup:children]
+redis
+redis-metadata2
+
+[redis-metadata2]
+11.5.3.16 ansible_ssh_port=2200
+
+[druid-zookeeper]
+11.5.2.10 cluster=raw
+
+[druid-postgres]
+11.5.2.10 cluster=raw
+
+[overlord]
+11.5.2.10 cluster=raw
+
+[coordinator]
+11.5.2.10 cluster=raw
+
+[historical]
+11.5.2.10 cluster=raw
+
+[druid-graphite]
+11.5.2.10 cluster=raw
+
+[broker]
+11.5.2.10 cluster=raw
+
+[middlemanager]
+11.5.2.10 cluster=raw
+
+[internal-proxy]
+11.5.2.15
+
+[report-cassandra]
+11.5.2.98
+
+[router]
+11.5.2.10 cluster=raw
+
+[druid:children]
+coordinator
+overlord
+broker
+historical
+middlemanager
+druid-graphite
+router
+[rollup-coordinator]
+11.5.2.10
+
+[rollup-broker]
+11.5.2.10 cluster=rollup
+
+[raw-coordinator]
+11.5.2.10 cluster=raw
+
+[raw-broker] 
+11.5.2.10 cluster=raw
+
+[raw-historical]
+11.5.2.10 cluster=raw
+
+[raw-overlord]
+11.5.2.10 cluster=raw
+
+[raw-middlemanager]
+11.5.2.10 cluster=raw
+
+[raw-graphite]
+11.5.2.10 cluster=raw
+
+[raw-zookeeper]
+11.5.2.10 cluster=raw
+
+[raw-router]
+11.5.2.10 cluster=raw
+
+[druid-raw:children]
+raw-coordinator
+raw-broker
+raw-historical
+raw-overlord
+raw-middlemanager
+raw-router
+[local]
+localhost ansible_connection=local
+
+[dp:children]
+local
+processing-cluster-kafka
+processing-cluster-zookeepers
+zookeeper
+postgres
+telemetry-search-cluster
+telemetry-search-cluster-kibana-node
+kafka-indexer
+influxdb
+lpa
+druid
+druid-zookeeper
+druid-postgres
+redisall
+ingestion-cluster-kafka
+ingestion-cluster-zookeeper
+spark-hdinsight-cluster
+redis-metadata2
+report-cassandra
+
+[env:children]
+dp
+
+[env:vars]
+ansible_ssh_user=deployer
+ansible_ssh_private_key_file=/var/lib/jenkins/secrets/preproddeployer_ssh_key
+
+##### Spark HDinsight cluster #####
+[spark-hdinsight]
+0.0.0.0
+
+[spark-hdinsight-cluster:children]
+spark-hdinsight
+
+########################### Monitoring ##########################
+
+[logstash-ps]
+11.5.3.10
+
+[es-ps]
+11.5.2.7
+
+[process-exporter:children]
+logstash-ps
+es-ps
+secor-ps
+analytics-ps
+kafka-ps
+druid-zookeeper-ps
+druid-postgres-ps
+druid-graphite-ps
+
+[secor-ps]
+11.5.3.10
+
+[analytics-ps]
+11.5.3.18 ansible_ssh_port=2200
+
+[kafka-ps]
+11.5.2.58 ansible_ssh_port=2200
+
+[druid-zookeeper-ps]
+11.5.2.10
+
+[druid-postgres-ps]
+11.5.2.10
+
+[overlord-ps]
+11.5.2.10
+
+[coordinator-ps]
+11.5.2.10
+
+[historical-ps]
+11.5.2.10
+
+[druid-graphite]
+11.5.2.10
+
+[broker-ps]
+11.5.2.10
+
+[middlemanager-ps]
+11.5.2.10
+
+[log-es-2] 
+11.5.0.13
+
+[log-es:children]
+log-es-2
+
+[all:vars]
+ansible_ssh_user=deployer
+ansible_ssh_private_key_file=/var/lib/jenkins/secrets/preproddeployer_ssh_key

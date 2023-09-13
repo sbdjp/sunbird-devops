@@ -1,0 +1,9 @@
+- name: Copy Script to kafka server
+  become: yes
+  template:
+    src: kafka_consumer_lag.j2
+    dest: "/opt/kafka_consumer_lag.sh"
+    mode: 0755
+
+- name: Create daily cron jobs 
+  cron: name="{{env}}-kafka" minute=30  job="bash /opt/kafka_consumer_lag.sh"

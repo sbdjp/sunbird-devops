@@ -1,2 +1,0 @@
-fluentd_index_prefix: logstash
-curator_delete_indices_older_than: 2

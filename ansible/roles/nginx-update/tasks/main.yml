@@ -1,0 +1,44 @@
+---
+- name: Copying tenant redirect config
+  template: src=tenant.conf.custom dest=/home/deployer/tenant.conf.custom
+
+- name: Copying nginx redirect config
+  template: src=nginx.conf.custom dest=/home/deployer/nginx.conf.custom
+
+- name: "Create docker secrets {{ item.name }}"
+  shell: "echo '{{ item.value }}' | docker secret create {{ item.name }} - "
+  with_items: "{{ play_proxy_secrets }}"
+  ignore_errors: true
+  no_log: true
+
+- name: Removing docker config if exists
+  become: yes
+  shell: docker config rm tenant.conf.custom
+  ignore_errors: yes
+
+- name: Removing docker nginx config if exists
+  become: yes
+  shell: docker config rm nginx.conf.custom
+  ignore_errors: yes
+
+- name: Create docker tenant redirect config
+  become: yes
+  shell: docker config create tenant.conf.custom /home/deployer/tenant.conf.custom
+
+- name: Create docker nginx redirect config
+  become: yes
+  shell: docker config create nginx.conf.custom /home/deployer/nginx.conf.custom
+
+
+- name: Create docker secrets {{ item.name }}
+  shell:
+    cmd: |
+      docker secret rm '{{ item.name }}' || true
+      echo '{{item.value}}' | docker secret create {{item.name}} - 
+  with_items:
+    - { name: "igot_proxy_site.crt", value: "{{proxyigot_cert}}" }
+    - { name: "igot_proxy_site.key", value: "{{proxyigot_key}}" }
+  
+- name: Updating the service
+  become: yes
+  shell: docker service update --config-add src=tenant.conf.custom,target=/etc/nginx/conf.d/tenant.conf.custom --config-add src=nginx.conf.custom,target=/etc/nginx/conf.d/nginx.conf --secret-add src=igot_proxy_site.key,target=/run/secrets/igot_proxy_site.key --secret-add src=igot_proxy_site.crt,target=/run/secrets/igot_proxy_site.crt --secret-add src=play_proxy_site.crt,target=/run/secrets/play_proxy_site.crt --secret-add src=play_proxy_site.key,target=/run/secrets/play_proxy_site.key proxy_proxy

@@ -1,0 +1,3 @@
+artifacts_container: 'artifacts'                 # Azure blob container name to save built artifacts
+artifact_azure_account_name: dikshaartifactstore
+artifact_azure_account_key: "{{ core_vault_artifact_azure_account_key }}"

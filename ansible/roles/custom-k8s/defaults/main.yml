@@ -1,0 +1,12 @@
+---
+hub_org: sunbird
+nginx_per_ip_connection_limit: 400
+proxy_prometheus: false
+proxy_secrets:
+  - name: prom_admin_creds
+    value: "{{proxy_prometheus_admin_creds}}"
+  - name: site.key
+    value: "{{proxy_site_key}}"
+  - name: site.crt
+    value: "{{proxy_site_crt}}"
+maintainance_proxy: false

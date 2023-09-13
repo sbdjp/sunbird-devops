@@ -1,0 +1,4 @@
+- name: Log into DockerHub
+  become: yes
+  command: docker login ntphub.azurecr.io  -u ntphub -p"{{vault_docker_hub_password}}"
+    

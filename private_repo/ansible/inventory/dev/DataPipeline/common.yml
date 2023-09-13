@@ -1,170 +1,40 @@
-# ------------------------------------------------------------------------------------------------------------ #
-# Mandatorty variables - DO NOT LEAVE ANYTHING BLANK #
-domain_name: ""          # your domain name like example.com
-# docker hub details
-dockerhub: "change.docker.url"                                      # docker hub username or url incase of private registry
-private_ingressgateway_ip: ""                        # your private kubernetes load balancer ip
-# Note - You can use the same azure account for the below variables or have separate azure accounts
-sunbird_private_storage_account_name: "change.azure.storage.account.name"         # Azure account name for storing private data (like reports, telemetry data)
-sunbird_public_storage_account_name: "change.azure.storage.account.name"         # Azure account name for storing public data (like contents)
-sunbird_druid_storage_account_name: "change.azure.storage.account.name"         # Azure account name for storing druid data (like query results)
-sunbird_artifact_storage_account_name: "change.azure.storage.account.name"       # Azure account name for storing artifacts data (like jenkins build zip files)
-sunbird_management_storage_account_name: "change.azure.storage.account.name"     # Azure account name for storing backup data (like cassandra backups)
+############## Common ######################
+
+# Common vars for env
+env: 
+proto: 
+domain_name: 
+ssh_public_key_deployer:  
+bootstrap_user: 
+bootstrap_key_path: 
+ansible_ssh_private_key_file: 
+
+#################### DP ##########################
 
 
 
+# Every where the value is telemetry-data-store
+# Shall we change the value to telemetry-data-store in dev also?
+# What's the implication
+# Is it azure blob or s3 bucket??
+# Is it same as `channel_data_exhaust_bucket`
+secor_azure_container_name: 
 
-# ------------------------------------------------------------------------------------------------------------ #
-# Optional variables - Can be left blank if you dont plan to use the intended features
-env: dev                  # some name like dev, preprod etc
-proto: https               # http or https, preferably https
+dp_azure_account_name:  # azure storage account name
+default_org_hash_id: # channel id of the organization
 
-# Azure media streaming service
-stream_base_url: "" # Media service streaming url
+# Data products monitoring web hooks
+data_exhaust_webhook_url: ""
+data_exhaust_Channel: ""
+data_exhaust_name: 
+bucket: 
+stream_base_url: ""
+
+# Media content
 media_service_azure_tenant: "" # value have to be defined
+media_service_azure_tenant: ""
 media_service_azure_subscription_id: ""
 media_service_azure_account_name: ""
 media_service_azure_resource_group_name: ""
 media_service_azure_token_client_key: ""
 media_service_azure_token_client_secret: ""
-
-# data exhaust alerts
-data_exhaust_webhook_url: "slack.com"     # Slack webhook url
-data_exhaust_Channel: "slack.com"         # Slack channel for data products alerts
-secor_alerts_slack_channel: "slack.com"   # Slack channel name for secor alerts - Example #all_alerts_channel
-
-# ------------------------------------------------------------------------------------------------------------ #
-# Sensible defaults which you need not change - But if you would like to change, you are free to do so
-data_exhaust_name: "datapipeline-monitoring"  # Slack notification name
-postgres:
-  db_url: "{{ groups['postgres'][0] }}"
-  db_username: analytics
-  db_name: analytics
-  db_password: "{{dp_vault_pgdb_password}}"
-  db_table_name: "{{env}}_consumer_channel_mapping"
-  db_port: 5432
-  db_admin_user: postgres
-  db_admin_password: "{{dp_vault_pgdb_admin_password}}"
-
-druid_postgres_user: druid # Do not change this
-sunbird_private_azure_report_container_name: 'reports'
-sunbird_public_azure_report_container_name: 'public-reports'
-imagepullsecrets: "{{env}}registrysecret"                  # kubernetes imagePullSecrets
-kubeconfig_path: /var/lib/jenkins/secrets/k8s.yaml         # kubeconfig file path on jenkins
-core_kubeconfig_path: "{{ kubeconfig_path }}"              # kubeconfig file path on jenkins for core kube cluster, change this if you use separate kube cluster for core and KP + DP
-
-# The below sets the kafka topics retention time to 1 day, if you use the defaults from the public repo, it will be 7 days
-# If you want to retain the topics for 7 days, remove the below sections completely
-# Ensure you have atleast 1 TB of disk to retain data for 7 days
-ingestion_kafka_topics:
-  - name: telemetry.ingestion
-    num_of_partitions: 2
-    replication_factor: 1
-  - name: events.deviceprofile
-    num_of_partitions: 2
-    replication_factor: 1
-  - name: telemetry.ingest
-    num_of_partitions: 2
-    replication_factor: 1
-
-ingestion_kafka_overriden_topics:
-  - name: telemetry.ingestion
-    retention_time: 86400000
-    replication_factor: 1
-    max_message_bytes: 5242880
-  - name: events.deviceprofile
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.ingest
-    retention_time: 86400000
-    replication_factor: 1
-    max_message_bytes: 5242880
-
-processing_kafka_overriden_topics:
-  - name: analytics.job_queue
-    retention_time: 86400000
-    replication_factor: 1
-  - name: analytics_metrics
-    retention_time: 86400000
-    replication_factor: 1
-  - name: druid.events.error
-    retention_time: 86400000
-    replication_factor: 1
-  - name: druid.events.log
-    retention_time: 86400000
-    replication_factor: 1
-  - name: druid.events.summary
-    retention_time: 86400000
-    replication_factor: 1
-  - name: druid.events.telemetry
-    retention_time: 86400000
-    replication_factor: 1
-  - name: events.deviceprofile
-    retention_time: 86400000
-    replication_factor: 1
-  - name: prom.monitoring.metrics
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.assess
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.assess.failed
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.assess.raw
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.audit
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.denorm
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.derived
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.derived.unique
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.duplicate
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.error
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.extractor.duplicate
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.extractor.failed
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.failed
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.ingest
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.metrics
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.raw
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.unique
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.unique.latest
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.unique.primary
-    retention_time: 86400000
-    replication_factor: 1
-  - name: telemetry.unique.secondary
-    retention_time: 86400000
-    replication_factor: 1
-  - name: ml.observation.raw
-    retention_time: 86400000
-    replication_factor: 1
-  - name: ml.observation.druid
-    retention_time: 86400000
-    replication_factor: 1

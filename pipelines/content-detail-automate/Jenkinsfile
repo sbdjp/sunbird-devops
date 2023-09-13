@@ -1,0 +1,41 @@
+@Library('deploy-conf') _
+node( ) {
+
+    stage('Start-VM') {
+                build job: 'Start-VM-Content', parameters: [
+                string(name: 'server', value: "${params.host}")
+                ]
+        }
+
+    stage('Checkout') {
+                cleanWs()
+                sh "git clone https://github.com/project-sunbird/sunbird-devops.git -b ${params.branch_or_tag} ."
+                dir('private') {
+                  checkout scm
+                }
+        }
+    stage('deploy') {
+       values = [:]
+                envDir = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-3].trim()
+                module = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-2].trim()
+                jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim()
+                currentWs = sh(returnStdout: true, script: 'pwd').trim()
+                ansiblePlaybook = "${currentWs}/private/ansible/run-content-details.yml"
+                ansibleExtraArgs = "--extra-vars=\"host=${params.host}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                values.put('currentWs', currentWs)
+                values.put('env', envDir)
+                values.put('module', module)
+                values.put('jobName', jobName)
+                values.put('ansiblePlaybook', ansiblePlaybook)
+                values.put('ansibleExtraArgs', ansibleExtraArgs)
+                println values
+                ansible_playbook_run(values)
+                currentBuild.result = "SUCCESS"
+                currentBuild.description = "Branch_private: ${params.branch_or_tag}"
+            }
+    stage('Stop-VM') {
+                build job: 'Stop-VM-Content', parameters: [
+                string(name: 'server', value: "${params.host}")
+                ]
+        }
+}

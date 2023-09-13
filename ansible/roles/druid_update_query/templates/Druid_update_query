@@ -1,0 +1,9 @@
+#!/bin/bash
+#set -x
+
+###-------------------------------------------------------------------
+### Created By: Raghupathi
+### Description: To Send alert for Dataproducts failure/skipping.
+###-------------------------------------------------------------------
+
+curl -X POST '{{proto}}://{{ domain_name }}/api/dataset/v1/add' -H 'authorization: Bearer {{ core_vault_sunbird_api_auth_token }}' -H 'content-type: application/json' -d '{{ payload_data }}'

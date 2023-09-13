@@ -1,0 +1,44 @@
+#!/bin/bash
+#set -x
+
+###-------------------------------------------------------------------
+### Created By: Raghupathi
+### Description: To Send alert for Dataproducts failure/skipping.
+###-------------------------------------------------------------------
+
+### variables
+env=$1
+
+### removing the old files
+rm -rf ~/reports-list ~/sparkoutput-file ~/difference-list
+
+### Collecting the reports list from postgres
+reportname=`psql "host={{ postgres.db_url }} port={{ postgres.db_port }} dbname={{ postgres.db_name}} user={{ postgres.db_username }} password={{ postgres.db_password  }} sslmode=require" -t -c "select report_id from {{ reports_config_table }} where (status='ACTIVE' and report_schedule='DAILY') or (status='ACTIVE' and report_schedule='Daily')" | sort -n | sed -n '1,2!p'`
+
+for i in $reportname
+do
+echo $i >> ~/reports-list
+done
+
+### Getting the successful reports from spark server
+sparkoutput=`sudo ssh deployer@{{ groups['spark'][0] }} -i {{ ansible_ssh_private_key_file }} 'cat /mount/data/analytics/scripts/logs/joblog.log | grep "JOB_END" | grep "SUCCESS" ' | jq '.context.pdata.pid' | awk -F '"' '{print $2}' | sed 's/_job//' | sort -n`
+
+for i in $sparkoutput
+do 
+echo $i >> ~/sparkoutput-file
+done
+
+## check the missed list from report-list in sparkoutput
+awk -F, 'FNR==NR {f2[$1];next} !($0 in f2)' ~/sparkoutput-file ~/reports-list >> ~/difference-list
+
+## sending email if found difference
+if [ -s ~/difference-list ]
+then
+text=`echo -e "The below daily data-products failed \n $(cat ~/difference-list)"`
+curl -d "{{ dataproducts_mailing_list }}&fromname='Dataproducts-alerts'&fromname='Dataproducts-alerts'&fromname='Dataproducts-alerts'&fromname='Dataproducts-alerts'&subject='[$env] - Dataproducts failure alert - Daily'&text=${text}&from=alerts@ntp.net.in" -H 'Authorization: Bearer {{ SGPASS }}' https://api.sendgrid.com/api/mail.send.json
+
+else
+text=`echo "All the Daily data-products are successful"`
+curl -d "{{ dataproducts_mailing_list }}&fromname='Dataproducts-alerts'&fromname='Dataproducts-alerts'&fromname='Dataproducts-alerts'&fromname='Dataproducts-alerts'&subject='[$env] - Dataproducts Success alert - Daily'&text=${text}&from=alerts@ntp.net.in" -H 'Authorization: Bearer {{ SGPASS }}' https://api.sendgrid.com/api/mail.send.json
+fi
+

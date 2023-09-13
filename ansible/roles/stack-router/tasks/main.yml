@@ -1,0 +1,37 @@
+- name: Ensure stack directory exists
+  file:
+    path: /home/deployer/stack
+    state: directory
+    owner: root
+    group: root
+
+- name: Save stack file
+  template: src=router.yml dest=/home/deployer/stack/router.yml mode=0644
+
+- name: Remove stack
+  shell: "docker stack rm router"
+  ignore_errors: yes
+
+- name: Remove docker secrets {{ item.name }}
+  shell: "docker secret rm {{ item.name }}"
+  with_items: "{{ ssl_secrets }}"
+  ignore_errors: true
+  no_log: true
+
+- name: Create docker secrets {{ item.name }}
+  shell: "echo '{{item.value}}' | docker secret create {{item.name}} -"
+  with_items: "{{ ssl_secrets }}"
+  ignore_errors: true
+  no_log: true
+
+- name: Login to docker
+  shell: "docker login {{ vault_docker_registry_url }} -u {{ vault_docker_registry_user }} -p {{ vault_docker_registry_password }}"
+  no_log: True
+  ignore_errors: yes
+
+- debug: msg="Image details= {{hub_org}}/{{image_name}}:{{image_tag}}"
+
+- name: Deploy stack
+  shell: "docker stack deploy -c router.yml router --with-registry-auth"
+  args:
+    chdir: /home/deployer/stack

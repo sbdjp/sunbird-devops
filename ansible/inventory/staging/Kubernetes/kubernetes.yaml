@@ -1,0 +1,27 @@
+# Kubernetes 1 variable
+kubernetes_cluster_name: Kubernetes-1
+kubeconfig_path: "/var/lib/jenkins/secrets/staging-k8s-1.yaml"
+private_ingressgateway_ip: 11.3.8.8
+grafana_data_sources:
+  - name: prom-fed
+    access: proxy
+    editable: false
+    type: prometheus
+    url: http://{{groups['swarm-dashboard'][0]}}:29090/prometheus
+  - name: Prometheus_DS1
+    access: proxy
+    editable: false
+    type: prometheus
+    url: http://{{groups['swarm-manager'][0]}}:9090/prometheus
+  - name: Prometheus_Stateful
+    access: proxy
+    editable: false
+    type: prometheus
+    url: http://{{groups['swarm-dashboard'][0]}}:19090/prometheus
+  - name: InfluxDB_Datapipeline
+    access: proxy
+    editable: false
+    type: influxdb
+    url: http://{{groups['dp-influx-ps'][0]}}:8086
+    database: monitoring_events
+

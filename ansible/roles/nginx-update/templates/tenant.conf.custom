@@ -1,0 +1,15 @@
+location ~ ^/mitra$ {    
+   return 301 https://{{ proxy_server_name }}/mh;    
+}
+location ~ ^/ch$ {
+   return 301 https://{{ proxy_server_name }}/chd;
+}
+location ~ ^/ts$ {
+   return 301 https://{{ proxy_server_name }}/telangana;
+}
+location ~* /public/certs/(.+)$ {
+set $certid '$1';
+  if ($scheme = "https") {
+       return 301 http://{{ programs_url }}/public/certs/$1;
+  }
+}

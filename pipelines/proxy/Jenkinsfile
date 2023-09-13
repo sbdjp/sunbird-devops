@@ -1,0 +1,58 @@
+@Library('deploy-conf') _
+node() {
+    try {
+        String ANSI_GREEN = "\u001B[32m"
+        String ANSI_NORMAL = "\u001B[0m"
+        String ANSI_BOLD = "\u001B[1m"
+        String ANSI_RED = "\u001B[31m"
+        String ANSI_YELLOW = "\u001B[33m"
+
+        ansiColor('xterm') {
+            stage('Checkout') {
+                cleanWs()
+                sh "git clone https://github.com/project-sunbird/sunbird-devops.git -b ${branch_or_tag} ."
+                dir('private') {
+                  checkout scm
+                }
+            }
+
+            ansiColor('xterm') {
+                stage('deploy') {
+                    values = docker_params()
+                    currentWs = sh(returnStdout: true, script: 'pwd').trim()
+                    values.put('currentWs', currentWs)
+                    ansiblePlaybook = "$currentWs/ansible/docker_image_push.yml"
+                    ansibleExtraArgs = "--tags docker-login --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                    values.put('ansiblePlaybook', ansiblePlaybook)
+                    values.put('ansibleExtraArgs', ansibleExtraArgs)
+                    ansible_playbook_run(values)
+                    sh """cp private/artifacts/Geo* private/pipelines/proxy 
+                          cd private/pipelines/proxy
+                          docker build --build-arg image_name=${hub_org}/${values.image_name} --build-arg image_tag=${values.image_tag} -t ${hub_org}/${values.image_name}:${values.image_tag} .
+                    """
+                    ansibleExtraArgs = "--extra-vars \"hub_org=${hub_org} image_name=${values.image_name} image_tag=${values.image_tag}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                    values.put('ansibleExtraArgs', ansibleExtraArgs)
+                    ansible_playbook_run(values)
+                    ansiblePlaybook = "${currentWs}/ansible/deploy.yml"
+                    ansibleExtraArgs = "--tags \"stack-proxy\" --extra-vars \"hub_org=${hub_org} image_name=${values.image_name} image_tag=${values.image_tag}\" --vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                    values.put('ansiblePlaybook', ansiblePlaybook)
+                    values.put('ansibleExtraArgs', ansibleExtraArgs)
+                    ansible_playbook_run(values)
+                    ansiblePlaybook = "${currentWs}/private/ansible/nginx-custom.yml"
+                    ansibleExtraArgs = "--vault-password-file /var/lib/jenkins/secrets/vault-pass"
+                    values.put('ansiblePlaybook', ansiblePlaybook)
+                    values.put('ansibleExtraArgs', ansibleExtraArgs)
+          					ansible_playbook_run(values)
+                }
+            }
+
+            stage('ArchiveArtifacts') {
+                archiveArtifacts "metadata.json"
+                currentBuild.description = "${values.image_tag}"
+            }
+        }
+    }
+    catch (err) {
+        throw err
+    }
+}

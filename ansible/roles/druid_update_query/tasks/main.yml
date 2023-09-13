@@ -1,0 +1,13 @@
+- name: Remove the existing curl script
+  file: path=~/{{ env }}_druid_update_query.sh state=absent
+
+
+- name: copy the curl script
+  template: src=Druid_update_query dest=~/{{ env }}_druid_update_query.sh mode=755 force=yes
+    
+- name: Run the curl script
+  command: ~/{{ env }}_druid_update_query.sh
+  register: curl_status
+  
+- name: Print the status of curl call
+  debug: var=curl_status

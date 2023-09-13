@@ -1,0 +1,10 @@
+---
+- hosts: diksha-docs
+  become_user: deployer
+  gather_facts: true
+  vars_files:
+    - "{{inventory_dir}}/secrets.yml"
+    - "{{inventory_dir}}/common.yml"
+  roles:
+    - diksha-docs-deploy
+

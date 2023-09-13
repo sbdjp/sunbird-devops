@@ -1,0 +1,544 @@
+env: preproddock
+env_name: "{{ env }}"
+instance: preprod
+instance_name: ntp
+cloud_storage_config_environment: preproddock
+
+#### overriding variables
+composite_search_indexer_container_count: 1
+publish_pipeline_container_count: 1
+publish_yarn_container_memory_mb: 2048
+dialcode_keyspace_name: "{{env}}_dialcode_store"
+plugin_media_base_url: "https://dock.preprod.ntp.net.in"
+
+## Mahesh have to come back on this
+learning_content_h5p_library_path: https://s3.ap-south-1.amazonaws.com/ekstep-public-dev/content/templates/h5p-library-latest.zip
+
+############## Common ######################
+
+proto: https
+domain_name: dock.preprod.ntp.net.in
+
+ekstep_domain_name: https://qa.ekstep.in 
+
+#bootstrap
+ssh_public_key_deployer: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAI+a3cryu+6HfVucfUljuRtbQ20WpNGd2BN+UeyA2yEnn46U/Ym5lCBVqmkqFqPMHnYGOEXaA3r5ZQWaA3V7w+c+L53QvZiTkaw+TxZBgo9n5ksYwprmPUVOV8ZeDoUdDpdMg7qyUmZCM9edklIqzeYllTZhhCn2e/1X8B4/oP715KyfmNQ56hiusRDDf1mdSlHTVaCd3bY7hlvYq3dJngP5gQ0YkQFj9qsvMd4krlA6FIkQuxa+x9HQYXSwburjCnE2mbug9SNLFfOxIfvdoYU6G/RLYWUF8gR6xzoSwWahjm9jdWKtxXwL30zyJWk2raGKP7tocr0oLQjMrIGgp"
+bootstrap_user: deployer
+bootstrap_key_path: /var/lib/jenkins/secrets/preproddeployer_ssh_key
+###################### LP ############################
+
+azure_public_container: dock-content-preprod
+azure_account_name: dockpreprodall
+learnings:
+  paths: ['/data', '/data/graphDB', '/data/logs', '/data/contentBundle', '/data/properties', '/home/learning/tmp', '/home/learning/platform']
+  service_config: ['consumer-config.xml']
+
+searchs:
+  paths: ['/data', '/data/logs', '/data/contentBundle', '/data/properties', '/home/learning/tmp', '/home/learning/platform', '/home/learning/platform/search', '/home/learning/platform/service', '/home/learning/platform/service/logs' ]
+
+
+environment_id: 20000000
+
+###########  jenkinspipeline upload artifact ############
+artifacts_container: artifacts
+artifact_azure_account_name: "dikshaartifactstore"
+artifact_azure_account_key: "{{ lp_vault_artifact_azure_account_key }}"
+
+#neo4j_home: "{{learner_user_home}}/{{neo4j_dir}}/neo4j-enterprise-3.3.0"
+neo4j_home: "{{learner_user_home}}/{{neo4j_dir}}/neo4j-enterprise-3.3.10-SNAPSHOT"
+#neo4j_zip: neo4j-enterprise-3.3.0-unix.tar.gz     # neo4j enterprise version.zip present in the artifacts folder
+neo4j_zip: neo4j-enterprise-3.3.10-SNAPSHOT-unix.tar.gz
+neo4j_enterprise: "true"
+
+## Cassandra-backup
+cassandra_backup_azure_container_name: 
+
+########
+tr_secondary_route_events: "LOG,ERROR"
+sunbird_installation: "Diksha_Preprod"
+
+#Release-2.3.5
+swarm_manager_lb_ip: 11.6.16.68
+
+##Release-2.6.0###
+lp_cassandra_keyspace_prefix: "{{ instance }}"
+
+## kubernetes variables ### overriding swarm manager lb ip to private ingress ip ### 
+private_ingressgateway_ip: 11.6.16.68
+learner_service_base_url: "http://{{private_ingressgateway_ip}}/learner"  ## lp samza jobs
+cert_service_base_url: "http://{{private_ingressgateway_ip}}/cert"    ### lp samza jobs
+kp_content_service_base_url: "http://{{private_ingressgateway_ip}}/content"  ## lp samza jobs
+cert_reg_service_base_url: "http://{{private_ingressgateway_ip}}/certreg"  ## lp samza jobs
+kp_print_service_base_url: "http://{{private_ingressgateway_ip}}/print"
+kp_search_service_base_url: "http://{{private_ingressgateway_ip}}/search"
+
+# Dock variable
+secor_azure_container_name: dock-data-store
+secor_alerts_slack_channel: "#preprod_samza_alerts"
+#data_exhaust_webhook_url: "ttps://hooks.slack.com/services/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"
+dp_azure_account_name: dockpreprodall
+secor_service_name:
+  learning-events-backup:
+    consumer_group: "{{ env }}.graph.events.backup"
+    base_path: "learning-events"
+    timestamp_key: "createdOn"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env }}.learning.graph.events"
+    kafka_broker_host: "{{groups['processing-cluster-kafka'][0]}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: "100000000"
+    max_file_age: "14400"
+    ostrich_port: "9995"
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    service_description: "Learning Events Backup"
+    service_monitor_schedule_hr: "23"
+    service_monitor_schedule_min: "56"
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+  learning-failed-backup:
+    consumer_group: "{{ env }}.learning.failed.events.backup"
+    base_path: "learning-failed-events"
+    timestamp_key: "ets"
+    fallback_timestamp_key: "@timestamp"
+    azure_account_name: "{{ secor.azure.account_name }}"
+    container_name: "{{ secor.azure.container_name }}"
+    azure_account_key: "{{ secor.azure.account_key }}"
+    topic: "{{ env }}.learning.events.failed"
+    kafka_broker_host: "{{groups['processing-cluster-kafka'][0]}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: "100000000"
+    max_file_age: "3600"
+    ostrich_port: "9999"
+    partition_prefix_enabled: "true"
+    partition_prefix_key: "jobName"
+    partition_prefix_mapping: "{\"publish-pipeline\":\"publish_pipeline\",\"composite-search-indexer\":\"cs_index\",\"DEFAULT\":\"failed_events\"}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    service_description: "Learning Failed Backup"
+    service_monitor_schedule_hr: "23"
+    service_monitor_schedule_min: "52"
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+  pipeline-metrics-backup:
+    consumer_group: "{{ env }}.pipeline_metrics"
+    base_path: "data-pipeline-metrics"
+    timestamp_key: "metricts"
+    fallback_timestamp_key: "metricts"
+    topic: "{{ env }}.pipeline_metrics"
+    kafka_broker_host: "{{groups['processing-cluster-kafka'][0]}}"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: "100000000"
+    max_file_age: "21600"
+    ostrich_port: "9992"
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    service_description: "Pipeline metrics events backup"
+    service_monitor_schedule_hr: "23"
+    service_monitor_schedule_min: "50"
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+  ingestion-telemetry-backup:
+    consumer_group: "{{ env }}.telemetry.ingestion.backup"
+    base_path: "ingest"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env }}.telemetry.ingest"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: "100000000"
+    max_file_age: "14400"
+    ostrich_port: "9996"
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    service_description: "Ingestion Telemetry Backup"
+    service_monitor_schedule_hr: "23"
+    service_monitor_schedule_min: "54"
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+  raw-telemetry-backup:
+    consumer_group: "{{ env }}.telemetry.raw.backup"
+    base_path: "raw"
+    timestamp_key: "syncts"
+    fallback_timestamp_key: "@timestamp"
+    topic: "{{ env }}.telemetry.raw"
+    kafka_broker_host: "{{groups['processing-cluster-kafka']|join(':9092,')}}:9092"
+    zookeeper_quorum: "{{groups['processing-cluster-zookeepers']|join(':2181,')}}:2181"
+    max_file_size: "100000000"
+    max_file_age: "14400"
+    ostrich_port: "9994"
+    partition_prefix_enabled: "false"
+    partition_prefix_key: ""
+    partition_prefix_mapping: "{}"
+    output_file_pattern: "{partition}-{currentTimestamp}.json"
+    service_description: "Raw Telemetry Backup"
+    service_monitor_schedule_hr: "23"
+    service_monitor_schedule_min: "50"
+    message_parser: "com.pinterest.secor.parser.PatternDateMessageParser"
+
+
+## over riding backup and secret
+backup_azure_storage_account_name: dockpreprodall
+backup_azure_storage_access_key: "{{lp_vault_backup_azure_storage_secret}}"
+
+### release-3.0.0.vars
+sunbird_public_storage_account_name: dockpreprodall
+sunbird_private_storage_account_name: preproddp
+sunbird_management_storage_account_name: dockpreprodall
+sunbird_artifact_storage_account_name: dikshaartifact
+
+content_streaming_enabled: false
+streaming_mime_type: "video/mp4,video/webm"
+
+#sprint 14 var
+
+processing_kafka_topics:
+  - name: telemetry.raw
+    num_of_partitions: 4
+    replication_factor: 1
+  - name: telemetry.valid
+    num_of_partitions: 4
+    replication_factor: 1
+  - name: telemetry.unique
+    num_of_partitions: 8
+    replication_factor: 1
+  - name: telemetry.duplicate
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: telemetry.sink
+    num_of_partitions: 8
+    replication_factor: 1
+  - name: telemetry.with_location
+    num_of_partitions: 8
+    replication_factor: 1
+  - name: telemetry.de_normalized
+    num_of_partitions: 4
+    replication_factor: 1
+  - name: telemetry.log
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: analytics.job_queue
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: learning.graph.events
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: pipeline_metrics
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: metrics
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: learning.graph.events.fail
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: analytics_metrics
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: learning.job.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: learning.job.request.fail
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: learning.republish.job.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: telemetry.derived
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: telemetry.failed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: telemetry.malformed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: telemetry.extractor.failed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: telemetry.indexer.failed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: coursebatch.job.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: content.postpublish.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: coursebatch.certificate.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: system.command
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: learning.events.failed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: auto.creation.job.request
+    num_of_partitions: 4
+    replication_factor: 1
+  - name: auto.creation.job.request.failed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: contentstate.invalid
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: db.query.events
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: mvc.events.failed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: mvc.processor.job.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: auto.creation.job.failedevent
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: assessment.publish.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: publish.job.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: assessment.republish.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: assessment.postpublish.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: csp.migration.job.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: live.video.stream.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: republish.job.request
+    num_of_partitions: 4
+    replication_factor: 1
+  - name: cassandra.data.migration.request
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: cassandra.data.migration.job.request.failed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: republish.events.failed
+    num_of_partitions: 1
+    replication_factor: 1
+  - name: republish.events.skipped
+    num_of_partitions: 1
+    replication_factor: 1
+
+processing_kafka_overriden_topics:
+  - name: telemetry.raw
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.valid
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.unique
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.duplicate
+    retention_time: 86400000
+    replication_factor: 1
+  - name: telemetry.sink
+    retention_time: 259200000
+    replication_factor: 1
+  - name: telemetry.with_location
+    retention_time: 86400000
+    replication_factor: 1
+  - name: telemetry.de_normalized
+    retention_time: 86400000
+    replication_factor: 1
+  - name: telemetry.log
+    retention_time: 86400000
+    replication_factor: 1
+  - name: analytics.job_queue
+    retention_time: 86400000
+    replication_factor: 1
+  - name: learning.graph.events
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: pipeline_metrics
+    retention_time: 259200000
+    replication_factor: 1
+  - name: metrics
+    retention_time: 604800000
+    replication_factor: 1
+  - name: learning.graph.events.fail
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: analytics_metrics
+    retention_time: 86400000
+    replication_factor: 1
+  - name: learning.job.request
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: learning.job.request.fail
+    retention_time: 1296000000
+    replication_factor: 1
+  - name: telemetry.derived
+    retention_time: 259200000
+    replication_factor: 1
+  # Error/Failed Topics
+  - name: telemetry.failed
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.malformed
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.extractor.failed
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.indexer.failed
+    retention_time: 604800000
+    replication_factor: 1
+  - name: coursebatch.job.request
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: content.postpublish.request
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: coursebatch.certificate.request
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: learning.events.failed
+    retention_time: 604800000
+    replication_factor: 1
+  - name: auto.creation.job.request
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: auto.creation.job.request.failed
+    retention_time: 1296000000
+    replication_factor: 1
+  - name: contentstate.invalid
+    retention_time: 604800000
+    replication_factor: 1
+  - name: db.query.events
+    retention_time: 604800000
+    replication_factor: 1
+  - name: mvc.events.failed
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: mvc.processor.job.request
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: auto.creation.job.failedevent
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: assessment.publish.request
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: publish.job.request
+    retention_time: 1209600000
+    replication_factor: 1
+
+### samza monitoring variables
+#samza_alert_slack_url: https://hooks.slack.com/services/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  # new Diksha-slack
+samza_alert_to_address: to=noc@optit.in
+samza_alert_from_address: alerts@ntp-preprod.net.in
+SGUSER: apikey
+#SGUSER: azure_9f4958288fdb111362201640e638d7ed@azure.com # sendgrid username
+SGPASS: "{{ dp_vault_sendgrid_password }}"
+sendgrid_hostname: smtp.sendgrid.net
+alert_from_address: "{{ samza_alert_from_address }}"
+
+
+###flink vars###
+flink_namespace: flink-kp-{{ env }}
+kubeconfig_path: /var/lib/jenkins/secrets/preprod-dp-k8s.yaml
+### base-config related vars
+flink_container_name: flink-state-backend
+# docker hub details
+dockerhub: ntphub.azurecr.io
+docker_registry: ntphub
+imagepullsecrets: diksha-registry-secret
+
+###release-3.8.0##
+schemas_container_name: content-service
+kp_schema_base_path: "{{proto}}://{{sunbird_public_storage_account_name}}.blob.core.windows.net/{{schemas_container_name}}/schemas"
+    
+search_indexer_ignored_fields: ["responseDeclaration", "body", "options", "editorState", "solutions"]
+
+##release-4.0.0 vars##
+master_category_validation_enabled: no
+
+##release-4.1.0 vars##
+content_stream_enabled: false
+
+## release-5.1.0
+# CSP Name
+cloud_service_provider: azure
+
+cloudstorage_replace_absolute_path: 'true'
+cloudstorage_base_path: "https://obj.dock.preprod.ntp.net.in"
+valid_cloudstorage_base_urls: '["https://dockpreprodall.blob.core.windows.net","https://obj.dock.preprod.ntp.net.in"]'
+cloudstorage_relative_path_prefix: "CONTENT_STORAGE_BASE_PATH"
+cloudstorage_metadata_list: '["appIcon", "artifactUrl", "posterImage", "previewUrl", "thumbnail", "assetsMap", "certTemplate", "itemSetPreviewUrl", "grayScaleAppIcon", "sourceURL", "variants", "downloadUrl", "streamingUrl", "toc_url", "data", "question", "solutions", "editorState", "media", "pdfUrl", "transcripts"]'
+cloud_storage_base_url: "https://{{ sunbird_public_storage_account_name }}.blob.core.windows.net"
+cloud_storage_cname_url: "{{cloudstorage_base_path}}"
+
+dial_service_schema_base_path: "{{ cloud_storage_cname_url }}/{{ dial_plugin_storage }}/jsonld-schema/local"
+
+cloud_public_storage_accountname: "{{sunbird_public_storage_account_name}}"
+cloud_public_storage_endpoint: ""
+cloud_public_storage_region: "centralindia"
+cloud_public_storage_project: ""
+
+cloud_private_storage_accountname: "{{sunbird_private_storage_account_name}}"
+cloud_private_storage_endpoint: ""
+cloud_private_storage_region: "centralindia"
+cloud_private_storage_project: ""
+
+cloud_management_storage_accountname: "{{sunbird_management_storage_account_name}}"
+cloud_management_storage_endpoint: ""
+cloud_management_storage_region: "centralindia"
+cloud_management_storage_project: ""
+
+cloud_artifact_storage_accountname: "{{sunbird_artifact_storage_account_name}}"
+cloud_artifact_storage_endpoint: ""
+cloud_artifact_storage_region: "centralindia"
+cloud_artifact_storage_project: ""
+
+cloud_storage_certqr_bucketname: certqr
+cloud_storage_chatbot_bucketname: chatbot
+cloud_storage_dial_bucketname: dial
+cloud_storage_flink_bucketname: flink-state-backend
+cloud_storage_playercdn_bucketname: player
+cloud_storage_public_bucketname: public
+cloud_storage_publicreports_bucketname: public-reports
+cloud_storage_privatereports_bucketname: reports
+cloud_storage_samiksha_bucketname: samiksha
+cloud_storage_schema_bucketname: schema
+cloud_storage_sourcing_bucketname: sourcing
+cloud_storage_offlineinstaller_bucketname: "{{env}}-offlineinstaller"
+cloud_storage_content_bucketname: "dock-content-preprod"
+cloud_storage_telemetry_bucketname: telemetry-data-store
+cloud_storage_termsandcondtions_bucketname: termsandcondtions
+cloud_storage_user_bucketname: user
+cloud_storage_desktopappcrashlogs_bucketname: desktopappcrashlogs
+cloud_storage_label_bucketname: label
+cloud_storage_certservice_bucketname: "{{env}}-e-credentials"
+cloud_storage_uci_bucketname: "uci-{{env}}"
+cloud_storage_cassandrabackup_bucketname: cassandra-backup
+cloud_storage_dpcassandrabackup_bucketname: dp-cassandra-backup
+cloud_storage_dppostgresbackup_bucketname: dp-postgresql-backup
+cloud_storage_dpredisbackup_bucketname: dp-redis-backup
+cloud_storage_esbackup_bucketname: elasticsearch-snapshots
+cloud_storage_influxdbbackup_bucketname: influxdb-backup
+cloud_storage_jenkinsbackup_bucketname: jenkins-backup
+cloud_storage_mongobackup_bucketname: mongodb-backup
+cloud_storage_neo4jbackup_bucketname: neo4j-backup
+cloud_storage_redisbackup_bucketname: redis-backup
+cloud_storage_artifacts_bucketname: "{{ artifacts_container }}"
+compositesearch_index_name: "compositesearch"
+
+#Added value while fixing 5.1.0 issues
+cloudstorage_relative_path_prefix_content: "CONTENT_STORAGE_BASE_PATH"
+
+## live-node-publisher-partition configuration
+live_node_publisher_consumer_parallelism: 4
+live_node_publisher_router_parallelism: 4
+checkpoint_interval: 3600000

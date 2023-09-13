@@ -1,0 +1,23 @@
+pipeline {
+	agent {
+		label 'general-production'
+	}
+	stages {
+		stage('Checkout'){
+		   steps {
+		   	  sh('./pipelines/setupDevopsCode.sh')
+		   }
+		}
+
+		stage('Build'){
+			steps{
+				sh('./sunbird-devops/ansible/installDeps.sh')
+			}
+		}
+		stage('Deploy') {
+			steps{
+				sh('ansible-playbook -i ansible/inventories/ntp-production ansible/dockerservice-remove.yml --vault-password-file /run/secrets/vault-pass')
+			}
+		}
+	}
+}

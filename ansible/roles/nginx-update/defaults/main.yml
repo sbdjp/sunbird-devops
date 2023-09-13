@@ -1,0 +1,7 @@
+---
+
+play_proxy_secrets:
+  - name: play_proxy_site.key
+    value: "{{play_proxy_site_key}}"
+  - name: play_proxy_site.crt
+    value: "{{play_proxy_site_crt}}"

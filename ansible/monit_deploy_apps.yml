@@ -1,0 +1,9 @@
+---
+# Create vars_file and vars in extravars
+# extra-vars service_name=cassandra extra-vars=@group_vars/monit_dev 
+- hosts: "{{ hosts }}"
+  name: Installing and configuring monit
+  vars_files:
+    - ['{{inventory_dir}}/secrets.yml']
+  roles:
+    - monit_generic

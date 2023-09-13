@@ -1,0 +1,4 @@
+enrolment_reconcilation_lag_threshold: 1
+search_indexer_lag_threshold: 1
+cert_preprocessor_lag_threshold: 1
+certificate_generator_lag_threshold: 1

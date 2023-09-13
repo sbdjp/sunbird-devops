@@ -1,0 +1,16 @@
+#!/bin/bash
+
+
+# This script will check for collection-summary job_end log if not present,
+# will start collection-summary-report-v2 report
+# Author -- Shashank Nandennavar
+
+cat /mount/data/analytics/scripts/logs/joblog.log | grep -i CollectionSummaryJobV2 | grep -i job_end
+a=$(echo $?)
+if [ $a -eq 0 ]
+ then
+  exit 1
+else
+  pkill -9 collection-summary
+  nohup /mount/data/analytics/scripts/run-job.sh collection-summary-report-v2 &
+fi

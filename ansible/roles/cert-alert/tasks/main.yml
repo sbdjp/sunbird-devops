@@ -1,0 +1,7 @@
+- name: copy the alert script
+  template: src=certgenerator dest=~/{{ env }}_cert_alert.sh mode=755 force=yes
+ 
+
+- name: Run the alert script
+  command: ~/{{ env }}_cert_alert.sh {{ env }}
+  

@@ -1,0 +1,84 @@
+---
+- name: verify env in all the servers
+  hosts: "{{ hosts }}"
+  become: yes
+  tasks:
+  - shell:
+      cmd: cat /etc/environment | grep "log4j"
+
+- name: verify log4j in cassandra servers
+  hosts: cassandra
+  become: yes
+  tasks:
+  - shell:
+      cmd: cat /etc/systemd/system/cassandra.service.d/override.conf | grep "log4j"
+
+- name: Verify log4j in Neo4j
+  hosts: lp-neo4j-ps
+  become: yes
+  tasks:
+  - shell:
+      cmd: /usr/bin/java -version
+
+- name: Verify log4j in Learning
+  hosts: lp-learning-ps
+  become: yes
+  tasks:
+  - shell: 
+      cmd: /opt/jdk-11/bin/java -version
+
+- name: Verify log4j in logstash-learning
+  hosts: logstash-ps
+  become: yes
+  tasks:
+  - shell:
+      cmd: ps -ef | grep \"logstash-6.8.21\"
+
+- name: Verify log4j in elastic search - user
+  hosts: es
+  become: yes
+  tasks:
+  - shell:
+      cmd: cat /usr/lib/systemd/system/*elasticsearch.service | grep "log4j"
+
+- name: Verify log4j in elastic search - composite
+  hosts: lp-composite-ps
+  become: yes
+  tasks:
+  - shell:
+      cmd: cat /usr/lib/systemd/system/*elasticsearch.service | grep "log4j"
+
+- name: Verify log4j in elastic search - logger
+  hosts: log-es
+  become: yes
+  tasks:
+  - shell: 
+      cmd: cat /usr/lib/systemd/system/*elasticsearch.service | grep "log4j"
+
+- name: Verify log4j in keycloak
+  hosts: keycloak
+  become: yes
+  tasks:
+  - shell:
+      cmd: cat /etc/init.d/keycloak | grep "log4j"
+
+- name: Verify log4j in redis
+  hosts: redis-ps
+  become: yes
+  tasks:
+  - shell:
+      cmd: cat /etc/systemd/system/redis.service | grep "log4j"
+
+- name: Verify log4j in mongodb
+  hosts: mongodb
+  become: yes
+  tasks:
+  - shell:
+      cmd: cat /lib/systemd/system/mongod.service | grep "log4j"
+
+- name: Verify log4j in graylog
+  hosts: graylog
+  become: yes
+  tasks:
+  - shell:
+      cmd: cat /usr/lib/systemd/system/graylog-server.service | grep "log4j"

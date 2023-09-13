@@ -1,0 +1,65 @@
+@Library('deploy-conf') _
+node('build-slave') {
+    try {
+        String ANSI_GREEN = "\u001B[32m"
+        String ANSI_NORMAL = "\u001B[0m"
+        String ANSI_BOLD = "\u001B[1m"
+        String ANSI_RED = "\u001B[31m"
+        String ANSI_YELLOW = "\u001B[33m"
+
+        ansiColor('xterm') {
+            stage('Checkout') {
+                cleanWs()
+                checkout scm
+            }
+
+            stage('Build') {
+                // values = docker_params()
+                if (params.build_number == "") {
+                    println(ANSI_BOLD + ANSI_YELLOW + "Setting build_number to lastSuccessfulBuild to copy metadata.json" + ANSI_NORMAL)
+                    buildNumber = "lastSuccessfulBuild"
+                } else
+                    buildNumber = params.build_number
+
+                values = [:]
+                try {
+                    copyArtifacts projectName: params.absolute_job_path, fingerprintArtifacts: true, flatten: true, selector: specific(buildNumber)
+                }
+                catch (err) {
+                    println ANSI_YELLOW + ANSI_BOLD + "Ok that failed!. Lets try an alertnative.." + ANSI_NORMAL
+                    copyArtifacts projectName: params.absolute_job_path, flatten: true, selector: upstream()
+                }
+                image_tag = sh(returnStdout: true, script: 'jq -r .image_tag metadata.json').trim()
+                agent = sh(returnStdout: true, script: 'jq -r .node_name metadata.json').trim()
+                image_name = sh(returnStdout: true, script: 'jq -r .image_name metadata.json').trim()
+                commit_hash = sh(returnStdout: true, script: 'jq -r .commit_hash metadata.json').trim()
+                values.put('image_name', image_name)
+                values.put('image_tag', image_tag)
+                values.put('commit_hash', commit_hash)
+
+                dir('themes') {
+                    sh('pwd')
+                    if("$params.diksha_tenant_tag" == "master")
+                    {
+                        checkout([$class: 'GitSCM', branches: [[name: "refs/heads/$params.diksha_tenant_tag"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '932d6790-8f08-4644-8e2f-479d8d491b8d', url: 'https://github.com/DIKSHA-NCTE/diksha-tenant.git']]])
+                    }
+                    else {
+                        checkout([$class: 'GitSCM', branches: [[name: "refs/tags/$params.diksha_tenant_tag"]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: true]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '932d6790-8f08-4644-8e2f-479d8d491b8d', url: 'https://github.com/DIKSHA-NCTE/diksha-tenant.git']]])
+                        //   git credentialsId: '932d6790-8f08-4644-8e2f-479d8d491b8d', url: 'https://github.com/DIKSHA-NCTE/diksha-tenant.git', branch: params.diksha_tenant_branch
+                    }
+                }
+                sh("bash ${WORKSPACE}/images/player/build.sh ${values.image_tag} ${env.NODE_NAME} ${hub_org} ${values.image_name} ${params.diksha_tenant_tag} ${commit_hash}")
+            }
+            stage('ArchiveArtifacts') {
+                archiveArtifacts "metadata.json"
+                currentBuild.description = "${values.image_tag}"
+            }
+        }
+
+    }
+    catch (err) {
+        currentBuild.result = "FAILURE"
+        throw err
+    }
+
+}

@@ -1,0 +1,251 @@
+############## Common ######################
+# Common vars for env
+env: preproddock
+proto: https
+domain_name: dock.preprod.ntp.net.in
+producer_env: preproddock
+env_name: preproddock
+ssh_public_key_deployer: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAI+a3cryu+6HfVucfUljuRtbQ20WpNGd2BN+UeyA2yEnn46U/Ym5lCBVqmkqFqPMHnYGOEXaA3r5ZQWaA3V7w+c+L53QvZiTkaw+TxZBgo9n5ksYwprmPUVOV8ZeDoUdDpdMg7qyUmZCM9edklIqzeYllTZhhCn2e/1X8B4/oP715KyfmNQ56hiusRDDf1mdSlHTVaCd3bY7hlvYq3dJngP5gQ0YkQFj9qsvMd4krlA6FIkQuxa+x9HQYXSwburjCnE2mbug9SNLFfOxIfvdoYU6G/RLYWUF8gR6xzoSwWahjm9jdWKtxXwL30zyJWk2raGKP7tocr0oLQjMrIGgp"
+bootstrap_user: deployer
+bootstrap_key_path: /var/lib/jenkins/secrets/preproddeployer_ssh_key
+ansible_ssh_private_key_file: /var/lib/jenkins/secrets/preproddeployer_ssh_key
+
+#################### DP ##########################
+
+###artifact upload
+artifact_azure_account_name: "dikshaartifactstore"
+artifact_azure_account_key: "{{dp_vault_artifact_azure_account_key}}"
+
+secor_azure_container_name: telemetry-data-store
+#secor_alerts_slack_channel: "#ntp-dp-preprod-alerts" #old sunbird-slack
+secor_alerts_slack_channel: "#preprod_samza_alerts"  #new diskha slack
+samza_slack_channel: "#preprod_samza_alerts" #new diksha slack
+
+dp_azure_account_name: preprodall
+default_org_hash_id: "505c7c48ac6dc1edc9b08f21db5a571d"
+
+# Data products monitoring web hooks
+#data_exhaust_webhook_url: "https://hooks.slack.com/services/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" #old sunbird-slack
+#data_exhaust_webhook_url: "https://hooks.slack.com/services/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"  #new diksha slack
+#data_exhaust_Channel: "ntp-dp-preprod-alerts" ##sunbird slack
+data_exhaust_Channel: "preprod_flink_alerts" #diksha slack
+data_exhaust_name: "dp-monitor"
+bucket: telemetry-data-store
+stream_base_url: "https://ntppreprodmedia-inct.streaming.media.azure.net"
+
+# Kafka topics
+ingestion_kafka_topics:
+  - name: telemetry.ingest
+    num_of_partitions: 4
+    replication_factor: 1
+    retention_time: 604800000
+
+ingestion_kafka_overriden_topics: 
+  - name: telemetry.ingest
+    retention_time: 604800000
+    replication_factor: 1
+
+processing_kafka_overriden_topics:
+  - name: telemetry.raw
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.valid
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.unique
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.duplicate
+    retention_time: 86400000
+    replication_factor: 1
+  - name: telemetry.sink
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.with_location
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.de_normalized
+    retention_time: 86400000
+    replication_factor: 1
+  - name: telemetry.log
+    retention_time: 86400000
+    replication_factor: 1
+  - name: analytics.job_queue
+    retention_time: 28800000
+    replication_factor: 1
+  - name: learning.graph.events
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: pipeline_metrics
+    retention_time: 259200000
+    replication_factor: 1
+  - name: metrics
+    retention_time: 604800000
+    replication_factor: 1
+  - name: learning.graph.events.fail
+    retention_time: 1209600000
+    replication_factor: 1
+  - name: analytics_metrics
+    retention_time: 86400000
+    replication_factor: 1
+  - name: learning.job.request
+    retention_time: 1209600000 
+    replication_factor: 1
+  - name: learning.job.request.fail
+    retention_time: 1296000000
+    replication_factor: 1
+  - name: telemetry.derived
+    retention_time: 259200000
+    replication_factor: 1
+  # Error/Failed Topics
+  - name: telemetry.failed
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.malformed
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.extractor.failed
+    retention_time: 604800000
+    replication_factor: 1
+  - name: telemetry.indexer.failed
+    retention_time: 604800000
+    replication_factor: 1
+  - name: qrimage.request
+    retention_time: 604800000
+    replication_factor: 1
+  - name: events.telemetry
+    retention_time: 604800000
+    replication_factor: 1
+  - name: events.summary
+    retention_time: 604800000
+    replication_factor: 1
+  - name: lms.sso.events
+    retention_time: 604800000
+    replication_factor: 1
+
+
+# Media content
+media_service_azure_tenant: deepikaekstep.onmicrosoft.com
+media_service_azure_subscription_id: 5af454cb-5087-411d-a651-2d7d6c1b93a1
+media_service_azure_account_name: ntppreprodmedia
+media_service_azure_resource_group_name: preprod_all
+media_service_azure_token_client_key: 03846469-67eb-44cb-b15a-24bf4266ab40 
+media_service_azure_token_client_secret: SdYI5qy9awmk9IUhp0dx5CSDiTw99B7mrmJtqeEWJLs=
+
+
+########## overriding variables
+telemetry_extractor_yarn_container_count: 2
+telemetry_validator_yarn_container_count: 2
+telemetry_de_duplication_yarn_container_count: 2
+telemetry_router_yarn_container_count: 4
+telemetry_reverse_search_yarn_container_count: 4
+telemetry_object_de_normalization_yarn_container_count: 1
+telemetry_es_indexer_yarn_container_count: 4
+telemetry_location_updater_yarn_container_count: 4
+events_router_yarn_container_count: 2
+samza_checkpoint_replication_factor: 1
+channel_data_exhaust_bucket: "telemetry-data-store"
+cassandra_hierarchy_store_prefix: "preprod_"
+location_db_redis_key_expiry_seconds: 21600
+es_search_index: compositesearch
+compositesearch_index_name: compositesearch
+swarm_manager_lb_ip: 11.5.5.6 #swarm-IP
+
+postgres:                                                                                          #### geetha
+  db_url: dock-preprod-all.postgres.database.azure.com #"{{ groups['postgres'][0] }}" preprod-lp-dp.postgres.database.azure.com
+  db_username: dockpreprod@dock-preprod-all #analytics
+  db_name: sunbird_programs
+  db_password: "{{dp_vault_pgdb_password}}"
+  db_port: 5432
+  db_admin_user: dockpreprod@dock-preprod-all
+  db_admin_password: "{{dp_vault_pgdb_admin_password}}"
+
+##################
+zk_port: 2181
+yarn_am_container_memory_mb: 128
+yarn_container_memory_mb: 128
+
+### Release-1.15
+### samza monitoring variables
+#samza_alert_slack_url: https://hooks.slack.com/services/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 #old sunbird-slack
+#samza_alert_slack_url: https://hooks.slack.com/services/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  # new Diksha-slack
+
+samza_alert_to_address: to=anandp@sanketika.in&to=noc@optit.in&to=sowmyad@sanketika.in&to=manjunathd@sanketika.in
+samza_alert_from_address: alerts@ntp.net.in
+SGUSER: azure_9f4958288fdb111362201640e638d7ed@azure.com # sendgrid username
+SGPASS: "{{ dp_vault_sendgrid_password }}"
+throughput_threshold_value: 30000
+influxdb_query_duration: 30
+
+dedup_include_env_producer_ids: "preprod.diksha.portal,preprod.sunbird.desktop"
+#commented below values for release-2.6.0
+#analytics_job_list: '"pipeline-failed-events-audit", "pipeline-druid-events-audit", "pipeline-audit", "wfs", "wfus", "workflow-usage-metrics", "portal-metrics", "dialcode-usage-summary", "dialcode-usage-updater", "etb-coverage-summary", "content-rating-updater", "data-exhaust", "ds", "dpu", "monitor-job-summ"'
+#analytics_jobs_count: 15 #count
+
+###Release-2.5.0##
+maxmind_geocity_db_url: 'https://download.maxmind.com/app/geoip_download?edition_id=GeoIP2-City-CSV&license_key={{ maxmind_db_license_key }}&suffix=zip'
+maxmind_db_unarchived_dir_prefix: GeoIP2-City-CSV_*
+maxmind_db_geo_city_blocks_filename: GeoIP2-City-Blocks-IPv4.csv
+maxmind_db_geo_city_locations_filename: GeoIP2-City-Locations-en.csv
+maxmind_db_geo_city_ip_range_filename: GeoIP2-City-Range-IPv4.csv
+report_azure_account_name: preprodall
+report_azure_storage_secret: "{{dp_vault_reports_azure_key}}"
+
+# monitoring variables for redis dump.rdb state detection
+redis_dump_rdb_time_in_seconds: 900
+redis_dump_rdb_keys_to_save_state: 1
+redis_dump_rdb_mail_sender: "alerts@ntp.net.in"
+redis_dump_rdb_mail_receivers: "{{samza_alert_to_address}}"
+redis_dump_rdb_mail_sendgrid_username: "azure_139dddf1c9ba120b125bebfa48922037@azure.com"
+redis_dump_rdb_mail_sendgrid_password: "{{ dp_vault_sendgrid_password }}"
+redis_dump_rdb_slack_url: "{{ monit_alerts_slack_url }}"
+redis_dump_rdb_cron_hour: "*/2"
+redis_dump_rdb_cron_minute: "0"
+redis_user: analytics # set value to analytics for production
+monitor_alerts_slack_channel: preprod_alerts  #new diksha slack
+#monit_alerts_slack_url: https://hooks.slack.com/services/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 #new diksha-slack
+
+sunbird_public_storage_account_name: preprodall
+sunbird_private_storage_account_name: preproddp
+sunbird_artifact_storage_account_name: dikshaartifactstore
+private_ingressgateway_ip: "11.6.16.68"
+
+##Redis-metadata2##
+metadata2_redis_host: "{{ groups['redis-metadata2'][0] }}"
+
+## vars for data-products ###
+dockdataproducts: true
+
+cloud_storage:
+  object_key: "druid-content-snapshot/vdn-snapshot.txt"
+  container: "telemetry-data-store" # Container is different in all env so override this.
+  provider: "azure"
+  account_name: "{{sunbird_public_storage_account_name}}"
+  account_key: "{{sunbird_public_storage_account_key}}"
+  
+#druid:
+#  data_source: "vdn-content-model-snapshot"
+#  ingestion_spec_path: "{{ content_snapshot_jar_path }}/etl-jobs-1.0/druid_models/vdn_content_index_batch.json"
+druid:
+  coordinator_host: "{{groups['raw-coordinator'][0]}}"
+  data_source: "vdn-content-model-snapshot"
+  ingestion_spec_path: "{{ content_snapshot_jar_path }}/etl-jobs-1.0/druid_models/vdn_content_index_batch.json"
+  
+output_file_path: "{{ content_snapshot_path }}/compositeSearchBatchDataVDN"
+#elastic_search:
+#  host: "{{ lp_composite_search_host }}" # compositesearch index
+#  port: "9200"
+#  content:
+#    index: "compositesearch"
+#    query: '"{\"query\":{\"bool\":{\"must\":[{\"match\":{\"status\":{\"query\":\"Live\"}}},{\"match\":{\"objectType\":{\"query\":\"Content\"}}}]}}}"'
+#  dialcode:
+#    index: "dialcode"
+#    query: '"{\"query\":{\"match_all\":{}}}"'
+#  cloud:
+#    index: "compositesearch"
+#    query: '"{\"query\":{\"match_all\":{}}}"'
+#  scroll_size: "1000"
+
+# learning service
+learningservice_ip: 11.6.3.5            # Load balancer IP for learning server
+

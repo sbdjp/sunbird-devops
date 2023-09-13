@@ -1,4 +1,0 @@
-PyYAML
-prometheus_client
-requests
-expiring-dict

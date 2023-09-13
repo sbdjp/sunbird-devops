@@ -1,0 +1,39 @@
+# Kubernetes 2 variable
+kubernetes_cluster_name: kubernetes-2
+kubeconfig_path: "/var/lib/jenkins/secrets/staging-k8s-2.yaml"
+private_ingressgateway_ip: 11.3.4.10:8080
+grafana_data_sources:
+  - name: prom-fed
+    access: proxy
+    editable: false
+    type: prometheus
+    url: http://{{groups['swarm-dashboard'][0]}}:29090/prometheus
+  - name: Prometheus_DS1
+    access: proxy
+    editable: false
+    type: prometheus
+    url: http://{{groups['swarm-manager'][0]}}:9090/prometheus
+  - name: Prometheus_Stateful
+    access: proxy
+    editable: false
+    type: prometheus
+    url: http://{{groups['swarm-dashboard'][0]}}:19090/prometheus
+  - name: InfluxDB_Datapipeline
+    access: proxy
+    editable: false
+    type: influxdb
+    url: http://{{groups['dp-influx-ps'][0]}}:8086
+    database: monitoring_events
+  - name: kubernetes1
+    access: proxy
+    editable: false
+    type: prometheus
+    url: http://11.3.8.7:9090
+
+# Disabling additional prometheus scrape because 
+# this prometheus is a subset
+additional_scrape_configs_enabled: 'false'
+monitoring_stack:
+  - prometheus-operator
+  - logger
+  - alertrules

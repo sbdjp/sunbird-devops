@@ -1,0 +1,537 @@
+[lp-cassandra]
+11.3.2.33
+
+[dp-cassandra]
+11.3.2.15
+
+[learning-neo4j-node1]
+11.3.3.28
+
+[composite-search-cluster]
+11.3.2.20
+11.3.2.21
+11.3.2.22
+
+####### Data pipeline ##########
+
+[processing-cluster-kafka-1]
+11.3.2.6
+
+[processing-cluster-kafka-2]
+11.3.2.14
+
+[processing-cluster-kafka-3]
+11.3.2.8
+
+[raw-broker]
+13.0.0.6
+
+[processing-cluster-kafka:children]
+processing-cluster-kafka-1
+processing-cluster-kafka-2
+processing-cluster-kafka-3
+
+[processing-cluster-zookeepers:children]
+processing-cluster-kafka-1
+processing-cluster-kafka-2
+processing-cluster-kafka-3
+
+[zookeeper:children]
+processing-cluster-kafka-1
+processing-cluster-kafka-2
+processing-cluster-kafka-3
+
+[ingestion-cluster-kafka]
+11.3.2.6
+11.3.2.14
+11.3.2.8
+
+[ingestion-cluster-zookeeper]
+11.3.2.6
+11.3.2.14
+11.3.2.8
+
+[raw-coordinator]
+13.0.0.4
+
+####################################
+
+[swarm-manager-1]
+11.3.0.26 swarm_master=true
+
+[swarm-manager:children]
+swarm-manager-1
+
+[swarm-node-1]
+11.3.0.27
+
+[swarm-node-2]
+11.3.0.28
+
+[swarm-worker:children]
+swarm-node-1
+swarm-node-2
+
+# This host will make sure prometheus for all stateful services 
+# will run on a single node, as it has storage dependancy
+# By default this host is same as docker swarm prometheus
+
+[swarm-agent-for-prometheus:children]
+swarm-agent-for-prometheus-1
+
+[swarm-agent-for-prometheus-stateful:children]
+swarm-agent-dashboard
+
+[alertmanager_stateful:children]
+swarm-agent-dashboard
+
+[alertmanager]
+11.3.0.26
+11.3.0.29
+
+[swarm-dashboard-1]
+11.3.3.23
+
+[swarm-dashboard:children]
+swarm-dashboard-1
+
+[swarm-agent-dashboard-1]
+11.3.3.23
+
+[swarm-agent-dashboard:children]
+swarm-agent-dashboard-1
+
+[keycloak-1]
+11.3.0.33 ansible_ssh_port=2200
+
+[keycloak-2]
+11.3.0.34 ansible_ssh_port=2200
+
+[keycloak:children]
+keycloak-1
+keycloak-2
+
+[yarn-master]
+11.3.3.11
+
+[yarn-slave]
+11.3.3.12
+11.3.3.13
+11.3.3.14
+
+[yarn:children]
+yarn-master
+yarn-slave
+
+[diksha-docs]
+10.9.0.5
+
+# Deprication in release-2.4
+#[log-es-1] 
+#11.3.2.27 node_name=refactor-log-es-1 es_etc_node_master=true es_etc_node_data=true 
+
+#[log-es-2]
+#11.3.2.35 node_name=log-es-2 es_instance_name=log-es-2 es_etc_node_master=true es_etc_node_data=true
+
+#[log-es-1]
+#11.3.2.36 node_name=log-es-1 es_instance_name=log-es-1 es_etc_node_master=true es_etc_node_data=true
+
+#[log-es-2]
+#11.3.2.37 node_name=log-es-2 es_instance_name=log-es-2 es_etc_node_master=true es_etc_node_data=true
+
+#[log-es-3]
+#11.3.2.38 node_name=log-es-3 es_instance_name=log-es-3 es_etc_node_master=true es_etc_node_data=true
+
+#[log-es:children]
+#log-es-1
+#log-es-2
+#log-es-3
+
+### Gray log Intro ##
+[log-es-1]
+11.3.3.25 node_name=log-es-1 es_instance_name=log-es-1 es_etc_node_master=true es_etc_node_data=true
+
+[log-es:children]
+log-es-1
+
+[graylog-1]
+11.3.3.21 mongodb_master=True graylog_is_master=True
+
+[graylog:children]
+graylog-1
+
+[swarm-agent-for-prometheus-1] 
+11.3.0.27
+
+[swarm-agent-for-prometheus:children]
+swarm-agent-for-prometheus-1
+
+[swarm-agent-for-alertmanager-1] 
+11.3.0.27
+
+[es-1] 
+11.3.2.20 es_instance_name=es-1 es_etc_node_master=true es_etc_node_data=true
+
+[es-2]
+11.3.2.21 es_instance_name=es-2 es_etc_node_master=true es_etc_node_data=true
+
+[es-3]
+11.3.2.22 es_instance_name=es-3 es_etc_node_master=true es_etc_node_data=true
+
+[es-backup:children]
+es-1
+
+[log-es-backup:children]
+log-es
+
+[lp-redis]
+11.3.3.27
+
+[dp-redis]
+11.3.3.32 ansible_ssh_port=2200
+
+[redis-exporter-targets:children]
+lp-redis
+dp-redis
+
+[redis-cluster:children]
+redis-exporter-targets
+
+
+[es:children]
+es-1
+es-2
+es-3
+
+[cassandra-1]     
+11.3.2.33
+
+[cassandra-2]    
+11.3.2.32
+
+[cassandra-3]    
+11.3.2.34   
+
+[cassandra:children]    
+cassandra-1    
+cassandra-2
+cassandra-3
+
+[postgresql-master-1] 
+stagingall.postgres.database.azure.com
+
+[postgresql-master:children]
+postgresql-master-1
+
+[postgresql-slave-1] 
+stagingall.postgres.database.azure.com
+
+[postgresql-slave:children]
+postgresql-slave-1
+
+[postgres:children]
+postgresql-slave
+postgresql-master
+
+[kafka-1]
+11.3.2.6 kafka_id=1 
+
+[kafka-2]
+11.3.2.14 kafka_id=2
+
+[kafka-3]
+11.3.2.8 kafka_id=3 
+
+[telemetry-search-cluster-1]
+11.3.2.20
+
+[telemetry-search-cluster-2]
+11.3.2.21
+
+[telemetry-search-cluster-3]
+11.3.2.22
+
+[telemetry-search-cluster:children]
+telemetry-search-cluster-1
+telemetry-search-cluster-2
+telemetry-search-cluster-3
+
+[kafka:children]
+kafka-1
+kafka-2
+kafka-3
+
+[mongo_master]
+ 11.3.3.26 mongodb_master=True
+#11.3.2.39
+
+#[mongo_replicas] #add ip in case replicaSet
+
+[mongo:children]
+mongo_master
+#mongo_replicas
+
+[local]
+localhost ansible_connection=local
+
+[jenkins-master]
+localhost
+
+[swarm-agent-for-alertmanager:children]
+swarm-agent-for-alertmanager-1
+
+[kong-api]
+localhost
+
+[swarm-bootstrap-manager:children]
+swarm-manager
+
+[swarm-nodes:children]
+swarm-manager
+swarm-worker
+swarm-bootstrap-manager
+swarm-agent-for-prometheus
+swarm-agent-for-alertmanager
+
+[log-forwarder:children]
+swarm-manager
+
+[core:children]
+es
+log-es
+cassandra
+#postgresql-master
+#postgresql-slave
+swarm-nodes
+swarm-manager
+kafka
+keycloak
+swarm-dashboard
+swarm-agent-dashboard
+process-exporter
+alertmanager
+composite-search-cluster
+graylog
+redis-cluster
+
+[env:children]
+core
+local
+node-exporter
+log-es
+druid
+mongo
+
+[log-forwarder:children]
+swarm-manager
+
+[all:vars]
+ansible_ssh_user=deployer
+ansible_ssh_private_key_file=/var/lib/jenkins/secrets/deployer_ssh_key
+# Upgraded logger es host.
+# keeping for old data compatibility
+logger_es6_host="{{ groups['log-es-2'][0] }}"
+monitor_stateful=true
+
+########################### Centralized logs ####################
+[centralised-logs]
+10.20.1.6
+
+###############################################################################################
+[lp-redis-ps]
+11.3.3.27
+
+[lp-neo4j-ps]
+11.3.3.28
+
+[dp-influx-ps]
+11.3.2.17
+
+#[dp-druid-ps]
+
+[dp-superset-ps]
+13.0.0.6
+
+[dp-analytics-ps]
+11.3.3.4
+11.3.3.32 ansible_ssh_port=2200
+
+[dp-yarn-rm-ps]
+11.3.3.11
+
+[dp-yarn-slave-ps]
+11.3.3.12
+11.3.3.13
+11.3.3.14
+
+[lp-composite-ps]
+11.3.2.20
+11.3.2.21
+11.3.2.22
+
+[dp-secor-ps]
+11.3.3.9
+
+[dp-spark-ps]
+11.3.3.10
+
+[dp-kafkaindexer-ps]
+11.3.2.17
+
+[lp-search-ps]
+11.3.3.19
+
+[lp-learning-ps]
+
+
+[basic-monitor:children]
+swarm-manager
+swarm-worker
+lp-redis-ps
+cassandra
+es
+log-es
+lp-neo4j-ps
+dp-influx-ps
+swarm-dashboard
+processing-cluster-kafka
+keycloak
+yarn
+dp-secor-ps
+dp-spark-ps
+dp-analytics-ps
+lp-search-ps
+lp-learning-ps
+druid-zookeeper-ps
+overlord-ps
+coordinator-ps
+historical-ps
+druid-graphite-ps
+broker-ps
+middlemanager-ps
+mongo
+graylog
+
+# monitor tomcat process
+[tomcat-ps:children]
+lp-learning-ps
+
+# monitor serach process
+[search-ps:children]
+lp-search-ps
+
+# monitor neo4j process
+[dp-neo4j-ps]
+11.3.3.28
+
+[neo4j-ps:children]
+dp-neo4j-ps
+
+# monitor elasticsearch process
+[es-ps:children]
+log-es
+lp-composite-ps
+es
+
+# monitor yarn process
+[yarn-rm-ps:children]
+dp-yarn-rm-ps
+
+[yarn-slave-ps:children]
+dp-yarn-slave-ps
+
+# monitor cassandra process
+[dp-cassandra-ps]
+11.3.2.15
+
+[cassandra-ps:children]
+cassandra
+dp-cassandra-ps
+
+# monitor logstash process  # learning, search, neo4j, kafkaindexer
+[dp-apilogstash-ps]
+11.3.2.17
+
+[logstash-ps:children]
+dp-apilogstash-ps
+lp-learning-ps
+lp-search-ps
+lp-neo4j-ps
+dp-kafkaindexer-ps
+
+# monitor secor process
+[secor-ps:children]
+dp-secor-ps
+
+# monitor analytics process
+[analytics-ps:children]
+dp-analytics-ps
+
+# monitor kafka process
+[kafka-ps:children]
+dp-kafka-ps
+
+# monitor druid process
+[druid-zookeeper-ps]
+13.0.0.4
+13.0.0.5
+13.0.0.6
+
+# monitor postgres process
+[druid-postgres-ps]
+13.0.0.4
+
+# monitor overlord process
+[overlord-ps]
+13.0.0.4
+
+# monitor coordinator process
+[coordinator-ps]
+13.0.0.4
+
+# monitor historical process
+[historical-ps]
+13.0.0.4
+
+# monitor druid graphite process
+[druid-graphite-ps] # check once
+13.0.0.4
+
+# monitor druid broker process
+[broker-ps]
+13.0.0.6
+
+# monitor middlemanager process
+[middlemanager-ps]
+13.0.0.5
+
+[druid]
+13.0.0.4
+13.0.0.5
+13.0.0.6
+
+# process exporter monitoring group
+[process-exporter:children]
+es-ps
+yarn-ps
+cassandra-ps
+logstash-ps
+secor-ps
+analytics-ps
+kafka-ps
+druid-zookeeper-ps
+druid-postgres-ps
+overlord-ps
+coordinator-ps
+historical-ps
+druid-graphite-ps
+broker-ps
+middlemanager-ps
+graylog
+
+# Add all VMs for basic monitoring
+[node-exporter:children]
+core
+basic-monitor
+
+############################################################################################

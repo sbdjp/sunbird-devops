@@ -1,0 +1,6 @@
+- name: copy the alert script
+  template: src=report-monitor-higher-spark dest=~/{{ env }}_report-monitor-higher-spark.sh mode=755 force=yes
+  
+- name: Run the alert script
+  command: ~/{{ env }}_report-monitor-higher-spark.sh {{ env }}
+  

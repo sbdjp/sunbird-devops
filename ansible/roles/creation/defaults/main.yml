@@ -1,0 +1,12 @@
+library_path: /home/analytics/dataproducts.tar.gz
+data_path: /mount/portal_data
+virtualenv_path: /mount/venv
+druid_hostname: "{{ sunbird_druid_broker_host }}:8082/"
+druid_rollup_hostname: "{{ sunbird_druid_rollup_broker_host }}:8082/"
+cassandra_host: "{{ cassandra_host }}"
+content_search_api: "http://{{ private_ingressgateway_ip }}/search/"
+org_search_api: "http://{{ swarm_manager_lb_ip }}/learner/"
+content_hierarchy_api: "http://{{ learning_lb_ip }}:8080/"
+keyspace_prefix: "{{ env }}"
+date: "{{ date }}"
+env: "{{ env }}"

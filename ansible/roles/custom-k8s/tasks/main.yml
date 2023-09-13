@@ -1,0 +1,62 @@
+---
+# This variable will get injected to nginx resolver config
+# There is no native helm way to do this. So it's 
+# kind of a workaround
+- name: getting kube dns ip
+  shell: kubectl get service --namespace kube-system kube-dns -o jsonpath="{.spec.clusterIP}"
+  register: kube_dns_ip
+  when: maintainance_proxy
+
+- name: setting variable
+  set_fact:
+    kube_dns_ip: "{{ kube_dns_ip.stdout }}"
+  when: maintainance_proxy 
+
+- name: create a temporary directory for kubeconfig files
+  file:
+    path: "{{role_path}}/management/"
+    state: directory
+    mode: '0755'
+    recurse: yes 
+
+- name: templating the custom kubeconfig files
+  template:
+    src: "{{ item }}"
+    dest: "{{role_path}}/management/{{ item | basename }}"
+    mode: '0755'
+  with_fileglob:
+    - "templates/{{ job_to_deploy }}.yml"
+    - "templates/{{ job_to_deploy }}.yaml"
+
+- name: copy images
+  copy:
+    src: templates/Diksha-logo.png
+    dest: /tmp/Diksha-logo.png
+  when: maintainance_proxy
+
+- name: copy images
+  copy:
+    src: templates/banner-img.png
+    dest: /tmp/banner-img.png
+  when: maintainance_proxy
+
+- name: Create configMaps
+  shell: "kubectl create configmap -n {{ namespace }} logo-image --from-file=/tmp/Diksha-logo.png"
+  when: maintainance_proxy
+  ignore_errors: yes
+
+- name: Create banner configmap
+  shell: "kubectl create configmap -n {{ namespace }} banner-image --from-file=/tmp/banner-img.png"
+  when: maintainance_proxy
+  ignore_errors: yes
+
+- name: Apply all the env specific custom kubernetes configurations
+  shell: "kubectl apply -f {{role_path}}/management/"
+  
+- name: update the public ingress svc to point to maintainance_proxy
+  shell: "kubectl patch service nginx-public-ingress -n {{ namespace }} -p '{\"spec\":{\"selector\":{\"app\": \"maintainance-nginx-ingress\"}}}'"
+  when: maintainance_proxy
+
+- name: update the public ingress svc to point to maintainance_proxy
+  shell: "kubectl patch service nginx-public-ingress-metrics -n {{ namespace }} -p '{\"spec\":{\"selector\":{\"app\": \"maintainance-nginx-ingress\"}}}'"
+  when: maintainance_proxy

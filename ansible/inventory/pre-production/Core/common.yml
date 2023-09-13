@@ -1,0 +1,1750 @@
+##########################################
+# Starting Of Core VARS
+env: preprod                             #Name of the environment, e.g. dev, staging or production.
+domain_name: preprod.ntp.net.in              #Domain on which the portal will be accessed. e.g. staging.{implementation-name}.org
+proto: https                         # Protocol
+bootstrap_user: deployer  
+bootstrap_key_path: /var/lib/jenkins/secrets/preproddeployer_ssh_key 
+ssh_public_key_deployer: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAI+a3cryu+6HfVucfUljuRtbQ20WpNGd2BN+UeyA2yEnn46U/Ym5lCBVqmkqFqPMHnYGOEXaA3r5ZQWaA3V7w+c+L53QvZiTkaw+TxZBgo9n5ksYwprmPUVOV8ZeDoUdDpdMg7qyUmZCM9edklIqzeYllTZhhCn2e/1X8B4/oP715KyfmNQ56hiusRDDf1mdSlHTVaCd3bY7hlvYq3dJngP5gQ0YkQFj9qsvMd4krlA6FIkQuxa+x9HQYXSwburjCnE2mbug9SNLFfOxIfvdoYU6G/RLYWUF8gR6xzoSwWahjm9jdWKtxXwL30zyJWk2raGKP7tocr0oLQjMrIGgp"             # SSH Public key for deployer user, with which ansible will execute tasks
+
+ekstep_s3_env: preprod                    # dev or qa of ekstep for plugins 
+sunbird_ekstep_api_base_url: "https://qa.ekstep.in/api"
+sunbird_ekstep_proxy_base_url: "https://qa.ekstep.in"  #Base URL of the Ekstep environment. Use `https://qa.ekstep.in/` for non-prod deployments, and `https://community.ekstep.in/` for prod deployment.
+learningservice_ip: 11.5.0.9                      # Load balancer IP for learning server  
+searchservice_ip: 11.5.0.8                     # search service Load balancer IP 
+analyticsapi_ip: 11.5.3.8                      # Analytics Service Load Balancer IP 
+keycloak_url: http://11.5.0.7                        # Keycloak Load balancer IP; eg http://10.10.10.10
+sunbird_default_channel: ntp                # Organization channel name which portal will connect to
+sunbird_app_name: preprod                       # By default app name will be sunbird
+azure_account_name: preprodall                    # Storage account name for blobs
+sunbird_content_azure_storage_container: ntp-content-preprod # Conatainer store assets/public
+swarm_load_balancer: 52.172.185.180 # Loadbalancer ip to push the logspout result to logstash in swarm
+#sunbird_swarm_manager_lb_ip: 11.5.1.8 #loadbalancer for swarm
+sunbird_swarm_manager_lb_ip: 11.5.7.127 #loadbalancer of k8's
+
+artifacts_container: 'artifacts'                 # Azure blob container name to save built artifacts
+###2-10 artifact_azure_account_name: dikshaartifactstore
+###2-10 artifact_azure_account_key: "{{ core_vault_artifact_azure_account_key }}"
+
+## Mail config
+mail_server_host: smtp.sendgrid.net
+mail_server_username: "apikey"
+#mail_server_username: azure_9f4958288fdb111362201640e638d7ed@azure.com
+sunbird_mail_server_from_email: support-preprod@ntp.net.in         # Email ID that should be as from address in mails
+
+# Kibana oauth authorized domains; for accessing kibana dashboard
+kibana_oauth_authenticated_email_domains:
+kibana_oauth_authenticated_email_ids:
+  - santhosh.g@optit.in    
+  - altamash.s@optit.co    
+  - kaliraja.ramasamy@tarento.com    
+  - kiruba.sankari@qualitrix.com    
+  - shailandra.ojha@qualitrix.com    
+  - raghupathi.g@optit.co 
+  - saiakhil.g@optit.co   
+  - rajesh.r@optit.co
+  - shashank.n@optit.co
+  - swayangjit.parida@goodworklabs.com
+  - sharath.prasad@tarento.com
+  - anil.gupta@tarento.com
+  - kiruba.sankari@qualitrix.com
+  - naveenprabhu.v@optit.co
+  - navendu@ekstep.org
+  - amit.kumar@tarento.com
+  - reshmi.nair@tarento.com
+  - satishkumar.nirmalkar@tarento.com
+  - harip@ilimi.in
+  - vinod@techjoomla.com
+  - vatsaraj@framewirk.com
+  - pradyumnan@ilimi.in
+  - mathew.pallan@tarento.com
+  - keshav.prasad@tarento.com
+  - manimegalai.mohan@qualitrix.com
+  - nikunj.beladiya@tarento.com
+  - chaithanya.d@optit.co
+  - rajeev.sathish@tarento.com
+  - kalaipandiyan.k@optit.co
+  - shailandra.ojha@qualitrix.com
+  - anandp@sanketika.in
+  - vinay.b@optit.co
+  - revathi.kotla@tibilsolutions.com
+  - vinu.kumar@tarento.com
+  - gaurawk@ilimi.in
+  - anil.gupta@tarento.com
+  - sowmyad@sanketika.in
+  - kiran@tunerlabs.com
+  - mahesh@sanketika.in
+  - jayaprakash.narayanaswamy@tarento.com
+  - akash@tunerlabs.com
+  - shakthieshwari@shikshalokam.org
+  - srikanth.kolluri@optit.co
+  - samatha.j@optit.co
+  - rajesh.r@optit.co
+  - chakshu@samagragovernance.in
+  - surabhi.mahawar@aurigait.com
+  - manoj@luezoid.com
+  - sandeep.r@optit.co
+  - rajasimman.s@teamdiskha.org
+  - saloni@samagragovernance.in
+  - vinod@techjoomla.com
+  - vatsaraj@framewirk.com
+  - sandeep.r@teamdiksha.org
+  - swayangjit.parida@goodworklabs.com
+  - manivasagan.p@teamdiksha.org
+  
+monitor_alerts_mail_from_email: alerts@ntp.net.in        # From Address for alert mails
+msg_91_required: true
+sunbird_msg_sender: DIKAPP                # SMS from Address; atleast 6 char
+sunbird_android_app_url: https://play.google.com/store/apps/details?id=in.gov.diksha.app             # Playstore url of android app; default is subird.org
+
+# NOT MANDATORY VARS
+keycloak_api_management_user_email: "admin@sunbird.org"
+jenkins_url:                            # Jenkins urls to be accessed from slaves; eg "http://10.20.0.12:8080/jenkins" 
+sunbird_installation_email: "master@master.org" # fallback email for badger badge creation if the user doesn't have email address.
+
+###2-10 azure_plugin_storage_account_name: preprodall
+plugin_container_name: ntp-content-preprod #latest value
+#plugin_container_name: diksha-public-preprod  #old value
+
+####################### Please Check me #############################
+sunbird_ekstep_api_base_url: "https://qa.ekstep.in/api"   #API base URL of the Ekstep environment. Use `https://qa.ekstep.in/api` for non-prod deployments, and use `https://api.ekstep.in/` for prod deployment.
+sunbird_data_service_api_base_url: "{{sunbird_ekstep_api_base_url}}"
+telemetry_proxy_url: ""
+sunbird_telemetry_api: "{{sunbird_ekstep_api_base_url}}/data/v3/telemetry"
+sunbird_language_service_api_base_url: '{{sunbird_ekstep_api_base_url}}/language'
+  # Following variable gets called for assets/public from Proxy
+badger_url: http://preprodall.blob.core.windows.net/ # Is it a dummy var?
+sunbird_installation_display_name: "DIKSHA"
+
+## Not used
+project: "ntp" 
+application_postgres_host: "kong-lms-keycloak-preprod-new.postgres.database.azure.com"  #Private IP of Postgres server
+keycloak_postgres_host: "kong-lms-keycloak-preprod-new.postgres.database.azure.com"  #Private IP of Postgres server
+sunbird_env: preprod #Ekstep environment to connect to. Use `qa` for non-prod deployments, and `prod` for prod deployment.
+sunbird_appid: sunbird_portal
+sunbird_installation: Diksha_Preprod
+sunbird_portal_title_name: Diksha
+sunbird_env_logo_url: https://preprod.ntp.net.in/tenant/ntp/logo.png
+sunbird_telemetry_pdata_id: preprod.diksha.learning.service
+sunbird_environment: preprod
+sunbird_instance: diksha
+
+# Kong 
+kong_database: postgres
+kong_postgres_host: "kong-lms-keycloak-preprod-new.postgres.database.azure.com"  #Private IP of Postgres server
+kong_ssl: 'True'
+kong_postgres_user: preprod_keycloak@kong-lms-keycloak-preprod-new
+kong_postgres_password: "{{ core_vault_postgres_password }}"
+#kong_postgres_database: api_manager_preprod_kong9 # commenting as a part of kong12 upgrade
+#kong_postgres_database: api_manager_kong12  ## commenting as a part of kong14 migration
+kong_postgres_database: api_manager_kong14
+## 2.10 backup_storage_name: "preprodall"
+#monitor_alerts_slack_channel: preprod-alert #old-sunbird slack
+monitor_alerts_slack_channel: preprod_alerts  #new diksha slack
+expected_minimum_logs_per_minute: 50
+enable_scraping_docker_metrics: true
+postgres_exporter_user: preprod_keycloak@kong-lms-keycloak-preprod-new
+##2-10 postgresql_backup_azure_storage_account_name: "{{ backup_storage_name }}"
+##2-10 postgresql_backup_azure_storage_access_key: "{{ backup_storage_key }}"
+##2-10 postgresql_restore_azure_storage_account_name: "{{ backup_storage_name }}"
+##2-10 postgresql_restore_azure_storage_access_key: "{{ backup_storage_key }}"
+badger_host: "kong-lms-keycloak-preprod-new.postgres.database.azure.com"
+prometheus_data_dir: /root/dockerdata/prometheus/data/
+dialpage_cdn_url: "https://playpreprod.ntp.net.in"
+sunbird_enable_signup: true
+sunbird_installation_display_name: DIKSHA
+content_service_channel_refresh_cron: ''
+sunbird_portal_user_upload_ref_link: "https://preprod.ntp.net.in/help/administrator/register-user/index.html"
+sunbird_url_shortner_enable: true
+sunbird_course_batch_notification_enabled: 'false'
+api_proxy_name: apipreprod.ntp.net.in
+sunbird_course_batch_notification_signature:
+sunbird_qrimage_topic: preprod.qrimage.request
+sunbird_otp_expiration: 1800
+sunbird_lock_expiry_time: 120
+sunbird_help_link_visibility: TRUE
+login_theme: ../private/ansible/artifacts/ntp
+email_theme: ../private/ansible/artifacts/email
+sunbird_telemetry_kafka_topic: "{{env_name}}.telemetry.ingestion"
+sunbird_data_pipeline_kafka_topic: "preprod.telemetry.ingest"
+proxy_custom_config: include conf.d/*.conf.custom; 
+sunbird_content_service_log_level: debug
+##2-10 sunbird_cloud_storage_urls: "https://s3.ap-south-1.amazonaws.com/ekstep-public-qa/,https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/,https://{{azure_account_name}}.blob.core.windows.net/ntp-content-preprod/,https://s3.ap-south-1.amazonaws.com/ekstep-public-prod/,https://ekstep-public-prod.s3-ap-south-1.amazonaws.com/,https://ntpproductionall.blob.core.windows.net/ntp-content-production/"
+sunbird_cloud_storage_urls: "https://obj.preprod.ntp.net.in/ntp-content-preprod,https://s3.ap-south-1.amazonaws.com/ekstep-public-qa/,https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/,https://{{sunbird_public_storage_account_name}}.blob.core.windows.net/ntp-content-preprod/,https://s3.ap-south-1.amazonaws.com/ekstep-public-prod/,https://ekstep-public-prod.s3-ap-south-1.amazonaws.com/,https://ntpproductionall.blob.core.windows.net/ntp-content-production/"
+
+# CDN
+##2-10 player_cdn_account_key: "{{vault_sunbird_cdn_account_key}}"
+player_cdn_container: player
+##2-10 player_cdn_account: preprodall
+sunbird_portal_player_cdn_enabled: 'true'
+
+sunbird_portal_cdn_url: https://static.preprod.ntp.net.in/player/
+##2-10 sunbird_portal_cdn_blob_url: https://preprodall.blob.core.windows.net/player/
+sunbird_portal_cdn_blob_url: "https://{{sunbird_public_storage_account_name}}.blob.core.windows.net/uci/"
+
+sunbird_portal_content_cdn_url: 'true' # mandatory Variable for player
+#sunbird_portal_preview_cdn_url: https://static.preprod.ntp.net.in/diksha-public-preprod/v3/preview #old CDN URL for conten-preview
+sunbird_portal_preview_cdn_url: https://static.preprod.ntp.net.in/ntp-content-preprod/v3/preview  # latest CDN URL for conten-preview
+
+app_alerts_mailing_list: "{{devops_alerts_mailing_list}}"
+devops_alerts_mailing_list: "devops@ekstep.org, noc@optit.in"
+site_alerts_mailing_list: "{{devops_alerts_mailing_list}}"
+druid_alerts_mailing_list: "noc@optit.in"
+alerts_mailing_list: "{{devops_alerts_mailing_list}}"
+#### Alert Categorisation ####
+critical_alerts_mailing_list: "{{ alerts_mailing_list }}"
+fatal_alerts_mailing_list: "{{ alerts_mailing_list }}"
+alerts_mailing_severity_filter:
+- severity: CRITICAL
+  alerts_mailing_list: "{{ critical_alerts_mailing_list }}, noc@optit.in"
+- severity: FATAL
+  alerts_mailing_list: "{{ fatal_alerts_mailing_list }}"
+
+druid_alerts_mailing_severity_filter:
+- severity: CRITICAL
+  alerts_mailing_list: "sowmyad@ilimi.in,manjunathd@sanketika.in"
+- severity: FATAL
+  alerts_mailing_list: "sowmyad@ilimi.in,manjunathd@sanketika.in"
+
+#############################
+
+## Container details
+
+#badger
+badger_replicas: 1
+proxy_replicas: 1
+proxy_reservation_memory: 64M
+proxy_limit_memory: 128M
+kong_replicas: 1
+kong_reservation_memory: 64M
+kong_limit_memory: 256M
+echo_service_replicas: 1    
+echo_service_reservation_memory: 8M    
+echo_service_limit_memory: 16M    
+adminutil_replicas: 1    
+adminutil_reservation_memory: 300M    
+adminutil_limit_memory: 300M    
+actor_replicas: 1    
+actor_reservation_memory: 500M    
+actor_limit_memory: 1024M    
+learner_limit_cpu: 1    
+learner_replicas: 1    
+learner_reservation_memory: 800M
+learner_limit_memory: 800M
+logger_logstash_heap_size: 512M    
+logger_logstash_replicas: 1    
+logger_logstash_reservation_memory: 512M    
+logger_logstash_limit_memory: 750M    
+logger_kibana_reservation_memory: 750M    
+logger_kibana_limit_memory: 750M    
+logger_logspout_reservation_memory: 75M    
+logger_logspout_limit_memory: 75M    
+logger_oauth_reservation_memory: 32M    
+logger_oauth_limit_memory: 32M    
+logger_logstash_reservation_memory: 1024M    
+logger_logstash_limit_memory: 1024M    
+prometheus_reservation_memory: 1G
+prometheus_limit_memory: 1.8G
+alertmanager_reservation_memory: 100M
+alertmanager_limit_memory: 100M
+node_exporter_reservation_memory: 16M
+node_exporter_limit_memory: 32M
+cadvisor_reservation_memory: 150M
+cadvisor_limit_memory: 250M
+elasticsearch_exporter_reservation_memory: 8M
+elasticsearch_exporter_limit_memory: 24M
+postgres_exporter_reservation_memory: 16M
+postgres_exporter_limit_memory: 32M
+statsd_exporter_reservation_memory: 8M
+statsd_exporter_limit_memory: 16M
+blackbox_exporter_reservation_memory: 16M
+blackbox_exporter_limit_memory: 32M
+jsonpath_exporter_reservation_memory: 32M
+jsonpath_exporter_limit_memory: 64M
+azure_blob_exporter_reservation_memory: 16M
+azure_blob_exporter_limit_memory: 64M
+grafana_reservation_memory: 100M
+grafana_limit_memory: 100M
+monitor_logstash_replicas: 1
+monitor_logstash_heap_size: 256m
+monitor_logstash_reservation_memory: 256M
+monitor_logstash_limit_memory: 350M
+monitor_logspout_reservation_memory: 150M
+monitor_logspout_limit_memory: 150M
+player_replicas: 1
+player_reservation_memory: 256M
+player_limit_memory: 512M
+content_replicas: 1
+content_reservation_memory: 900M
+content_limit_memory: 900M
+learner_replicas: 1
+learner_reservation_memory: 900M
+learner_limit_memory: 900M
+learner_reservation_cpu: 1
+knowledge_mw_service_reservation_memory: 1000M
+knowledge_mw_service_limit_memory: 1000M
+
+# Consumers to be on-boarded
+small_rate_limit_per_hour: 5000
+medium_rate_limit_per_hour: 30000
+large_rate_limit_per_hour: 60000
+
+kong_srivathsa:
+  - appAdmin
+  - appUpdate
+  - contentUpdate
+  - contentUser
+  - courseUpdate
+  - courseUser
+  - dialcodeUpdate
+  - domainUpdate
+  - domainUser
+  - orgAdmin
+  - publicUser
+  - userUpdate
+  - privateContentMgmt
+  - dataUpdate
+
+kong_kumar_jai_diksha_implementation_sso_test:
+  - publicUser
+kong_saket_singh:
+  - privateContentMgmt
+  - searchContent
+  - getCourseHierarchy
+  - appAdmin
+  - appUpdate
+  - authAdmin
+  - contentAdmin
+  - contentUpdate
+  - contentUser
+  - domainUpdate
+  - domainUser
+  - orgAdmin
+  - orgUpdate
+  - orgUser
+  - publicUser
+  - userUpdate
+  - privateContent
+  - courseUser
+  - courseUpdate
+
+kong_sachin_sahu:
+  - privateContentMgmt
+  - orgUser
+  - orgAdmin
+  - publicUser
+  - domainUser
+  - userAdmin
+  - userUpdate
+  - orgUpdate
+  - domainUpdate
+  - dialcodeUpdate
+  - dataUpdate
+  - courseUser
+  - courseUpdate
+  - courseAdmin
+  - contentUser
+  - contentUpdate
+  - contentAdmin
+  - authAdmin
+
+
+kong_vipul_dholaria:
+  - contentUser
+  - contentAdmin
+  - contentUpdate
+  - privateContentMgmt
+
+kong_chetan_sachdev:
+  - privateContentMgmt
+  - appAdmin
+  - appUpdate
+  - authAdmin
+  - contentAdmin
+  - contentUpdate
+  - contentUser
+  - domainUpdate
+  - domainUser
+  - orgAdmin
+  - orgUpdate
+  - orgUser
+  - publicUser
+  - userUpdate
+  - privateContent
+
+kong_vaibhav_bhuva:
+  - appAdmin
+  - appUpdate
+  - authAdmin
+  - contentAdmin
+  - contentUpdate
+  - contentUser
+  - domainUpdate
+  - domainUser
+  - orgAdmin
+  - orgUpdate
+  - orgUser
+  - publicUser
+  - userUpdate
+  - privateContent
+kong_praveen_Parachuru:
+  - orgUpdate
+  - publicUser
+  - orgAdmin
+  - domainUser
+  - domainUpdate
+  - contentUser
+  - contentUpdate
+  - contentAdmin
+  - courseUser
+  - userUpdate
+  - privateContentMgmt
+kong_bhabaranjan:
+  - privateContentMgmt
+  - appAdmin
+  - appUpdate
+  - authAdmin
+  - contentAdmin
+  - contentUpdate
+  - contentUser
+  - domainUpdate
+  - domainUser
+  - orgAdmin
+  - orgUpdate
+  - orgUser
+  - publicUser
+  - userUpdate
+  - privateContent
+kong_tanweer:
+  - orgUser
+  - appAdmin
+  - appUpdate
+  - contentUpdate
+  - contentUser
+  - courseUpdate
+  - courseUser
+  - dialcodeUpdate
+  - domainUpdate
+  - domainUser
+  - orgAdmin
+  - publicUser
+  - userUpdate
+  - privateContentMgmt
+  - orgUpdate
+  - userAdmin
+  - dataUpdate
+kong_kranthi:
+  - publicUser
+kong_nikunj:
+  - appAdmin
+  - appUpdate
+  - authAdmin
+  - contentAdmin
+  - contentUpdate
+  - contentUser
+  - domainUpdate
+  - domainUser
+  - orgAdmin
+  - orgUpdate
+  - orgUser
+  - publicUser
+  - userUpdate
+  - privateContent
+sso_partner_group:
+  - echoUser
+
+kong_desktopapp:
+  - contentUser
+  - publicUser
+  
+kong_nithin:
+  - courseUser  
+  
+ 
+kong_consumers:
+  - username: sunbird-integrator-test-user-test
+    groups: "{{ integration_partner_groups }}"
+    state: present
+    credential_algorithm: "RS256"
+    credential_rsa_public_key: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApY2yKRC8NLe5KbGX5Hs9\nMj3LzHLZKYKVS3nB7tw9ZjW+26rFil421VrzSr8sJI6AkXK1ZZ7A0mmeuIgJ3cPZ\nId+h8hY9tRaAECGF0kGOgLWa9eyYiAUIRbeE70M8D9FPd+hepTD7c3f/F4Xjpjdn\nQZPkD4NYg1K8d+ye5sMQabnxt9U+M879DG2dbucT38Io9IxJxbEEbse3GdPXV/Wp\nKd+s2NwuJ1Auwckjc5stb+frBAnlUmFUWSmVIIYBF1TUzjP/Kq73PLgYTEIYBxiL\nozS0Dlp9x3mHowSg2tvhyCZ93SoCdnaps+8pvfvTq2Nq1o24XC9RkJlk6F94DQVV\n9wIDAQAB\n-----END PUBLIC KEY-----"
+    credential_iss: "sunbird-integrator-test-1.org"
+  - username: temporary-api-credentials
+    groups: "{{ kong_all_consumer_groups }}"
+    state: present
+  - username: admin-credentials
+    groups: "{{ kong_all_consumer_groups }}"
+    state: present
+  - username: dekstopapp
+    groups: "{{ kong_desktopapp }}"
+    state: present
+  - username: api-management-test-user
+    groups: "{{ kong_all_consumer_groups }}"
+    state: present
+  - username: sunbird-integrator-test-user
+    groups: "{{ integration_partner_groups }}"
+    state: present
+    credential_algorithm: "RS256"
+    credential_rsa_public_key: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvknOmYAnTRS2BJCm0EXT\nqs3Zg3HPFyhwHIlWp2vwOo5rKLUBmNlSM91yy2vAr7A3wwg+HKe+k+b8XZEJAJyf\nlvtlbRkbuDNpxaqPVav6h7hfUT2RvJOIZn828JLtgYzsA92kD3Ef4YnQoX2FoNLn\noQL0B8WfHbVFkKTbSlz59MlEp74Wx39lTSXjFDYG0wrLiUMW7Eq8ECTEj9ombB+o\nVnBq0mgRNqywtxQlAiFFkuP2H7FATttcHi5PuF8vYMJtpj6PSHmdsMc++VdVE3Pw\n4rQ9s/WY2ThV80RecL5c7jSlfXTyLDTnR10ZNZnMCEzcZAKBSdiIlDmLoZ4852P6\ncwIDAQAB\n-----END PUBLIC KEY-----"
+    credential_iss: "sunbird-integrator-test.org"
+  - username: qci-user
+    groups:  "{{ integration_partner_groups }}"
+    state: present
+    credential_algorithm: "RS256"
+    credential_rsa_public_key: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA/Fdy/zzU4LQMM7t9zDaA\n6rCPMkk3pVYgDBYXND4JjVVYa9Xb/wfiIBiZtVbRZSRCkEtlD6reqDeMkRzuKoNm\nCYOUVLnjjposlwmzUASGhLQOLJknPJGWaCWRGVIXiQc956cNwx7NDIcPblsa0O8K\nkEeXEOXew3gkXaNkJOEgHZCzVu4TKh6F+GRp159jZnoQpJF4bLkwzTdsmpVu/dOG\nDt4YNwkjtpk60WN/wDbN1wlBWE3HqZ/+xNFPw1pteJUJIW4EW9+P5Qb7c8ZghCZw\nm1W+/TCU06BmN2yzGpnTFGd5ru8wbY2eP1rOpdauL6c86qcvmsXPmUutO8P0OEkd\nswIDAQAB\n-----END PUBLIC KEY-----"
+    credential_iss: "qci"
+  - username: mobile_admin
+    groups: "{{ mobile_admin_groups }}"
+    print_credentials: true
+    state: present
+  - username: mobile_app
+    groups: "{{ mobile_app_groups }}"
+    state: present
+  - username: mobile_device
+    groups: "{{ mobile_device_groups }}"
+    state: present
+  - username: add-any-consumer-to-be-deleted
+    state: absent
+  - username: apekx-integrator-user
+    groups: "{{ integration_partner_groups }}"
+    state: present
+    credential_algorithm: "RS256"
+    credential_rsa_public_key: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6fXOAWMg2lBRkKVXZthC\ncVsC2uTP8LXmc9pDCiXDzqIMFn5hkRqrg2UCGWjfZc2fY6AvQJgzf48VWkDWA9Z2\n/+kjzOLa5w2zoir/jTOTcplxrqOsXoZwSXyDcuX8Jqzy3zqydKVqURCmOjl8aJ9v\nPYrojsaerDQHM1ndEsYbJ2v93SizV/Qn3my6WxyceQE7E6UrOQabHChoKgtXfCxh\ngaSBmh9BAiUGf43bUku9QgCsYR6cqwzNK/Fr5PZFo6OQZYzNeaMIVVdotS3UKSDH\nI/L9quVdgqhzRDg7RYvQ5cE0PDTlRe3K9ICybzwjZv3QJqRJhOYkb2cyIxfg9Oii\n9QIDAQAB\n-----END PUBLIC KEY-----"
+    credential_iss: "apekx"
+  - username: diksha-implementation-user
+    groups: "{{ integration_partner_groups }}"
+    state: present
+    credential_algorithm: "RS256"
+    credential_rsa_public_key: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyMMCgmdv1XAtIQ7Qjrbe\nBeOFsKvBpsbT3IGbz6NNC/Tu3R0YwdtGUZJMSU5n+xuUxExaiWdf0I4tGa9Z11E0\nLwfqVdlQh+bGg6lqcJmD8N5V2z69D7N4JZJrzLqj38nWNW88fgO9YsM+lwzOwhG3\n0GLa/tTT+ZEIkktVuJ/YqNVc6aLZH+TlbQAuShYhzzQPmVBuyGgkaf7s6+mS216Z\nuR07vC+7gqAPfMPPTH/e7CIl4mSXI+eQA1Sz3kg2oREuQoVe4rUNDemKk2orKfYn\nTCWp3uL6xxZU26PyYIHgfoaEcRrQeWYgmSz1i6S7P9JuwB92F9M2pRQmFuIoWRwJ\nYwIDAQAB\n-----END PUBLIC KEY-----"
+    credential_iss: "diksha-implementation"
+  - username: diksha-mha-server-integration-user
+    groups: "{{ integration_partner_groups }}"
+    state: present
+    credential_algorithm: "RS256"
+    credential_rsa_public_key: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4WrAO5NyPgbGs0Go83+b\nQ8J7rfOQDOgwuFVda4AVJC1w4fBoJunEUDHkmPzFM7u8VP1JjIRky18nZRymx+cM\n6zLfiluGEG3UxbY/oimng5xnnULLLcQvrRoI16HxYPXowu7PscFk/X6DUMNUm7Jg\nuXcY5cZNslqrv5n9su+7NWTfbMr8fX4Aep1oDx0PQfqV3Raw8+phBttqnbenbjA6\nuEcc2mxu/eyuVnIqZBANM0pHX3MscmiogVVgVS7yvEKFSJ5Az+uPdQuX8R//RGhK\n4hfM3LZ9APMD8+u+dlLpVmwbUtXVJsP4d8VNUuZRdkHihDwKwxRwFrv65yzvaRO0\nhwIDAQAB\n-----END PUBLIC KEY-----"
+    credential_iss: "diksha-mha-server-integration-user"
+  - username: diksha-implementation-test-user
+    groups: "{{ integration_partner_groups }}"
+    state: present
+    credential_algorithm: "RS256"
+    credential_rsa_public_key: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAukW3hgHduCq1/v5VEAdf\nL1ShFQfpOPZtFUeEas7seapL2at18GOxq8iuiPjEmnrEYMuUFbsZ2fJKIvVD8rS8\nawIKClKqQzKZY1vTKCGL8qPzIdaY+9nkvh1l9888Nkfp2WIc+Sa5ZUDlol3AQ8K+\n7K6a3hyonjGLP07OQjG49IYRpP7/+5hx8kt/o3BehPFKxZDjZrm+sLJjrGvds6n0\nbe5p4wYrjAYIuONYQ+PRyYDmPEATehBuc5O+2pSmU2Z4l/Ufk8+yHijTzY1jd8KS\ndPdFdGIvqpqIz6nn+p5yfQWgBZOQNNuDcVweo/NSozphkiF2fcBjK8nAz1Rz3bvH\nswIDAQAB\n-----END PUBLIC KEY-----"
+    credential_iss: "diksha-implementation-test-user"
+  - username: sunbird-security-team
+    groups: "{{ kong_all_consumer_groups }}"
+    state: present
+  - username: vatsaraj-l2-team
+    groups: "{{ kong_all_consumer_groups }}"
+    state: present
+  - username: badal
+    groups: "{{ kong_all_consumer_groups }}"
+    state: present
+  - username: Nikunj
+    groups: "{{ kong_nikunj }}"
+    state: present
+  - username: manzarul
+    groups: "{{ kong_all_consumer_groups }}"
+    state: present
+  - username: srivathsa
+    groups: "{{ kong_srivathsa }}"
+    state: present
+  - username: sachin
+    groups: "{{ kong_sachin_sahu }}"
+    state: present
+  - username: aman
+    groups: "{{ kong_all_consumer_groups }}"
+    state: present
+  - username: samagra-integration-diksha-user
+    groups: "{{ integration_partner_groups }}"
+    state: present
+    credential_algorithm: "RS256"
+    credential_rsa_public_key: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuBlugnTsEbERVhnXJvmV\n4d/qKxsd/EyzVV0zbSUMJXYrW5jKdFcMbw1GibO3DSHz82wHJgIvGawVh46yo4hG\nkL4HUr3gZnLCD0tS6/g7FYxAp60kFm18nP41T1DMTca/FttLX/WdoE4SGDVfIquO\njCDwNpEpIJIQDJCJYd+LjHWLpu8TMXpDDaAm7NDpX8RcWov4lgxL0KlrdgOarJ6m\nfbM24MK7UUR5fnt/68UvovcrXSQyC42/OijZAyLKa5G+FQdUTUD4pvIlPknpDKls\nfVJ1d44Kj+u/yvtLXUbok+NRouwVp6NdGkXNFqk//KHztIAeV14xbELBpHkzhi8B\nkwIDAQAB\n-----END PUBLIC KEY-----"
+    credential_iss: "samagra-integration-diksha-user"
+  - username: mobile_admin_openrap
+    groups: ["mobileAdminOpenRAP"]
+    save_credentials: true
+    state: present
+  - username: mobile_app_openrap
+    groups: ["mobileAppOpenRAP"]
+    state: present
+  - username: mobile_device_openrap
+    groups: "{{ mobile_device_groups }}"
+    state: present
+  - username: mobile_admin_teacheraid
+    groups: ["mobileAdminTeacherAid"]
+    save_credentials: true
+    state: present
+  - username: mobile_app_teacheraid
+    groups: ["mobileAppTeacherAid"]
+    state: present
+  - username: mobile_device_teacheraid
+    groups: "{{ mobile_device_groups }}"
+    state: present
+  - username: rajesh-kumaravel-tarento-com
+    groups: "{{ integration_partner_groups }}"
+    state: present
+  - username: somvit-bhowmik-tarento-com
+    groups: "{{ integration_partner_groups }}"
+    state: present
+  - username: sso-test-user
+    groups: "{{ integration_partner_groups }}"
+    state: present
+  - username: diksha-implementation-jai-sso-test
+    groups: "{{ kong_kumar_jai_diksha_implementation_sso_test }}"
+    state: present
+    credential_algorithm: "RS256"
+    credential_rsa_public_key: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArQ4aAlySRV8JswXEguc0\nv1lF3hVqaGDdE54U0F04ly2l5wfjLOp2Gxj2ZmqP4hNSpqyHW6nr/Ie0NenlZV94\n8v7X5O23ppQptfZbB7VhF0nShRGegPdn7jjPHQZG+IX2XzIR93frsGTEEsUysEd5\n8ViurDNMbwGaiI9757sylwTZaQjrkEnhDV0oDesj81djpGE2jjo5YsEYzxEb5jSx\niWcwkUWYuWGYT6D+Qqppq/P1Rj4aSnEmMq5qOfrgQZ+3KJuHHba/mNxXrVy7fHec\ncGDn6mCjqma2voi7IHjI4FUnHmJpJNEu4UtQLzqlrTlXUc3Q00y+S2G/K1MXKVuI\nkwIDAQAB\n-----END PUBLIC KEY-----"
+    credential_iss: "diksha-implementation-jai-sso-test"
+  - username: kong_saket_singh
+    groups: "{{ kong_saket_singh }}"
+    state: present
+  - username: jai-user
+    groups: "{{ kong_all_consumer_groups }}"
+    state: present
+    credential_algorithm: "RS256"
+    credential_rsa_public_key: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAw2oRrhiku4KYpONTykr7\nEfqFds7tJeixLFTLsoK4N6paPDGFDlEIbDmhwfz53Z9lj900Hc9YxDErztDUw36P\nPkT4RBaEcdNUVPpRoVLpJmWg0ew/gVKYY3mbyBQ7rTLQqogijWmlUilR44VGg8nD\nKirKNhc92Y3dMcd7aS2l3pU/ivvsjMSjiW6KLvXmA8PDez0qRjpKIH3f+13cHU3Z\nTdUwF1zGLR2cKmaxqxBiv58Y/2EhOSwJxPJZ8Di6td25rFtEut22xcZItHV/lOzH\n7muLLmGU199iYRUI1mSG6NB/1i3TjRbYG0rJWyjfGzBSf7qFpcRsmJLP5L2zWaEw\nswIDAQAB\n-----END PUBLIC KEY-----"
+    credential_iss: "preprod-sso"
+  - username: kong_vipul_dholaria
+    groups: "{{ kong_vipul_dholaria }}"
+    state: present
+  - username: kong_chetan_sachdev
+    groups: "{{ kong_chetan_sachdev }}"
+    state: present
+  - username: kong_vaibhav_bhuva
+    groups: "{{ kong_vaibhav_bhuva }}"
+    state: present
+  - username: praveen
+    groups: "{{ kong_praveen_Parachuru }}"
+    state: absent
+  - username: bhabaranjan
+    groups: "{{ kong_bhabaranjan }}"
+    state: present
+  - username: kong_tanweer
+    groups: "{{ kong_tanweer }}"
+    state: present
+  - username: kong_kranthi
+    groups: "{{ kong_kranthi }}"
+    state: present  
+  - username: cg-integrator-user
+    groups: "{{ sso_partner_group }}"
+    state: present
+    credential_algorithm: "RS256"
+    credential_rsa_public_key: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAx5arv0UT3rVTni025L2W\ntas+Uab6gA2PKhOaB15Db24UtEGar0HJdZW7nnV3dG//SN3Aw0YS01XzHNQKKFd2\ndnnlzosoGElwa9D7uvrcWgi9H/rOEQAESo+y0mOADsuDG9wuzcq/GOosrtnA9+i3\niY/3ni0eEsddyShh2i8VfD9naYTeGJkt12QGXcdzCOmMeYP0xSUPmap7b07eWkNh\neLRq9tqHBGD5oCFtGP5GzTMfKSwXZK+5Xcquk2O7p5cFQmq1LHTXMJwb88898BhI\niR94Vbpq852xyxW4y9mdnqatacYudrc/SofPjDmNizVXjG0cmMu5Nlj119JqoJdY\nCwIDAQAB\n-----END PUBLIC KEY-----"
+    credential_iss: "cg"
+  - username: mp-integrator-user
+    groups: "{{ sso_partner_group }}"
+    state: present
+    credential_algorithm: "RS256"
+    credential_rsa_public_key: "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvyJqww43BgJQvegPb8ES\nWmzSwy8BFMEKcS+8AZ5AQWcAM4prXnUgOJsd+Ckx7G0XntT8RyBZ8mQHPqO+/qR5\no8MiSnDtbdIH0Qpr4GU9f4fUSNZXa7K3NFKWNEoPSItfVTMyG9ttu7QzTI52k9zd\n6vd49tsPjT4WffAMPtPDOU17qM20Crxu41v3+SGHIKa7l0wlXusw0EjdyW+Fc6LX\n7cxnotMhSD4c9frIhTDdJT0mz02cll+kzRMPoKsZYBrE0HCLwJ7CyWkG2jIa5pUu\nWaFTmP1r7Tchq8sQw+YldYgvLG46N/2O4If/ejO4ftPQA2svB+dq4PwepFVKAWvl\nGQIDAQAB\n-----END PUBLIC KEY-----"
+    credential_iss: "mp"
+  - username: kong_nithin
+    groups: "{{ kong_nithin }}"
+    state: present
+  - username: mobile_devicev2      #R-3.0.0 kong migration
+    groups: "{{ mobile_device_groups }}"
+    state: present
+  - username: shikshalokam_mobile_app
+    groups: "{{ mobile_app_groups }}"
+    state: present
+  - username: portal_anonymous_register
+    groups: "{{ portal_anonymous_register }}"
+    state: present
+  - username: portal_loggedin_register
+    groups: "{{ portal_loggedin_register }}"
+    state: present
+  - username: portal_anonymous
+    groups: "{{ anonymous_user_groups }}"
+    state: present
+  - username: portal_loggedin
+    groups: "{{ kong_all_consumer_groups }}"
+    state: present
+  - username: portal_anonymous_fallback_token
+    groups: "{{ anonymous_user_groups }}"
+    state: present
+  - username: portal_loggedin_fallback_token
+    groups: "{{ kong_all_consumer_groups }}"
+    state: present
+
+# in sunbird everything goes to a single storage account.
+# !!! Does diksha has a seperate storage account ??
+##2-10 cassandra_backup_azure_storage_account_name: "{{ backup_storage_name }}"
+##2-10 cassandra_backup_azure_storage_access_key: "{{backup_storage_key}}"
+
+
+##release-1.15
+sunbird_gzip_enable: TRUE    
+##2-10 sunbird_course_metrics_base_url: 'https://preprodall.blob.core.windows.net/'
+sunbird_course_metrics_base_url: "https://{{sunbird_public_storage_account_name}}.blob.core.windows.net/"
+tenant_name: ntp    
+    
+##2-10 sunbird_analytics_blob_account_name: preprodall
+##2-10 sunbird_analytics_blob_account_key: "{{core_vault_sunbird_analytics_blob_account_key}}"
+
+sunbird_health_check_enable: 'false'
+sunbird_gzip_size_threshold: 262144
+
+sunbird_keycloak_user_federation_provider_id: "{{ core_vault_sunbird_keycloak_user_federation_provider_id }}"
+
+## overriding vars
+
+sunbird_cache_enable: true
+sunbird_sso_url: "{{keycloak_url}}/auth/"
+
+# samza relted vars
+env_name: preprod
+sunbird_sso_url: "{{keycloak_url}}/auth/"
+dialpage_url: play.preprod.ntp.net.in
+
+# release-2.1.0
+sunbird_portal_offline_tenant: "tn,mh,od,rj"
+#sunbird_portal_offline_supported_languages: "English,Hindi,Marathi,Kannada"
+sunbird_portal_offline_app_release_date: "24-06-2019"
+sunbird_portal_offline_app_version: "2.0.0"
+sunbird_portal_offline_app_download_url: "https://play.google.com/store/apps/details?id=in.gov.diksha.app"
+sunbird_portal_log_level: "debug"
+
+# release-2.2.0
+sunbird_google_android_keycloak_client_id: google-auth-android
+sunbird_google_android_keycloak_secret: 6be7717f-4edf-4c70-b37d-267cabc05deb
+sunbird_trampoline_android_keycloak_client_id: trampoline-android
+sunbird_trampoline_android_keycloak_secret: 0f68b645-bb6c-47d3-99a8-ad0f61372c38
+sunbird_android_keycloak_client_id: ""
+sunbird_audit_event_batch_allowed: FALSE
+sunbird_log_fingerprint_details: FALSE
+sunbird_telemetry_kafka_topic: "{{env_name}}.telemetry.ingestion"
+
+#release-2.3.5 Variables
+sunbird_subdomain_keycloak_base_url: https://merge.preprod.ntp.net.in/auth  #Required for account merge 
+sunbird_portal_merge_auth_server_url: https://merge.preprod.ntp.net.in/auth  #subdomain for account merge
+enc_postgres_host: "userorg-preprod.postgres.database.azure.com"
+enc_postgres_password: "{{core_vault_user_org_service_postgres_password}}"
+enc_postgres_user: "userorgpsql@userorg-preprod"
+enc_postgres_database: "{{env}}-keys"
+postgresql_users:
+  - name: "{{enc_postgres_user}}"
+    login_host: "{{enc_postgres_host}}"
+    login_password: "{{enc_postgres_password}}"
+    password: "{{enc_postgres_password}}"
+    db: "{{enc_postgres_database}}"
+    login_user: "{{enc_postgres_user}}"
+    priv: "ALL"
+postgresql_databases:
+  - name: "{{enc_postgres_database}}"
+    login_host: "{{enc_postgres_host}}"
+    login_password: "{{enc_postgres_password}}"
+    owner: "{{enc_postgres_user}}"
+    login_user: "{{enc_postgres_user}}"
+    
+enc_n_keys: 200 # Total number of keys required for encryption
+enc_n_reserved_keys: 150 # Number of keys which app reserves for usage
+
+cert_service_container_name: "{{env}}-e-credentials" # conatiner name for cert service to store cert templates
+cert_service_cloud_storage_type: azure  # can be updated if we are using some other blob
+certs_badge_name: "Course Completion Certificate"
+certs_badge_description: "Successfully completed course on Diksha Preprod"
+certs_badge_image: "Sunbird"
+certs_badge_criteria: ""
+certs_badge_root_org_id: "0127660048121610240"
+certs_badge_key_id: ""
+certs_badge_issuer_name: "Government of Diksha Preprod"
+certs_badge_issuer_url: "https://preprod.ntp.net.in"
+certs_badge_batch_id: "batch_preprod"
+certs_badge_upload_retry_count: 3
+merge_proxy_server_name: merge.preprod.ntp.net.in # Merge Account name
+sunbird_subdomain_keycloak_base_url: "{{proto}}://{{merge_proxy_server_name}}/auth"
+
+
+#Release-2.4.0
+sunbird_sync_block_size: 20
+
+### Offline Installer ###
+offline_app_base_url_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhOGRkNjkxOGE4ODc0ODFhOTE3Y2UzMThlZmFmMDk5OCJ9.oELy3iDPsUTkchyRQWf1kx6iSO9lRa-6f5k5letI2xU"
+offline_git_access_token: a0f1a3accfcda35815c109d0a7134fd056bd809f
+offline_git_private_repo: "DIKSHA-NCTE/offline-desktop-app"
+offline_target_env: "preprod"
+offline_installer_container_name: "{{env}}-offlineinstaller"
+##2-10 sunbird_offline_azure_storage_account: "offlineinstaller" # storage account name for the azure account.
+##2-10 sunbird_offline_azure_storage_key: "{{core_vault_sunbird_offline_azure_storage_key}}"
+
+## Release-2.5.0 Learner vars ##
+#sunbird_quartz_shadow_user_migration_timer: "0 0 0/1 1/1 * ? *"
+#sunbird_quartz_shadow_user_migration_timer: "0 0/10 * 1/1 * ? *" # every 10 min
+sunbird_quartz_shadow_user_migration_timer: "0 0/15 * ? * * *"  # every 15 min
+programs_url: "programs.ntp.net.in"
+
+## Release-2.6.0 ##
+environment_id: 20000000
+graph_passport_key: "{{core_vault_graph_passport_key}}"
+azure_public_container: ntp-content-preprod
+##2-10 lp_azure_account_name: preprodall
+lp_cassandra_keyspace_prefix: ntp
+freshDesk_url: "https://diksha-ncte.freshdesk.com"
+freshDesk_token: "{{ core_vault_freshDesk_token }}"
+
+##Release-2.6.0###
+lp_cassandra_keyspace_prefix: "{{ env }}"
+
+##RElease-2.6.5##
+sunbird_portal_updateLoginTimeEnabled: 'false'
+es_heap_size: "2g"
+keycloak_heap_size: "6144m"
+keycloak_metaspace_size: "512m"
+
+
+##Release-2.7.0##
+sunbird_cassandra_keyspace: sunbird
+sunbird_cassandra_consistency_level: quorum
+##2-10 kp_sunbird_account_name: "{{ azure_plugin_storage_account_name }}"
+##2-10 kp_sunbird_account_key: "{{ core_vault_azure_plugin_storage_account_key }}"
+
+#Kubernetes variables
+namespace: preprod
+imagepullsecrets: preprodregistrysecret
+dockerhub: "{{core_vault_docker_registry_url}}"
+#kubeconfig_path: "/var/lib/jenkins/secrets/preprod-k8s.yml"
+private_ingressgateway_ip: "11.5.7.127" #to be added after k8s bootstrap
+storage_class_name: "managed-premium"
+keycloak_lb_ip: 11.5.0.7
+##2-10 cloud_storage_url: preprodall.blob.core.windows.net
+cloud_storage_url: "https://{{ sunbird_public_storage_account_name }}.blob.core.windows.net"
+
+sunbird_lms_base_url: "http://{{private_ingressgateway_ip}}/api"   ### keycloak env variable
+sunbird_user_service_base_url: "http://{{private_ingressgateway_ip}}/learner"  #### keycloak env variable
+__lms_host__: "http://{{private_ingressgateway_ip}}/learner" ### yarn job
+merge_domain_status: true
+
+####### Kubernetes monitoring ##########
+default_mailing_list: "rajesh.r@optit.co, keshav.prasad@tarento.com, noc@optit.in, santhosh.g@optit.in,"
+kibana_oauth_authenticated_email_domains_kube: '[]'
+
+# Disabling kube service health checks
+print:
+  livenessProbe:
+assessment:
+  livenessProbe:
+
+
+statsd_host: statsd-service
+statsd_port: 9125
+
+# PVC for prometheus and grafana
+storage_class_name: "managed-premium"
+prometheus_storage_spec:
+  volumeClaimTemplate:
+    spec:
+      storageClassName: "{{ storage_class_name }}"
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 100Gi
+
+nginx_http_config: |
+  geoip2 /usr/local/share/GeoIP/GeoIP2-City.mmdb {
+      $geoip2_data_country_iso_code country iso_code;
+  }
+  map $geoip2_data_country_iso_code $allowed_country {
+  default yes;
+   RU no; 
+   HK no;
+   CN no;
+   UA no;
+   KP no;
+   PK no;
+   AF no;
+  }
+nginx_modules: |
+  load_module modules/ngx_http_geoip2_module.so;
+nginx_server_config: |
+  set $blacklist yes;
+  if ($allowed_country = yes) {
+    set $blacklist no;
+  }
+  # This is the ip block for containers from k8s
+  # if ($remote_addr ~ 10.244.*) {
+  #   set $blacklist no;
+  # }
+  if ($remote_addr ~ (20.193.252.92|11.5.*)) {
+    set $blacklist no;
+  }
+  # Allowing iphone appstore testing from outside india.
+  if ($http_user_agent ~ "iPhone|iPad") {
+    set $blacklist no;
+  }
+  if ($blacklist != no){
+    return 345;
+  }
+
+# For Nginx custom volume
+nginx_volumes:
+  volumes:
+    - name: tls-merge
+      secret:
+        secretName: ingress-merge-cert
+    - name: publicreports-conf
+      configMap:
+        name: publicreports-conf
+    - name: nginx-merge-config
+      configMap:
+        name: keycloak-conf
+    - name: tenant-conf
+      configMap:
+        name: tenant-conf
+    - name: igot-config
+      configMap:
+        name: igot-conf
+    - name: deny-conf
+      configMap:
+        name: deny-conf
+    - name: tls-igot
+      secret:
+        secretName: ingress-igot-cert
+  volumeMounts:
+    - name: tls-igot
+      mountPath: /etc/secrets-igot
+      readOnly: true
+    - name: publicreports-conf
+      mountPath: /etc/nginx/conf.d/publicreports.conf.custom
+      subPath: publicreports.conf.custom
+      readOnly: true
+    - name: igot-config
+      mountPath: /etc/nginx/conf.d/aigot.conf
+      subPath: igot.conf.custom
+      readOnly: true
+    - name: tls-merge
+      mountPath: /etc/secrets-merge
+      readOnly: true
+    - name: nginx-merge-config
+      mountPath: /etc/nginx/conf.d/keycloak.conf
+      subPath: keycloak.conf
+      readOnly: true
+    - name: tenant-conf
+      mountPath: /etc/nginx/conf.d/tenant.conf.custom
+      subPath: tenant.conf.custom
+      readOnly: true
+    - name: deny-conf
+      mountPath: /etc/nginx/conf.d/deny.conf.custom
+      subPath: deny.conf.custom
+      readOnly: true
+
+nginx_private_ingress_ip: "{{private_ingressgateway_ip}}"
+# Adding logsource clustername
+cluster_name: Swarm2
+
+
+# Prometheus service should be exposed for 
+# federation to scrape kong and nginx metrics
+prometheus_service:
+  type: NodePort
+
+# Prometheus k8s endopoint for prometheus federation
+prometheus_kubernetes_endpoint: 11.5.7.127:9090
+
+grafana_data_sources:
+  - name: prom-fed
+    access: proxy
+    editable: false
+    type: prometheus
+    url: http://{{groups['swarm-dashboard'][0]}}:29090/prometheus
+  - name: Prometheus_DS1
+    access: proxy
+    editable: false
+    type: prometheus
+    url: http://{{groups['swarm-manager'][0]}}:9090/prometheus
+  - name: Prometheus_Stateful
+    access: proxy
+    editable: false
+    type: prometheus
+    url: http://{{groups['swarm-dashboard'][0]}}:19090/prometheus
+  - name: InfluxDB_Datapipeline
+    access: proxy
+    editable: false
+    type: influxdb
+    url: http://{{groups['dp-influx-ps'][0]}}:8086
+    database: monitoring_events
+  - name: PrometheusProcessExporter
+    access: proxy
+    editable: false
+    type: prometheus
+    url: http://{{groups['swarm-dashboard'][0]}}:39090/prometheus
+
+grafana_persistence:
+  type: pvc
+  enabled: true
+  storageClassName: "{{ storage_class_name }}"
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+  finalizers:
+    - kubernetes.io/pvc-protection
+
+grafana_service:
+  type: NodePort
+  port: 80
+  targetPort: 3000
+  nodePort: 30300
+  portName: service
+
+
+###Release-2.8.0 vars##
+sunbird_otp_allowed_attempt: 2
+content_service_blacklisted_channels: ""
+sunbird_portal_slugForProminentFilter: "igot"
+
+### java memeory changes ###
+#lms_java_mem_limit: '-Xmx600m'
+#learner_java_mem_limit: '-Xmx600m'
+
+
+### iGot domain record ###
+igot_server_name: ione.ntp.net.in
+proxyigot_cert: "{{ core_vault_igot_site_crt }}"
+proxyigot_key: "{{ core_vault_igot_site_key }}"
+go_dns_verbosity: "true"
+
+### keycloak downgrade ##
+keycloak_postgres_database: keycloak_3017
+
+# release-2.8.6
+
+dp_postgres_host: dp-preprod-diksha.postgres.database.azure.com
+dp_postgres_db: analytics
+dp_postgres_password: "{{dp_vault_pgdb_password}}"
+dp_postgres_username: analytics@dp-preprod-diksha
+
+report_liveness_readiness:
+  healthcheck: false
+
+
+##### 
+# Kube replicas
+adminutil_replicacount: 1
+api_manager_replicacount: 1
+apimanagerecho_replicacount: 1
+assessment_replicacount: 1
+badger_replicacount: 1
+cert_replicacount: 1
+certregistry_replicacount: 1
+content_replicacount: 1
+enc_replicacount: 1
+knowledge_mw_replicacount: 2
+learner_replicacount: 2
+lms_replicacount: 2
+nginx_private_ingress_replicacount: 2
+notification_replicacount: 1
+player_replicacount: 2
+print_replicacount: 1
+telemetry_replicacount: 2
+report_replicacount: 1
+telemetry_logstash_replicacount: 1
+analytics_replicacount: 2
+
+## Kube Limits ##
+## Adminutil ##
+adminutil_cpu_req: 1
+adminutil_mem_req: 1G
+adminutil_cpu_limit: 1
+adminutil_memory_limit: 1G
+
+
+
+## ApiMan ##
+api_manager_cpu_req: 0.1
+api_manager_mem_req: 0.1G
+api_manager_cpu_limit: 0.2
+api_manager_memory_limit: 0.2G
+
+
+## ApiManEcho ##
+api_managerecho_cpu_req: 0.1
+api_managerecho_mem_req: 16Mi
+api_managerecho_cpu_limit: 0.2
+api_managerecho_memory_limit: 64Mi
+
+# Assess #
+assessment_cpu_req: 1
+assessment_mem_req: 60Mi
+assessment_cpu_limit: 1
+assessment_mem_limit: 500Mi
+
+
+# Cert #
+cert_cpu_req: 0.1
+cert_mem_req: 200Mi
+cert_cpu_limit: 0.3
+cert_mem_limit: 1G
+
+# CertReg #
+certregistry_cpu_req: 0.1
+certregistry_mem_req: 200Mi
+certregistry_cpu_limit: 1
+certregistry_mem_limit: 1G
+
+# Content #
+content_cpu_req: 0.2
+content_mem_req: 100Mi
+content_cpu_limit: 1
+content_mem_limit: 1G
+
+#search
+search_cpu_req: 0.5
+search_mem_req: 500Mi
+search_cpu_limit: 2
+search_mem_limit: 4G
+
+# Enc #
+enc_cpu_req: 0.1
+enc_mem_req: 100Mi
+enc_cpu_limit: 0.3
+enc_mem_limit: 1G
+
+# Kmw #
+knowledge_mw_cpu_req: 0.1
+knowledge_mw_mem_req: 200Mi
+knowledge_mw_cpu_limit: 1
+knowledge_mw_mem_limit: 1G
+
+# Learner #
+learner_cpu_req: 0.1
+learner_mem_req: 200Mi
+learner_cpu_limit: 1
+learner_mem_limit: 1G
+
+# LMS #
+lms_cpu_req: 0.1
+lms_mem_req: 100Mi
+lms_cpu_limit: 1
+lms_mem_limit: 1G
+
+# Nginx private #
+nginx_private_ingress_cpu_req: 0.1
+nginx_private_ingress_mem_req: 0.1G
+nginx_private_ingress_cpu_limit: 0.2
+nginx_private_ingress_mem_limit: 0.2G
+
+# Notify #
+#notification_cpu_req: 0.1
+#notification_mem_req: 64Mi
+#notification_cpu_limit: 1
+#notification_mem_limit: 1G
+
+# Player #
+player_cpu_req: 0.1
+player_mem_req: 0.3G
+player_cpu_limit: 0.2
+player_mem_limit: 0.5G
+
+# Print #
+print_cpu_req: 0.1
+print_mem_req: 64Mi
+print_cpu_limit: 1
+print_mem_limit: 1G
+
+# Tele #
+telemetry_cpu_req: 0.1
+telemetry_mem_req: 0.3G
+telemetry_cpu_limit: 0.2
+telemetry_mem_limit: 0.5G
+
+# Proxy Public #
+proxy_cpu_req: 0.1
+proxy_mem_req: 64Mi
+proxy_cpu_limit: 1
+proxy_mem_limit: 1500Mi
+
+# Report #
+report_cpu_req: 0.1
+report_mem_req: 200Mi
+report_cpu_limit: 0.2
+report_mem_limit: 1G
+
+# Telemetry Logstash #
+telemetry_logstash_cpu_req: 0.1
+telemetry_logstash_mem_req: 64Mi
+telemetry_logstash_cpu_limit: 0.2
+telemetry_logstash_mem_limit: 200Mi
+
+##  router ##
+router_cpu_req: 1
+router_mem_req: 1G
+router_cpu_limit: 1
+router_memory_limit: 2G
+
+##  bot ##
+bot_cpu_req: 1
+bot_mem_req: 1G
+bot_cpu_limit: 1
+bot_memory_limit: 2G
+
+nodebb_cpu_req: 1
+nodebb_mem_req: 1024M
+nodebb_cpu_limit: 1
+nodebb_mem_limit: 1024M
+
+####### release-2.10.0 ########
+sunbird_search_service_api_base_url: "http://{{private_ingressgateway_ip}}/search"
+sunbird_user_service_api_base_url: "http://{{private_ingressgateway_ip}}/learner"
+sunbird_content_service_api_base_url: "http://{{private_ingressgateway_ip}}/content"
+
+###Storage account details
+sunbird_public_storage_account_name: preprodall
+sunbird_private_storage_account_name: preproddp
+sunbird_management_storage_account_name: dikshapreprodmanagement
+sunbird_artifact_storage_account_name: dikshaartifact
+
+
+MOBILE_ENV_NAME: preproduction
+
+##var-2.10.0-search service
+search_java_mem_limit: '-Xmx3000m'
+
+##keycloak var
+sunbird_cassandra_host: "{{groups['cassandra'][0]}}"
+
+
+###R-3.0.0 Vars
+#bot-service
+dedup_redis_host: "{{ groups['dp-redis'][0] }}"
+
+## AdminUtil Vars ##
+adminutil__device_keyprefix: "mobile_devicev2_key"
+adminutil__device_keystart: 1
+adminutil__device_keycount: 10
+adminutil__access_keyprefix: "accessv1_key"
+adminutil__access_keystart: 1
+adminutil__access_keycount: 10
+adminutil__desktop_keyprefix: "desktop_devicev2_key"
+adminutil__desktop_keystart: 1
+adminutil__desktop_keycount: 10
+adminutil__portal_anonymous_keyprefix: "portal_anonymous_key"
+adminutil__portal_anonymous_keystart: 1
+adminutil__portal_anonymous_keycount: 10
+adminutil__portal_loggedin_keyprefix: "portal_loggedin_key"
+adminutil__portal_loggedin_keystart: 1
+adminutil__portal_loggedin_keycount: 10
+
+## Kong custom JWT onboaring ##
+kong_mobile_v2_consumer: "mobile_devicev2"
+kong_desktop_v2_consumer: "desktop_devicev2"
+kong_portal_v2_consumer: "portalv2"
+
+## Kong 0.12.3 ##
+#kong_mem_cache_size: 512m
+kong_upstream_keepalive: 300
+kibana_service: kibana.logging.svc.cluster.local:5601
+
+
+### KONG 0.14.1 ##
+kong_mem_cache_size: 256m
+kong_ratelimit_cache_size: 256m
+
+sunbird_enable_sso: true
+
+### processing kafka exporters related vars
+processing_cluster_zookeeper: "{{ groups['flink-processing-cluster-zookeepers'] | difference(['localhost']) | map('regex_replace', '^(.*)$', '\\1:2181') | list}}"
+processing_cluster_kafka: "{{ groups['flink-processing-cluster-kafka'] | difference(['localhost']) | map('regex_replace', '^(.*)$', '\\1:9092') | list}}"
+
+##Release-3.1.0 vars
+sunbird_api_request_timeout: 60000  ### or equal to 60 * 1000
+sunbird_session_ttl: 86400000  ### or equal to 24 * 60 * 60 * 1000
+sunbird_super_admin_slug: tn
+## report service env var for release-3.1.0
+DEACTIVATE_JOB_API_HOST: "http://{{analyticsapi_ip}}:9000/report/jobs/deactivate"
+
+###Tenant CDN###
+tenant_cdn_url: static.preprod.ntp.net.in
+tenant_cdn_blob: preprodall.blob.core.windows.net
+
+### nginx worker process count
+nginx_worker_processes: 4
+
+###release-3.2.5 vars - dial service
+dialservice_ip: 11.5.3.35             # vm ip for single node, LB ip for multiple nodes
+sunbird_dial_repo_api_base_url: "http://{{dialservice_ip}}:9001"
+
+### vars for analytics service as conatiner in kubernetes
+postgres:                                                                                          
+  db_url: dp-preprod-diksha.postgres.database.azure.com
+  db_username: analytics@dp-preprod-diksha #analytics
+  db_name: analytics
+  db_password: "{{dp_vault_pgdb_password}}"
+  db_table_name: preprod_consumer_channel_mapping
+  db_port: 5432
+  db_admin_user: preprod@dp-preprod-diksha
+  db_admin_password: "{{dp_vault_pgdb_admin_password}}"
+
+default_org_hash_id: "505c7c48ac6dc1edc9b08f21db5a571d"
+
+exhaust_api_consumer_ids: '["2eaff3db-cdd1-42e5-a611-bebbf906e6cf"]'
+channel_data_exhaust_bucket: "telemetry-data-store"
+
+# nodebb variables
+sunbird_nodebb_url: "https://{{ domain_name }}/discussions"
+redis_nodebb_host: "{{ groups['redis-nodebb'][0]}}"
+
+nginx_private_ingress_type: LoadBalancer
+
+##Admin-keycloak vars
+adminutil_access_token_validity: 43200   # 12 hours validity of access token
+adminutil_refresh_token_offline_validity: 15552000  # 180 days validity of offline token
+
+###Player var
+reportsListVersion: v2
+
+## 3.2.7 var
+dataexhaust_super_admin_channel: tn #For preprod as there is no mhrd org and tn is acting as a mhrd
+
+summary_agg_data_source:  audit-rollup-syncts
+
+summary_agg_ttl: 300
+
+### monitoring vars for 3.2.7 ##
+#dp_monitor_alerts_warning_slack_url: https://hooks.slack.com/services/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 
+#dp_monitor_alerts_warning_slack_channel: preprod_pipeline_warning_alerts
+#dp_monitor_alerts_critical_slack_url: https://hooks.slack.com/services/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
+#dp_monitor_alerts_critical_slack_channel: preprod_pipeline_critical_alerts
+
+
+
+#### release-3.3.0 vars ###
+kp_schema_base_path: "{{proto}}://{{sunbird_public_storage_account_name}}.blob.core.windows.net/{{plugin_container_name}}/schemas/local"
+
+nginx_additional_log_fields: '"$http_accept_encoding"'
+
+#### Nodebb vars ###
+sunbird_nodebb_storage_account: preprodnodebb
+sunbird_nodebb_container: nodebb
+sunbird_nodebb_hostname: https://preprodnodebb.blob.core.windows.net
+
+##### release-3.5.0 vars ######
+discussions_middleware: "http://discussionsmw-service:3002"
+nodebb_service_url: "http://nodebb-service:4567"
+
+#### denorm scale vars ###
+redis_process_names:
+  content: 6379
+  device: 6380
+  user: 6381
+  dialcode: 6382
+
+device_db_redis_port: 6380
+
+monitoring_stack:
+  - prometheus-operator
+  - cassandra-jmx-exporter
+  - elasticsearch-exporter
+  - logger
+  - blackbox-exporter
+  - additional-scrape-configs
+  - alertrules
+  - kafka-topic-exporter
+  - prometheus-redis-exporter
+  - processing-kafka-exporter
+  - ingestion-kafka-exporter
+  - oauth2-proxy
+  
+### release-3.6.0 vars
+sunbird_desktop_keycloak_client_id: desktop
+sunbird_google_desktop_keycloak_client_id: google-auth-desktop
+sunbird_google_desktop_keycloak_secret: cfbef5f0-186f-491f-ab26-9630d51a74c9
+sunbird_trampoline_desktop_keycloak_client_id: trampoline-desktop
+sunbird_trampoline_desktop_keycloak_secret: 91bbf1c9-21d7-44bf-a4ce-207c09d1dee2
+
+#rate change for api/org/v1/read, api/data/v1/location/search, api/data/v1/location/create
+temp_rate_limit: 100000
+
+### release-3.6.6 vars
+desktop_app_id: preprod.diksha.desktop
+
+### release-3.7.0 vars
+#curator_delete_indices_older_than: 2
+
+### HPA on kube clsuter ###
+adminutils_autoscaling_enabled: true
+analytics_autoscaling_enabled: true
+apimanager_autoscaling_enabled: true
+apimanagerecho_autoscaling_enabled: true
+assessment_autoscaling_enabled: true
+cert_autoscaling_enabled: true
+certregistry_autoscaling_enabled: true
+content_autoscaling_enabled: true
+enc_autoscaling_enabled: true
+groups_autoscaling_enabled: true
+knowledgemw_autoscaling_enabled: true
+learner_autoscaling_enabled: true
+lms_autoscaling_enabled: true
+nginx_private_ingress_autoscaling_enabled: true
+notification_autoscaling_enabled: true
+player_autoscaling_enabled: true
+print_autoscaling_enabled: true
+search_autoscaling_enabled: true
+taxonomy_autoscaling_enabled: true
+telemetry_autoscaling_enabled: true
+router_autoscaling_enabled: true
+bot_autoscaling_enabled: true
+nodebb_autoscaling_enabled: true
+ml_core_autoscaling_enabled: true
+ml_projects_autoscaling_enabled: true
+ml_reports_autoscaling_enabled: true
+ml_survey_autoscaling_enabled: true
+gotenberg_autoscaling_enabled: true
+
+adminutils_autoscaling_minReplicas: 1
+adminutils_autoscaling_maxReplicas: 6
+adminutils_autoscaling_targetCPUUtilizationPercentage: 70
+
+analytics_autoscaling_minReplicas: 2
+analytics_autoscaling_maxReplicas: 6
+analytics_autoscaling_targetCPUUtilizationPercentage: 70
+
+apimanager_autoscaling_minReplicas: 1
+apimanager_autoscaling_maxReplicas: 30
+apimanager_autoscaling_targetCPUUtilizationPercentage: 70
+
+apimanagerecho_autoscaling_minReplicas: 1
+apimanagerecho_autoscaling_maxReplicas: 3
+
+assessment_autoscaling_minReplicas: 1
+assessment_autoscaling_maxReplicas: 3
+
+cert_autoscaling_minReplicas: 1
+cert_autoscaling_maxReplicas: 3
+
+certregistry_autoscaling_minReplicas: 1
+certregistry_autoscaling_maxReplicas: 3
+
+player_autoscaling_minReplicas: 2
+player_autoscaling_maxReplicas: 16
+player_autoscaling_targetCPUUtilizationPercentage: 70
+
+print_autoscaling_minReplicas: 1
+print_autoscaling_maxReplicas: 3
+
+content_autoscaling_minReplicas: 1
+content_autoscaling_maxReplicas: 12
+content_autoscaling_targetCPUUtilizationPercentage: 70
+
+knowledgemw_autoscaling_minReplicas: 2
+knowledgemw_autoscaling_maxReplicas: 10
+knowledgemw_autoscaling_targetCPUUtilizationPercentage: 70
+
+learner_autoscaling_minReplicas: 2
+learner_autoscaling_maxReplicas: 40
+learner_autoscaling_targetCPUUtilizationPercentage: 70
+
+lms_autoscaling_minReplicas: 2
+lms_autoscaling_maxReplicas: 30
+lms_autoscaling_targetCPUUtilizationPercentage: 70
+
+search_autoscaling_minReplicas: 1
+search_autoscaling_maxReplicas: 10
+search_autoscaling_targetCPUUtilizationPercentage: 70
+
+telemetry_autoscaling_minReplicas: 2
+telemetry_autoscaling_maxReplicas: 40
+telemetry_autoscaling_targetCPUUtilizationPercentage: 70
+
+router_autoscaling_minReplicas: 1
+router_autoscaling_maxReplicas: 8
+router_autoscaling_targetCPUUtilizationPercentage: 60
+
+bot_autoscaling_minReplicas: 1
+bot_autoscaling_maxReplicas: 4
+bot_autoscaling_targetCPUUtilizationPercentage: 60
+
+nginx_private_ingress_autoscaling_minReplicas: 2
+nginx_private_ingress_autoscaling_maxReplicas: 6
+nginx_private_ingress_autoscaling_targetCPUUtilizationPercentage: 70
+
+nodebb_autoscaling_minReplicas: 4
+nodebb_autoscaling_maxReplicas: 12
+nodebb_autoscaling_targetCPUUtilizationPercentage: 70
+
+ml_core_autoscaling_minReplicas: 2
+ml_core_autoscaling_maxReplicas: 40
+ml_core_autoscaling_targetCPUUtilizationPercentage: 70
+
+ml_projects_autoscaling_minReplicas: 2
+ml_projects_autoscaling_maxReplicas: 80
+ml_projects_autoscaling_targetCPUUtilizationPercentage: 70
+
+ml_reports_autoscaling_minReplicas: 2
+ml_reports_autoscaling_maxReplicas: 40
+ml_reports_autoscaling_targetCPUUtilizationPercentage: 70
+
+ml_survey_autoscaling_minReplicas: 2
+ml_survey_autoscaling_maxReplicas: 40
+ml_survey_autoscaling_targetCPUUtilizationPercentage: 70
+
+gotenberg_autoscaling_minReplicas: 2
+gotenberg_autoscaling_maxReplicas: 20
+gotenberg_autoscaling_targetCPUUtilizationPercentage: 70
+
+## WHATSAPP vars##
+sunbird_whatsapp_url: "https://waapi.pepipost.com/api/v2/message/"
+
+##release-3.8.0 vars#
+public_exhaust_datasets: '["diksha-data-exhaust"]'
+
+db_name:
+  db: ['keycloak_3017', 'api_manager_kong14', 'badger', 'quartz']
+
+### Graylog ###
+graylog_elasticsearch_discovery_enabled: "true"
+graylog_allow_leading_wildcard_searches: "true"
+graylog_elasticsearch_output_batch_size: 500
+graylog_elasticsearch_max_total_connections: 20
+graylog_elasticsearch_max_total_connections_per_route: 2
+graylog_outputbuffer_processor_threads_core_pool_size: 3
+graylog_outputbuffer_processor_threads_max_pool_size: 30
+graylog_async_eventbus_processors: 1
+graylog_inputbuffer_processors: 1
+graylog_processbuffer_processors: 2
+graylog_outputbuffer_processors: 1
+graylog_allow_highlighting: "true"
+graylog_message_journal_dir: "/mnt/graylog-server/journal"
+graylog_message_journal_max_size: "10gb"
+graylog_transport_email_enabled: "true"
+graylog_transport_email_hostname: "{{ mail_server_host }}"
+graylog_transport_email_auth_username: "apikey"
+graylog_transport_email_from_email: "{{ sunbird_mail_server_from_email }}"
+graylog_server_heap_size: "1500m"
+graylog_gc_warning_threshold: "10s"
+graylog_root_timezone: "Asia/Kolkata"
+graylog_transport_email_use_ssl: "false"
+graylog_trusted_proxies: "11.5.6.0/23" # This should be the kubernetes subnet
+#graylog_open_to_public: true  # Not for Diksha
+send_logs_to_graylog: true
+log_es_heap_size: 4g
+
+#### Only for Diksha ####
+graylog_open_to_private: true
+oauth2_proxy_lb_ip: 11.5.6.100
+# Add http://oauth2_proxy_lb_ip.nip.io and http://oauth2_proxy_lb_ip.nip.io/oauth2/callback in google oauth console
+# Block all access from VPN for other IP's  
+
+nginx_private_ingress_annotations:
+  service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+
+graylog_alerts_mailing_list: "{{ alerts_mailing_list + ',anandp@sanketika.in' }}"
+
+##release-4.0 vars##
+content_additional_categories: '["Classroom Teaching Video", "Concept Map", "Curiosity Question Set", "Experiential Resource", "Explanation Video", "Focus Spot", "Learning Outcome Definition", "Lesson Plan", "Marking Scheme Rubric", "Pedagogy Flow", "Previous Board Exam Papers", "TV Lesson", "Textbook", "CCT", "FLN"]'
+collection_additional_categories: '["Textbook", "Lesson Plan", "CCT", "FLN"]'
+ml_survey_url: "https://survey.{{ domain_name }}"
+
+
+### Custom alerts threshold's ##
+enrolment_reconcilation_lag_threshold: 10
+search_indexer_lag_threshold: 10
+cert_preprocessor_lag_threshold: 10
+certificate_generator_lag_threshold: 10
+
+### nodebb-vars
+nodebb_heap_size: 1024
+nodebb_db_index_name: 10
+sunbird_nodebb_redis_host: "diksha-preprod-nodebb.redis.cache.windows.net"
+
+
+## grafana oauth ##
+grafana_admin_user_http_header: "X-privateSecretHeader-Auth"
+grafana_login_whitelisted_emails: |-
+   santhosh.g@optit.in
+   raghupathi.g@optit.co
+   shashank.n@optit.co
+   navendu@ekstep.org
+   rajesh.r@optit.co
+   naveenprabhu.v@optit.co
+   rajasimman.s@teamdiskha.org
+   anandvarada@teamdiksha.org
+   nadiya.s@qualitrix.com
+   anusha.c@qualitrix.com
+   aayush@samagragovernance.in
+   chakshu@samagragovernance.in
+   ramya.sk@tibilsolutions.com
+   amitp@ilimi.in
+   keshav.prasad@tarento.com
+   kalaipandiyan.k@optit.co
+   samatha.j@teamdiksha.org
+   srikanth.kolluri@teamdiksha.org
+   manivasagan.p@teamdiksha.org
+   
+### for azure redis monitoring
+azure_redis_max_clients: 7500 ## for premium 6GB instance
+
+#release-4.2.0 var
+vdnURL: "https://dock.preprod.ntp.net.in"
+
+##release-4.3.0 var
+
+## Portal Anonymous Sessions and Redis as a Session store ##
+sunbird_kong_device_register: 'true'
+sunbird_kong_device_register_anonymous: 'true'
+portal_redis_connection_string: "redis://:{{portal_redis_password}}@diksha-preprod-nodebb.redis.cache.windows.net/3"
+sunbird_session_store_type: redis
+
+### managed-learn vars
+ml_core_internal_access_token: "183c219f984050c0e89d"
+ml_cloud_config: |
+  CLOUD_STORAGE=AZURE
+  AZURE_ACCOUNT_NAME={{sunbird_public_storage_account_name}}
+  AZURE_ACCOUNT_KEY={{sunbird_public_storage_account_key}}
+  AZURE_ACCOUNT_SAS={{sunbird_public_storage_account_sas}}
+  AZURE_STORAGE_CONTAINER=manage-learn
+
+ml_analytics_druid_url: "{{groups['sl-druid'][0]}}:8081"  ##coordinator ip of druid where sl datasource are available
+ml_druid_url: "{{groups['sl-druid'][0]}}"  ### broker ip of druid where sl datasource are available
+ml_kafka_topic_create: true
+ml_mongodb: 'sl-prod'  ## db name of manage learn mongo
+ml_redis_device_port: 6381
+
+##release-4.4.0##
+sunbird_default_file_size: 150
+enable_tenant_config: '*'
+uci_kafka_topic_create: true
+av_kafka_topic_create: true
+uci_odk_user: preprod-odk
+uci_go_to_start_char: 0
+uci_one_level_up_char: 99
+uci_postgres_user: preprod_keycloak@kong-lms-keycloak-preprod-new
+uci_postgres_host: "kong-lms-keycloak-preprod-new.postgres.database.azure.com"
+
+
+### ml intgrated vars
+ml_survey_app_name: dikshasurvey
+ml_integrated_app_name: diksha
+ml_analytics_integrated_portal: preprod.diksha.portal 
+
+portal_redirect_error_callback_domain: "https://preprod.ntp.net.in,https://ione.ntp.net.in"
+
+##release-4.5.0
+kong_desktop_device_consumer_names_for_opa: '["desktop_devicev2", "desktop_device"]'
+adminutil_embed_role : 'true'
+
+analytics_opa_decision_logs: true
+certregistry_opa_decision_logs: true
+content_opa_decision_logs: true
+knowledgemw_opa_decision_logs: true
+learner_opa_decision_logs: true
+lms_opa_decision_logs: true"
+
+
+enrollment_list_size: 10
+
+  
+## release-4.8.0 variables
+sunbird_azure_uci_container_name : uci-preprod
+ml_analytics_azure_account_name : preprodall
+ml_analytics_evidence_base_url : https://preprodall.blob.core.windows.net/manage-learn/
+uci_env: preprod
+apple_app_site_association: '{"webcredentials": {"apps": ["86MSZA2785.preprod.diksha.app","86MSZA2785.in.gov.diksha.app"]},"applinks": {"apps": [],"details": [{"appID": "86MSZA2785.in.gov.diksha.app","paths": ["/explore/*","/dial/*","/get/dial/*","/play/content/*","/play/collection/*","/learn/course","/explore-course/course/*","/explore-course/*","/search/*","/search/Library/*","/faq/*","/profile/*","/play/quiz/*","/explore/*","/learn/*","/resources/*","/manage-learn/*"]},{"appID": "86MSZA2785.preprod.diksha.app","paths": ["/explore/*","/dial/*","/get/dial/*","/play/content/*","/play/collection/*","/learn/course","/explore-course/course/*","/explore-course/*","/search/*","/search/Library/*","/faq/*","/profile/*","/play/quiz/*","/explore/*","/learn/*","/resources/*","/manage-learn/*"]}]}}'
+
+## release-5.0.0 variable
+ml_analytics_druid_rollup_url: "{{groups['sl-druid'][0]}}:8081"
+ml_analytics_druid_query_url: "{{groups['sl-druid'][0]}}:8082"
+##release-5.0.0 var##
+sunbird_msg_91_auth: "{{core_vault_sunbird_msg_91_auth}}"
+sunbird_notification_msg_default_sender: DIKAPP 
+sunbird_mail_server_username: "{{mail_server_username}}"
+sunbird_mail_server_host: "{{mail_server_host}}"
+sunbird_mail_server_port: 587
+
+##ml-analytics values##
+ml_slack_token: "{{core_vault_ml_slack_token}}"
+ml_slack_channel: "#preprod_ml_reports_log"
+
+ml_analytics_public_azure_account_name: "{{azure_account_name}}"
+ml_analytics_public_azure_access_key: "{{sunbird_public_storage_account_key}}"
+ml_analytics_public_azure_container_name: manage-learn
+
+ml_analytics_program_dashboard_cloud_blob_path: projects/program_dashboard_csv
+ml_druid_query_data: http://11.5.2.10:8082/druid/v2
+ml_program_dashboard_data: '[{"programId":"62205480a81abe61c07e5058","solutionId":"623dad2b2be11e50293d3442","stateName":"Uttar Pradesh","solutionName":"Support required to test 4.7 Preprod build_FD 312_TASK","taskCount":0,"taskEvidenceCount":0,"projectEvidenceCount":0,"filters":false,"isNeeded":"task"},{"programId":"62205480a81abe61c07e5058","solutionId":"623dad2b2be11e50293d3442","stateName":"Uttar Pradesh","solutionName":"Support required to test 4.7 Preprod build_FD 312_STATUS","taskCount":0,"taskEvidenceCount":0,"projectEvidenceCount":0,"filters":false,"isNeeded":"status"},{"programId":"62205480a81abe61c07e5058","solutionId":"623dad2b2be11e50293d3442","stateName":"Uttar Pradesh","solutionName":"Support required to test 4.7 Preprod build_FD 312_FILTER","taskCount":1,"taskEvidenceCount":3,"projectEvidenceCount":2,"filters":true,"isNeeded":"filter-task"},{"programId":"6194f8d4db43ec4400a33b7c","solutionId":"6195ecf1db43ec4400a33b80","stateName":"Uttar Pradesh","solutionName":"Project link consumption -FD 137_TASK","taskCount":0,"taskEvidenceCount":0,"projectEvidenceCount":0,"filters":false,"isNeeded":"task"},{"programId":"6194f8d4db43ec4400a33b7c","solutionId":"6195ecf1db43ec4400a33b80","stateName":"Uttar Pradesh","solutionName":"Project link consumption -FD 137_FILTER","taskCount":3,"taskEvidenceCount":2,"projectEvidenceCount":1,"filters":true,"isNeeded":"filter-task"},{"programId":"6194f8d4db43ec4400a33b7c","solutionId":"6195ecf1db43ec4400a33b80","stateName":"Uttar Pradesh","solutionName":"Project link consumption -FD 137_STATUS","taskCount":0,"taskEvidenceCount":0,"projectEvidenceCount":0,"filters":false,"isNeeded":"status"},{"programId":"611661f09174bc4e6ee05f10","solutionId":"6116633a9174bc4e6ee05f11","stateName":"Uttar Pradesh","solutionName":"Project for testing-I_TASK","taskCount":0,"taskEvidenceCount":0,"projectEvidenceCount":0,"filters":false,"isNeeded":"task"},{"programId":"611661f09174bc4e6ee05f10","solutionId":"6116633a9174bc4e6ee05f11","stateName":"Uttar Pradesh","solutionName":"Project for testing-I_STATUS","taskCount":0,"taskEvidenceCount":0,"projectEvidenceCount":0,"filters":false,"isNeeded":"status"},{"programId":"611661f09174bc4e6ee05f10","solutionId":"6116633a9174bc4e6ee05f11","stateName":"Uttar Pradesh","solutionName":"Project for testing-I_FILTER","taskCount":0,"taskEvidenceCount":0,"projectEvidenceCount":0,"filters":true,"isNeeded":"filter-task"},{"programId":"611661f09174bc4e6ee05f10","solutionId":"611664839174bc4e6ee05f12","stateName":"Uttar Pradesh","solutionName":"Project for testing-II_TASK","taskCount":0,"taskEvidenceCount":0,"projectEvidenceCount":0,"filters":false,"isNeeded":"task"},{"programId":"611661f09174bc4e6ee05f10","solutionId":"611664839174bc4e6ee05f12","stateName":"Uttar Pradesh","solutionName":"Project for testing-II_FILTER","taskCount":0,"taskEvidenceCount":0,"projectEvidenceCount":0,"filters":true,"isNeeded":"filter-task"},{"programId":"611661f09174bc4e6ee05f10","solutionId":"611664839174bc4e6ee05f12","stateName":"Uttar Pradesh","solutionName":"Project for testing-II_STATUS","taskCount":0,"taskEvidenceCount":0,"projectEvidenceCount":0,"filters":false,"isNeeded":"status"}]' 
+# CSP Name
+cloud_service_provider: azure
+
+notification_opa_enabled: false
+
+
+## ml Analytics Variables ##
+ml_AWS_service_name: s3
+ml_AWS_access_key: "{{ ml_access_key }}"
+ml_AWS_secret_access_key: "{{ ml_secret_key }}"
+ml_AWS_region_name: "ap-south-1"
+ml_AWS_bucket_name: "rawdata-tibil-bucket"
+
+## release-5.1.0
+
+cloudstorage_replace_absolute_path: 'true'
+cloudstorage_base_path: "https://obj.preprod.ntp.net.in"
+valid_cloudstorage_base_urls: '["https://preprodall.blob.core.windows.net","https://obj.preprod.ntp.net.in"]'
+cloudstorage_relative_path_prefix: "CONTENT_STORAGE_BASE_PATH"
+cloudstorage_metadata_list: '["appIcon", "artifactUrl", "posterImage", "previewUrl", "thumbnail", "assetsMap", "certTemplate", "itemSetPreviewUrl", "grayScaleAppIcon", "sourceURL", "variants", "downloadUrl", "streamingUrl", "toc_url", "data", "question", "solutions", "editorState", "media", "pdfUrl", "transcripts"]'
+cloud_storage_base_url: "https://{{ sunbird_public_storage_account_name }}.blob.core.windows.net"
+cloud_storage_cname_url: "{{cloudstorage_base_path}}"
+
+dial_service_schema_base_path: "{{ cloud_storage_cname_url }}/{{ dial_plugin_storage }}/jsonld-schema/local"
+
+cloud_public_storage_accountname: "{{sunbird_public_storage_account_name}}"
+cloud_public_storage_endpoint: ""
+cloud_public_storage_region: "centralindia"
+cloud_public_storage_project: ""
+
+cloud_private_storage_accountname: "{{sunbird_private_storage_account_name}}"
+cloud_private_storage_endpoint: ""
+cloud_private_storage_region: "centralindia"
+cloud_private_storage_project: ""
+
+cloud_management_storage_accountname: "{{sunbird_management_storage_account_name}}"
+cloud_management_storage_endpoint: ""
+cloud_management_storage_region: "centralindia"
+cloud_management_storage_project: ""
+
+cloud_artifact_storage_accountname: "{{sunbird_artifact_storage_account_name}}"
+cloud_artifact_storage_endpoint: ""
+cloud_artifact_storage_region: "centralindia"
+cloud_artifact_storage_project: ""
+
+cloud_storage_certqr_bucketname: certqr
+cloud_storage_chatbot_bucketname: chatbot
+cloud_storage_dial_bucketname: dial
+cloud_storage_flink_bucketname: flink-state-backend
+cloud_storage_playercdn_bucketname: player
+cloud_storage_public_bucketname: public
+cloud_storage_publicreports_bucketname: public-reports
+cloud_storage_privatereports_bucketname: reports
+cloud_storage_samiksha_bucketname: samiksha
+cloud_storage_schema_bucketname: schema
+cloud_storage_sourcing_bucketname: sourcing
+cloud_storage_offlineinstaller_bucketname: "{{env}}-offlineinstaller"
+cloud_storage_content_bucketname: "ntp-content-{{env}}"
+cloud_storage_telemetry_bucketname: telemetry-data-store
+cloud_storage_termsandcondtions_bucketname: termsandcondtions
+cloud_storage_user_bucketname: user
+cloud_storage_desktopappcrashlogs_bucketname: desktopappcrashlogs
+cloud_storage_label_bucketname: label
+cloud_storage_certservice_bucketname: "{{env}}-e-credentials"
+cloud_storage_uci_bucketname: "uci-{{env}}"
+cloud_storage_cassandrabackup_bucketname: cassandra-backup
+cloud_storage_dpcassandrabackup_bucketname: dp-cassandra-backup
+cloud_storage_dppostgresbackup_bucketname: dp-postgresql-backup
+cloud_storage_dpredisbackup_bucketname: dp-redis-backup
+cloud_storage_esbackup_bucketname: elasticsearch-snapshots
+cloud_storage_influxdbbackup_bucketname: influxdb-backup
+cloud_storage_jenkinsbackup_bucketname: jenkins-backup
+cloud_storage_mongobackup_bucketname: mongodb-backup
+cloud_storage_neo4jbackup_bucketname: neo4j-backup
+cloud_storage_redisbackup_bucketname: redis-backup
+cloud_storage_artifacts_bucketname: "{{ artifacts_container }}"
+
+
+#Added value while fixing 5.1.0 issues
+cloudstorage_relative_path_prefix_content: "CONTENT_STORAGE_BASE_PATH"
+cloudstorage_relative_path_prefix_dial: "DIAL_STORAGE_BASE_PATH"
+
+#UCI variable as part of 5.1.0 hot fixes
+doubtnut_base_url: https://micro.doubtnut.com/secure/ask/tara
+doubtnut_bot_welcome_msg: |
+  Hello, you can ask your question in many ways:\n
+  Read out the question using the WhatsApp microphone\n
+  Take a picture of the question from your textbook and send it\n
+  Type the question and send it.\n
+doubtnut_bot_video_url: ""
+uci_cassandra_migration_count: 6

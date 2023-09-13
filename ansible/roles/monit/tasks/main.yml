@@ -1,4 +1,18 @@
 ---
+
+- debug:
+    msg="{{ groups['swarm-agent-for-alertmanager'][0] }}" 
+
+- debug:
+    msg="{{ groups['swarm-agent-for-prometheus'][0] }}"
+
+- debug:
+    msg="{{ alertmanager_host }}"
+
+- debug:
+    msg="{{ prometheus_host }}"
+
+
 - name: Install Monit
   apt: 
     name: monit
@@ -7,16 +21,11 @@
   notify: restart monit
   ignore_errors: yes
 
-- name: Create monit folder
-  file: path={{ item }} state=directory
-  with_items:
-    - /etc/monit.d/
-    - /etc/monit
-    - /var/lib/monit
-  notify: restart monit
-
 - name: Copy monitrc file
-  template: src=monitrc dest=/etc/monit/monitrc
+  template:
+    src: monitrc 
+    dest: /etc/monit/monitrc
+    mode: 0600
   notify: restart monit
 
 - name: Copy monit init.d file

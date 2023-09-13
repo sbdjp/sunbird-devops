@@ -1,0 +1,25 @@
+- name: Ensure stack directory exists
+  file:
+    path: /home/deployer/stack
+    state: directory
+    owner: root
+    group: root
+
+- name: Save stack file
+  template: src=bot.yml dest=/home/deployer/stack/bot.yml mode=0644
+
+- name: Remove stack
+  shell: "docker stack rm bot"
+  ignore_errors: yes
+
+- name: Login to docker
+  shell: "docker login {{ vault_docker_registry_url }} -u {{ vault_docker_registry_user }} -p {{ vault_docker_registry_password }}"
+  no_log: True
+  ignore_errors: yes
+
+- debug: msg="Image details= {{hub_org}}/{{image_name}}:{{image_tag}}"
+
+- name: Deploy stack
+  shell: "docker stack deploy -c bot.yml bot --with-registry-auth"
+  args:
+    chdir: /home/deployer/stack

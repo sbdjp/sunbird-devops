@@ -1,8 +1,0 @@
-ARG BASE
-FROM ${BASE}
-ARG USER=0
-USER ${USER}
-WORKDIR /app
-COPY opa /app
-ENTRYPOINT ["./opa"]
-CMD ["run"]

@@ -1,0 +1,33 @@
+#!groovy
+
+node('build-slave') {
+
+    currentBuild.result = "SUCCESS"
+
+    try {
+
+      stage('Checkout'){
+          checkout scm
+          sh('./pipelines/setupDevopsCode.sh')
+          sh('rm -rf sunbird-auth') 
+          sh('git clone https://github.com/project-sunbird/sunbird-auth.git')
+          sh('cd sunbird-auth && git checkout sms_provider_configuraton')
+      }
+
+       stage('Build'){
+         sh('cd sunbird-auth/keycloak/sms-provider && mvn package')
+       }
+
+       stage('Archive'){
+
+        sh('cd sunbird-auth/keycloak/sms-provider/templates && tar -zcvf templates.tar.gz *')
+        archiveArtifacts 'sunbird-auth/keycloak/sms-provider/templates/templates.tar.gz'
+
+        archiveArtifacts 'sunbird-auth/keycloak/sms-provider/target/keycloak-email-phone-autthenticator-1.0-SNAPSHOT.jar'
+       }
+    }
+    catch (err) {
+        currentBuild.result = "FAILURE"
+        throw err
+    }
+}
