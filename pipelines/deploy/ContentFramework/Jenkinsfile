@@ -44,7 +44,6 @@ node() {
                     sh """                                                   
                       zip -r content-editor-artifact.zip ansible/content-editor
                       cd ansible/content-editor
-		      . /var/lib/jenkins/.nvm/nvm.sh
 					  nvm use 6
                       sudo npm install -g gulp
                       npm install
