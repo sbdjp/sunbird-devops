@@ -44,15 +44,15 @@ node() {
                     sh """                                                   
                       zip -r content-editor-artifact.zip ansible/content-editor
                       cd ansible/content-editor
-		      . ~/.bashrc && \
-		      nvm use 6 && \
-                      sudo npm install -g gulp && \
-                      npm install && \ 
-                      npm install promise && \
-                      gulp minifyJs && \
-                      gulp copystyleImages && \
-                      gulp clean && \
-                      gulp injectrenamedfiles && \
+		      . ~/.bashrc && \\
+		      nvm use 6 && \\
+                      sudo npm install -g gulp && \\
+                      npm install && \\
+                      npm install promise && \\
+                      gulp minifyJs && \\
+                      gulp copystyleImages && \\
+                      gulp clean && \\
+                      gulp injectrenamedfiles && \\
                       gulp package 
                     """
                       
