@@ -44,8 +44,8 @@ node() {
                     sh """                                                   
                       zip -r content-editor-artifact.zip ansible/content-editor
                       cd ansible/content-editor
-		      // nvm use 6 
-                      // /var/lib/jenkins/.nvm/versions/node/v6.17.1/bin/npm install -g gulp 
+		      # nvm use 6 
+                      # /var/lib/jenkins/.nvm/versions/node/v6.17.1/bin/npm install -g gulp 
                       /var/lib/jenkins/.nvm/versions/node/v6.17.1/bin/npm install 
                       /var/lib/jenkins/.nvm/versions/node/v6.17.1/bin/npm install promise 
                       /var/lib/jenkins/.nvm/versions/node/v6.17.1/bin/gulp minifyJs 
