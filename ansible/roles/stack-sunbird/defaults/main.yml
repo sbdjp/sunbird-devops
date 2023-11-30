@@ -51,6 +51,13 @@ player_limit_memory: 750M
 player_reserve_cpu: 0.1
 player_limit_cpu: 1
 
+###sakhi#######
+player_replicas: 1
+player_reservation_memory: 128M
+player_limit_memory: 750M
+player_reserve_cpu: 0.1
+player_limit_cpu: 1
+
 # This variable is not to access learner service but to call the api
 # learner-service:9000/org/v1/search
 sunbird_learner_service_base_url: http://kong:8000/
@@ -277,6 +284,8 @@ service_env:
   odk: ../../../../ansible/roles/stack-sunbird/templates/odk.env
   orchestrator:
     - ../../../../ansible/roles/stack-sunbird/templates/orchestrator.env
+  sakhi:
+    - ../../../../ansible/roles/stack-sunbird/templates/sakhi.env
 
 sunbird_portal_player_cdn_enabled: false
 
@@ -804,6 +813,25 @@ dial_liveness_readiness:
 
 uci_inbound_liveness_readiness:
   healthcheck: true
+  readinessProbe:
+    httpGet:
+      path: /service/health
+      port: 8085
+    initialDelaySeconds: 15
+    periodSeconds: 15
+    timeoutSeconds: 5
+    failureThreshold: 2
+  livenessProbe:
+    httpGet:
+      path: /service/health
+      port: 8085
+    initialDelaySeconds: 15
+    periodSeconds: 15
+    timeoutSeconds: 5
+    failureThreshold: 2
+
+sakhi_inbound_liveness_readiness:
+  healthcheck: false
   readinessProbe:
     httpGet:
       path: /service/health
