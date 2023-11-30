@@ -286,6 +286,8 @@ service_env:
     - ../../../../ansible/roles/stack-sunbird/templates/orchestrator.env
   sakhi:
     - ../../../../ansible/roles/stack-sunbird/templates/sakhi.env
+  kathaasaagra:
+    - ../../../../ansible/roles/stack-sunbird/templates/kathaasaagra.env
 
 sunbird_portal_player_cdn_enabled: false
 

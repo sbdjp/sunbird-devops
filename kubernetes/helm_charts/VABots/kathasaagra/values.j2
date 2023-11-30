@@ -1,0 +1,32 @@
+### Default variable file for kathaasaagra-service ###
+
+namespace: {{ namespace }}
+imagepullsecrets: {{ imagepullsecrets }}
+dockerhub: {{ dockerhub }}
+
+replicaCount: {{kathaasaagra_replicacount|default(1)}}
+repository: {{kathaasaagra_repository|default('sunbird-kathaasaagra-service')}}
+image_tag: {{ image_tag }}
+resources:
+  requests:
+    cpu: {{kathaasaagra_cpu_req|default('100m')}}
+    memory: {{kathaasaagra_mem_req|default('100Mi')}}
+  limits:
+    cpu: {{kathaasaagra_cpu_limit|default('1')}}
+    memory: {{kathaasaagra_mem_limit|default('1024Mi')}}
+network:
+  port: 9001
+  targetport: 9000
+strategy:
+  type: RollingUpdate
+  maxsurge: {{ kathaasaagra_maxsurge|default('25%') }}
+  maxunavailable: {{ kathaasaagra_maxunavailable|default('25%') }}
+
+{{ kathaasaagra_liveness_readiness | to_nice_yaml }}
+
+autoscaling:
+  enabled: {{ kathaasaagra_autoscaling_enabled | default('false') }}
+  minReplicas: {{ kathaasaagra_autoscaling_minReplicas|default(1) }}
+  maxReplicas: {{ kathaasaagra_autoscaling_maxReplicas|default(2) }}
+  targetCPUUtilizationPercentage: {{ kathaasaagra_autoscaling_targetCPUUtilizationPercentage|default(60) }}
+  targetMemoryUtilizationPercentage: {{ kathaasaagra_autoscaling_targetMemoryUtilizationPercentage|default('') }}
