@@ -830,7 +830,7 @@ uci_inbound_liveness_readiness:
     timeoutSeconds: 5
     failureThreshold: 2
 
-sakhi_inbound_liveness_readiness:
+sakhi_liveness_readiness:
   healthcheck: false
   readinessProbe:
     httpGet:
