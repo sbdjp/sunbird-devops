@@ -15,8 +15,8 @@ resources:
     cpu: {{kathaasaagra_cpu_limit|default('1')}}
     memory: {{kathaasaagra_mem_limit|default('1024Mi')}}
 network:
-  port: 9001
-  targetport: 9000
+  port: 8000
+  targetport: 8000
 strategy:
   type: RollingUpdate
   maxsurge: {{ kathaasaagra_maxsurge|default('25%') }}
