@@ -1,0 +1,50 @@
+### Default variable file for sakhi-service ###
+
+namespace: test
+imagepullsecrets: "test" #{{ imagepullsecrets | default('test')}}
+dockerhub: "test" #{{ dockerhub| default('test') }}
+
+replicaCount: 1 #{{sakhi_replicacount|default(1)}}
+repository:  "testrepo" #{{sakhi_repository|default('sunbird-sakhi-service')}}
+image_tag_sakhi: "sakhi_api_service" #{{ image_tag_sakhi }}
+image_tag_sakhi_wrapper: "testimg" #{{ image_tag_sakhi_wrapper }}
+image_tag_sakhi_marco: "sakhi_marco" #{{ image_tag_sakhi_marco }}
+resources:
+  requests:
+    cpu: 1 #{{sakhi_cpu_req|default('100m')}}
+    memory: 1024 #{{sakhi_mem_req|default('100Mi')}}
+  limits:
+    cpu: 1 #{{sakhi_cpu_limit|default('1')}}
+    memory: 1024 #{{sakhi_mem_limit|default('1024Mi')}}
+sakhi_network:
+  port: 8000
+  targetport: 8000
+sakhi_wrapper_network:
+  port: 
+  targetport:
+marco_network:
+  port: 8882
+  targetport: 8882
+strategy:
+  type: RollingUpdate
+  maxsurge: 25% #{{ sakhi_maxsurge|default('25%') }}
+  maxunavailable: 25% #{{ sakhi_maxunavailable|default('25%') }}
+
+open_api_key: ""
+gcp_credential_json_path: ""
+gcp_bucket_name: ""
+postgress_sakhi_db_name: ""
+postgres_sakhi_db_username: ""
+postgres_sakhi_db_password: ""
+postgres_sakhi_db_ip: ""
+sakhi_login_username: ""
+sakhi_login_password: ""
+ai4bharat_api_key: ""
+# {{ sakhi_liveness_readiness | to_nice_yaml }}
+
+# autoscaling:
+#   enabled: {{ sakhi_autoscaling_enabled | default('false') }}
+#   minReplicas: {{ sakhi_autoscaling_minReplicas|default(1) }}
+#   maxReplicas: {{ sakhi_autoscaling_maxReplicas|default(2) }}
+#   targetCPUUtilizationPercentage: {{ sakhi_autoscaling_targetCPUUtilizationPercentage|default(60) }}
+#   targetMemoryUtilizationPercentage: {{ sakhi_autoscaling_targetMemoryUtilizationPercentage|default('') }}

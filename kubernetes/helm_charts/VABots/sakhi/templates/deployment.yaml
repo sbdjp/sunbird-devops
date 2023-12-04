@@ -1,0 +1,184 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Values.namespace }}
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+     rollingUpdate:
+        maxSurge: {{ .Values.strategy.maxsurge }}
+        maxUnavailable: {{ .Values.strategy.maxunavailable }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+{{- if .Values.imagepullsecrets }}
+      imagePullSecrets:
+      - name: {{ .Values.imagepullsecrets }}
+{{- end }}
+      volumes:
+        - name: {{ .Chart.Name }}-config
+          configMap:
+            name: {{ .Chart.Name }}-config
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag_sakhi }}"
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: {{ .Chart.Name }}-config
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        ports:
+        - containerPort: {{ .Values.sakhi_network.port }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-service
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  ports:
+  - name: http-{{ .Chart.Name }}
+    protocol: TCP
+    port: {{ .Values.sakhi_network.targetport }}
+  selector:
+    app: {{ .Chart.Name }}
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-marco
+  namespace: {{ .Values.namespace }}
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+     rollingUpdate:
+        maxSurge: {{ .Values.strategy.maxsurge }}
+        maxUnavailable: {{ .Values.strategy.maxunavailable }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-marco
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-marco
+    spec:
+{{- if .Values.imagepullsecrets }}
+      imagePullSecrets:
+      - name: {{ .Values.imagepullsecrets }}
+{{- end }}
+      volumes:
+        - name: {{ .Chart.Name }}-config
+          configMap:
+            name: {{ .Chart.Name }}-config
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag_sakhi_marco }}"
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: {{ .Chart.Name }}-config
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        ports:
+        - containerPort: {{ .Values.marco_network.port }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-marco-service
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Chart.Name }}-marco-service
+spec:
+  ports:
+  - name: http-{{ .Chart.Name }}
+    protocol: TCP
+    port: {{ .Values.marco_network.targetport }}
+  selector:
+    app: {{ .Chart.Name }}-marco
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-sakhi-wrapper
+  namespace: {{ .Values.namespace }}
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+     rollingUpdate:
+        maxSurge: {{ .Values.strategy.maxsurge }}
+        maxUnavailable: {{ .Values.strategy.maxunavailable }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-sakhi-wrapper
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-sakhi-wrapper
+    spec:
+{{- if .Values.imagepullsecrets }}
+      imagePullSecrets:
+      - name: {{ .Values.imagepullsecrets }}
+{{- end }}
+      volumes:
+        - name: {{ .Chart.Name }}-config
+          configMap:
+            name: {{ .Chart.Name }}-config
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag_sakhi_wrapper }}"
+        imagePullPolicy: Always
+        # envFrom:
+        # - configMapRef:
+        #     name: {{ .Chart.Name }}-config
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        ports:
+        - containerPort: {{ .Values.sakhi_wrapper_network.port }}
+#         {{- if .Values.healthcheck }}
+#         livenessProbe:
+# {{ toYaml .Values.livenessProbe | indent 10 }}
+#         readinessProbe:
+# {{ toYaml .Values.readinessProbe | indent 10 }}
+#         {{- end }}
+        # volumeMounts:
+        #   - name: {{ .Chart.Name }}-config
+        #     mountPath: /home/sunbird/sunbird-sakhi-service-1.0-SNAPSHOT/config/application.conf
+        #     subPath: sakhi-service_application.conf
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-sakhi-wrapper-service
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  ports:
+  - name: http-{{ .Chart.Name }}
+    protocol: TCP
+    port: {{ .Values.sakhi_wrapper_network.targetport }}
+  selector:
+    app: {{ .Chart.Name }}-sakhi-wrapper
