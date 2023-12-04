@@ -4,6 +4,6 @@ BUCKET_NAME= {{ ks_gcp_bucket_name }}
 DATABASE_NAME= {{ ks_postgress_db_name }} 
 DATABASE_USERNAME= {{ ks_postgres_db_username }} 
 DATABASE_PASSWORD= {{ ks_postgres_db_password }}
-DATABASE_IP= {{ postgres.db_url }} 
+DATABASE_IP= {{ ks_postgres_db_host }}
 DATABASE_PORT=5432
 AI4BHARAT_API_KEY={{ ai4bharat_api_key }}
