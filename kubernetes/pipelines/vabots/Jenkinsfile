@@ -11,7 +11,7 @@ pipeline {
             steps {
                 script {
                         jobName = sh(returnStdout: true, script: "echo $JOB_NAME").split('/')[-1].trim().toLowerCase()
-                        sh "helm upgrade --install $jobName ${currentWs}/kubernetes/helm_charts/core/$jobName --namespace $vabots_namespace --kubeconfig "$kubeconfig_path"
+                        sh "helm upgrade --install $jobName ${currentWs}/kubernetes/helm_charts/core/$jobName --namespace $vabots_namespace --kubeconfig $kubeconfig_path"
                 }
             }
         }
