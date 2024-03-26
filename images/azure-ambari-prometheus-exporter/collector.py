@@ -35,7 +35,7 @@ class AmbariMetricCollector(object):
         }
 
         with open(conf_file, "r") as read_conf_file:
-            conf = yaml.load(read_conf_file)
+            conf = yaml.load(read_conf_file, Loader=yaml.SafeLoader)
 
         self.conf_nn, self.conf_rm, self.conf_alert, self.conf_apphistory = self._parse_conf(conf)
 
